@@ -1,0 +1,68 @@
+@import url('https://fonts.googleapis.com/css2?family=Baloo+2:wght@400;500;600;700;800&family=Nunito:wght@400;500;600;700;800&display=swap');
+@import 'tailwindcss';
+
+@theme {
+  --color-primary: #4f46e5;
+  --color-primary-soft: #818cf8;
+  --color-on-primary: #ffffff;
+  --color-accent: #16a34a;
+  --color-accent-soft: #bbf7d0;
+  --color-bg: #eef2ff;
+  --color-fg: #312e81;
+  --color-fg-muted: #6366a8;
+  --color-surface: #ffffff;
+  --color-border-soft: #c7d2fe;
+  --color-danger: #dc2626;
+  --color-danger-soft: #fecaca;
+  --color-gold: #f59e0b;
+  --color-ru: #ef4444;
+  --color-es: #f59e0b;
+
+  --font-display: 'Baloo 2', system-ui, sans-serif;
+  --font-body: 'Nunito', system-ui, sans-serif;
+
+  --radius-clay: 1.25rem;
+  --shadow-clay: 0 4px 0 0 var(--color-border-soft), 0 8px 20px -6px rgb(79 70 229 / 0.15);
+  --shadow-clay-pressed: 0 1px 0 0 var(--color-border-soft), 0 2px 6px -2px rgb(79 70 229 / 0.15);
+}
+
+html {
+  font-family: var(--font-body);
+  background: var(--color-bg);
+  color: var(--color-fg);
+  touch-action: manipulation;
+}
+
+h1, h2, h3, h4 {
+  font-family: var(--font-display);
+}
+
+/* Clay surface — soft 3D card per claymorphism design system */
+.clay {
+  border-radius: var(--radius-clay);
+  border: 3px solid var(--color-border-soft);
+  background: var(--color-surface);
+  box-shadow: var(--shadow-clay);
+  transition: transform 0.15s ease-out, box-shadow 0.15s ease-out;
+}
+
+.clay-press {
+  cursor: pointer;
+}
+
+.clay-press:active {
+  transform: translateY(3px) scale(0.98);
+  box-shadow: var(--shadow-clay-pressed);
+}
+
+.clay-press:focus-visible {
+  outline: 3px solid var(--color-primary);
+  outline-offset: 2px;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 0.01ms !important;
+    transition-duration: 0.01ms !important;
+  }
+}
