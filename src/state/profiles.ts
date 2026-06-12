@@ -2,6 +2,14 @@ import { create } from 'zustand'
 import { persist } from 'zustand/middleware'
 import type { CourseId } from '../content/types'
 
+/** crypto.randomUUID is missing on some older browsers / non-secure contexts */
+function newProfileId(): string {
+  if (typeof crypto !== 'undefined' && typeof crypto.randomUUID === 'function') {
+    return crypto.randomUUID()
+  }
+  return `p-${Date.now()}-${Math.random().toString(36).slice(2, 10)}`
+}
+
 export interface Profile {
   id: string
   name: string
@@ -27,7 +35,7 @@ export const useProfiles = create<ProfilesState>()(
       activeProfileId: null,
       createProfile: (name, avatar, courses) => {
         const profile: Profile = {
-          id: crypto.randomUUID(),
+          id: newProfileId(),
           name,
           avatar,
           courses,

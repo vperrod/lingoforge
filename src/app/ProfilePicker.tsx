@@ -1,5 +1,5 @@
 import { useState } from 'react'
-import { Plus } from 'lucide-react'
+import { Plus, Check } from 'lucide-react'
 import { motion } from 'framer-motion'
 import { useProfiles } from '../state/profiles'
 import type { CourseId } from '../content/types'
@@ -12,7 +12,8 @@ export function ProfilePicker() {
   const [creating, setCreating] = useState(profiles.length === 0)
   const [name, setName] = useState('')
   const [avatar, setAvatar] = useState(AVATARS[0])
-  const [courses, setCourses] = useState<CourseId[]>(['ru'])
+  // start empty — preselecting a course made "tap to choose" deselect it
+  const [courses, setCourses] = useState<CourseId[]>([])
 
   const toggleCourse = (c: CourseId) =>
     setCourses((cur) => (cur.includes(c) ? cur.filter((x) => x !== c) : [...cur, c]))
@@ -91,22 +92,24 @@ export function ProfilePicker() {
             </div>
           </fieldset>
           <fieldset>
-            <legend className="mb-2 font-bold">What do you want to learn?</legend>
+            <legend className="mb-2 font-bold">What do you want to learn? (tap one or both)</legend>
             <div className="flex gap-3">
               <button
                 type="button"
                 aria-pressed={courses.includes('ru')}
                 onClick={() => toggleCourse('ru')}
-                className={`clay clay-press grow px-4 py-3 font-bold ${courses.includes('ru') ? 'border-ru bg-red-50' : ''}`}
+                className={`clay clay-press flex grow items-center justify-center gap-2 px-4 py-3 font-bold ${courses.includes('ru') ? 'border-ru bg-red-50' : ''}`}
               >
+                {courses.includes('ru') && <Check className="size-5 text-ru" aria-hidden />}
                 🇷🇺 Russian
               </button>
               <button
                 type="button"
                 aria-pressed={courses.includes('es')}
                 onClick={() => toggleCourse('es')}
-                className={`clay clay-press grow px-4 py-3 font-bold ${courses.includes('es') ? 'border-es bg-amber-50' : ''}`}
+                className={`clay clay-press flex grow items-center justify-center gap-2 px-4 py-3 font-bold ${courses.includes('es') ? 'border-es bg-amber-50' : ''}`}
               >
+                {courses.includes('es') && <Check className="size-5 text-es" aria-hidden />}
                 🇪🇸 Spanish
               </button>
             </div>
@@ -119,6 +122,15 @@ export function ProfilePicker() {
               Start learning!
             </ClayButton>
           </div>
+          {(!name.trim() || courses.length === 0) && (
+            <p className="text-center text-sm text-fg-muted" aria-live="polite">
+              {!name.trim() && courses.length === 0
+                ? 'Type your name and pick a language to start'
+                : !name.trim()
+                  ? 'Type your name to start'
+                  : 'Pick at least one language to start'}
+            </p>
+          )}
         </motion.div>
       )}
     </main>
