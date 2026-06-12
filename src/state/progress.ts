@@ -1,0 +1,178 @@
+import { create } from 'zustand'
+import type { CourseId } from '../content/types'
+import type { SrsItem } from '../engine/srs'
+import { newSrsItem, review } from '../engine/srs'
+import { progressStorageKey } from './profiles'
+
+export interface DayLog {
+  minutes: number
+  xp: number
+  lessons: number
+}
+
+export interface CourseProgress {
+  /** lessonId → times completed (crown level, 0-5) */
+  lessonCompletions: Record<string, number>
+  srsItems: Record<string, SrsItem>
+}
+
+export interface ProgressData {
+  xp: number
+  activeCourse: CourseId
+  dailyGoalMinutes: number
+  /** 'YYYY-MM-DD' → log */
+  dailyLog: Record<string, DayLog>
+  badges: Record<string, number> // badgeId → earnedAt epoch ms
+  courses: Partial<Record<CourseId, CourseProgress>>
+}
+
+const emptyProgress = (course: CourseId = 'ru'): ProgressData => ({
+  xp: 0,
+  activeCourse: course,
+  dailyGoalMinutes: 10,
+  dailyLog: {},
+  badges: {},
+  courses: {},
+})
+
+const emptyCourseProgress = (): CourseProgress => ({
+  lessonCompletions: {},
+  srsItems: {},
+})
+
+export function todayKey(d: Date = new Date()): string {
+  const y = d.getFullYear()
+  const m = String(d.getMonth() + 1).padStart(2, '0')
+  const day = String(d.getDate()).padStart(2, '0')
+  return `${y}-${m}-${day}`
+}
+
+/** Consecutive days (ending today or yesterday) where the daily goal was met. */
+export function computeStreak(dailyLog: Record<string, DayLog>, goalMinutes: number, now: Date = new Date()): number {
+  let streak = 0
+  const cursor = new Date(now)
+  const metGoal = (key: string) => (dailyLog[key]?.minutes ?? 0) >= goalMinutes || (dailyLog[key]?.lessons ?? 0) > 0
+  // today may still be in progress — start from today if met, else from yesterday
+  if (!metGoal(todayKey(cursor))) cursor.setDate(cursor.getDate() - 1)
+  while (metGoal(todayKey(cursor))) {
+    streak++
+    cursor.setDate(cursor.getDate() - 1)
+  }
+  return streak
+}
+
+interface ProgressState {
+  profileId: string | null
+  data: ProgressData
+  loadForProfile: (profileId: string, defaultCourse: CourseId) => void
+  setActiveCourse: (course: CourseId) => void
+  setDailyGoal: (minutes: number) => void
+  addXp: (amount: number) => void
+  addStudyMinutes: (minutes: number) => void
+  completeLesson: (course: CourseId, lessonId: string, newVocabIds: string[]) => void
+  reviewVocab: (course: CourseId, vocabId: string, correct: boolean) => void
+  earnBadge: (badgeId: string) => void
+  exportData: () => string
+  importData: (json: string) => boolean
+}
+
+function saveToStorage(profileId: string | null, data: ProgressData) {
+  if (!profileId) return
+  localStorage.setItem(progressStorageKey(profileId), JSON.stringify(data))
+}
+
+export const useProgress = create<ProgressState>()((set, get) => {
+  const update = (fn: (d: ProgressData) => ProgressData) => {
+    const { profileId, data } = get()
+    const next = fn(data)
+    saveToStorage(profileId, next)
+    set({ data: next })
+  }
+
+  const bumpDay = (d: ProgressData, delta: Partial<DayLog>): ProgressData => {
+    const key = todayKey()
+    const cur = d.dailyLog[key] ?? { minutes: 0, xp: 0, lessons: 0 }
+    return {
+      ...d,
+      dailyLog: {
+        ...d.dailyLog,
+        [key]: {
+          minutes: cur.minutes + (delta.minutes ?? 0),
+          xp: cur.xp + (delta.xp ?? 0),
+          lessons: cur.lessons + (delta.lessons ?? 0),
+        },
+      },
+    }
+  }
+
+  return {
+    profileId: null,
+    data: emptyProgress(),
+
+    loadForProfile: (profileId, defaultCourse) => {
+      const raw = localStorage.getItem(progressStorageKey(profileId))
+      const data = raw ? (JSON.parse(raw) as ProgressData) : emptyProgress(defaultCourse)
+      set({ profileId, data })
+    },
+
+    setActiveCourse: (course) => update((d) => ({ ...d, activeCourse: course })),
+    setDailyGoal: (minutes) => update((d) => ({ ...d, dailyGoalMinutes: minutes })),
+
+    addXp: (amount) => update((d) => bumpDay({ ...d, xp: d.xp + amount }, { xp: amount })),
+
+    addStudyMinutes: (minutes) => update((d) => bumpDay(d, { minutes })),
+
+    completeLesson: (course, lessonId, newVocabIds) =>
+      update((d) => {
+        const cp = d.courses[course] ?? emptyCourseProgress()
+        const srsItems = { ...cp.srsItems }
+        for (const id of newVocabIds) {
+          if (!srsItems[id]) srsItems[id] = newSrsItem(id)
+        }
+        const next: ProgressData = {
+          ...d,
+          courses: {
+            ...d.courses,
+            [course]: {
+              ...cp,
+              lessonCompletions: {
+                ...cp.lessonCompletions,
+                [lessonId]: Math.min(5, (cp.lessonCompletions[lessonId] ?? 0) + 1),
+              },
+              srsItems,
+            },
+          },
+        }
+        return bumpDay(next, { lessons: 1 })
+      }),
+
+    reviewVocab: (course, vocabId, correct) =>
+      update((d) => {
+        const cp = d.courses[course] ?? emptyCourseProgress()
+        const item = cp.srsItems[vocabId] ?? newSrsItem(vocabId)
+        return {
+          ...d,
+          courses: {
+            ...d.courses,
+            [course]: { ...cp, srsItems: { ...cp.srsItems, [vocabId]: review(item, correct) } },
+          },
+        }
+      }),
+
+    earnBadge: (badgeId) =>
+      update((d) => (d.badges[badgeId] ? d : { ...d, badges: { ...d.badges, [badgeId]: Date.now() } })),
+
+    exportData: () => JSON.stringify(get().data, null, 2),
+
+    importData: (json) => {
+      try {
+        const parsed = JSON.parse(json) as ProgressData
+        if (typeof parsed.xp !== 'number' || !parsed.dailyLog) return false
+        update(() => parsed)
+        return true
+      } catch {
+        return false
+      }
+    },
+  }
+})

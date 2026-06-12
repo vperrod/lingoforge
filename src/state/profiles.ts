@@ -1,0 +1,63 @@
+import { create } from 'zustand'
+import { persist } from 'zustand/middleware'
+import type { CourseId } from '../content/types'
+
+export interface Profile {
+  id: string
+  name: string
+  /** Emoji avatar shown on profile cards (display only, not UI iconography) */
+  avatar: string
+  courses: CourseId[]
+  createdAt: number
+}
+
+interface ProfilesState {
+  profiles: Profile[]
+  activeProfileId: string | null
+  createProfile: (name: string, avatar: string, courses: CourseId[]) => Profile
+  switchProfile: (id: string | null) => void
+  deleteProfile: (id: string) => void
+  addCourse: (profileId: string, course: CourseId) => void
+}
+
+export const useProfiles = create<ProfilesState>()(
+  persist(
+    (set) => ({
+      profiles: [],
+      activeProfileId: null,
+      createProfile: (name, avatar, courses) => {
+        const profile: Profile = {
+          id: crypto.randomUUID(),
+          name,
+          avatar,
+          courses,
+          createdAt: Date.now(),
+        }
+        set((s) => ({ profiles: [...s.profiles, profile], activeProfileId: profile.id }))
+        return profile
+      },
+      switchProfile: (id) => set({ activeProfileId: id }),
+      deleteProfile: (id) =>
+        set((s) => {
+          localStorage.removeItem(progressStorageKey(id))
+          return {
+            profiles: s.profiles.filter((p) => p.id !== id),
+            activeProfileId: s.activeProfileId === id ? null : s.activeProfileId,
+          }
+        }),
+      addCourse: (profileId, course) =>
+        set((s) => ({
+          profiles: s.profiles.map((p) =>
+            p.id === profileId && !p.courses.includes(course)
+              ? { ...p, courses: [...p.courses, course] }
+              : p,
+          ),
+        })),
+    }),
+    { name: 'lingoforge:profiles' },
+  ),
+)
+
+export function progressStorageKey(profileId: string): string {
+  return `lingoforge:${profileId}:progress`
+}

@@ -1,0 +1,147 @@
+import { Link } from 'react-router-dom'
+import { motion } from 'framer-motion'
+import { Lock, Check, Star, Hand, Sparkles, Coffee, Package, Users, MessageCircle, MapPin, Home, Hash, Clock } from 'lucide-react'
+import type { LucideIcon } from 'lucide-react'
+import { courses } from '../content'
+import type { CourseId } from '../content/types'
+import { useProfiles } from '../state/profiles'
+import { useProgress } from '../state/progress'
+import { VoiceWarning } from '../ui/VoiceWarning'
+
+const skillIcons: Record<string, LucideIcon> = {
+  hand: Hand,
+  sparkles: Sparkles,
+  coffee: Coffee,
+  package: Package,
+  users: Users,
+  'message-circle': MessageCircle,
+  'map-pin': MapPin,
+  home: Home,
+  hash: Hash,
+  clock: Clock,
+}
+
+export function PathScreen() {
+  const { profiles, activeProfileId } = useProfiles()
+  const profile = profiles.find((p) => p.id === activeProfileId)
+  const data = useProgress((s) => s.data)
+  const setActiveCourse = useProgress((s) => s.setActiveCourse)
+
+  const course = courses[data.activeCourse]
+  const completions = data.courses[course.id]?.lessonCompletions ?? {}
+
+  // A lesson is unlocked when all lessons before it (path order) are completed at least once
+  const orderedLessons = course.units.flatMap((u) => u.skills.flatMap((s) => s.lessons))
+  const firstIncomplete = orderedLessons.findIndex((l) => !completions[l.id])
+  const unlockedUpTo = firstIncomplete === -1 ? orderedLessons.length : firstIncomplete
+
+  let lessonIndex = -1
+
+  return (
+    <div className="flex flex-col gap-6">
+      {profile && profile.courses.length > 1 && (
+        <div className="flex gap-2" role="tablist" aria-label="Course">
+          {profile.courses.map((id: CourseId) => (
+            <button
+              key={id}
+              type="button"
+              role="tab"
+              aria-selected={data.activeCourse === id}
+              onClick={() => setActiveCourse(id)}
+              className={`clay clay-press px-4 py-2 font-display font-bold ${
+                data.activeCourse === id
+                  ? id === 'ru'
+                    ? 'border-ru bg-red-50'
+                    : 'border-es bg-amber-50'
+                  : ''
+              }`}
+            >
+              {courses[id].flag} {courses[id].name}
+            </button>
+          ))}
+        </div>
+      )}
+
+      <VoiceWarning lang={course.ttsLang} courseName={course.name} />
+
+      {course.id === 'ru' && unlockedUpTo === 0 && (
+        <Link to="/alphabet" className="clay clay-press block border-ru bg-red-50 p-4">
+          <p className="font-display text-lg font-bold">Start here: the Cyrillic alphabet</p>
+          <p className="text-fg-muted">Russian is phonetic — once you can read, everything unlocks. ~2 weeks, 15 min a day.</p>
+        </Link>
+      )}
+
+      {course.units.map((unit) => (
+        <section key={unit.id} className="flex flex-col gap-4">
+          <div className="clay bg-primary p-4 text-on-primary">
+            <h2 className="font-display text-xl font-bold">{unit.title}</h2>
+            <p className="text-sm opacity-90">{unit.description}</p>
+          </div>
+          {unit.skills.map((skill) => {
+            const Icon = skillIcons[skill.icon] ?? Sparkles
+            return (
+              <div key={skill.id} className="flex flex-col items-center gap-3">
+                <h3 className="flex items-center gap-2 font-display font-bold text-fg-muted">
+                  <Icon className="size-4" aria-hidden /> {skill.title}
+                </h3>
+                {skill.lessons.map((lesson) => {
+                  lessonIndex++
+                  const crowns = completions[lesson.id] ?? 0
+                  const unlocked = lessonIndex <= unlockedUpTo
+                  const isNext = lessonIndex === unlockedUpTo
+                  const node = (
+                    <motion.div
+                      initial={{ opacity: 0, y: 12 }}
+                      whileInView={{ opacity: 1, y: 0 }}
+                      viewport={{ once: true }}
+                      className={`clay flex min-h-20 w-full max-w-sm items-center gap-4 p-4 ${
+                        !unlocked ? 'opacity-50' : 'clay-press'
+                      } ${isNext ? (course.id === 'ru' ? 'border-ru' : 'border-es') : ''} ${
+                        crowns > 0 ? 'border-accent' : ''
+                      }`}
+                    >
+                      <span
+                        className={`flex size-12 shrink-0 items-center justify-center rounded-full border-3 ${
+                          crowns > 0
+                            ? 'border-green-700 bg-accent text-on-primary'
+                            : unlocked
+                              ? 'border-indigo-700 bg-primary text-on-primary'
+                              : 'border-border-soft bg-bg text-fg-muted'
+                        }`}
+                      >
+                        {crowns > 0 ? <Check aria-hidden /> : unlocked ? <Star aria-hidden /> : <Lock aria-hidden />}
+                      </span>
+                      <span className="grow text-left">
+                        <span className="block font-display text-lg font-bold">{lesson.title}</span>
+                        {crowns > 0 && (
+                          <span className="flex gap-0.5" aria-label={`Level ${crowns} of 5`}>
+                            {Array.from({ length: 5 }, (_, i) => (
+                              <Star
+                                key={i}
+                                className={`size-4 ${i < crowns ? 'fill-gold text-gold' : 'text-border-soft'}`}
+                                aria-hidden
+                              />
+                            ))}
+                          </span>
+                        )}
+                      </span>
+                    </motion.div>
+                  )
+                  return unlocked ? (
+                    <Link key={lesson.id} to={`/lesson/${course.id}/${lesson.id}`} className="w-full max-w-sm">
+                      {node}
+                    </Link>
+                  ) : (
+                    <div key={lesson.id} className="w-full max-w-sm" aria-disabled>
+                      {node}
+                    </div>
+                  )
+                })}
+              </div>
+            )
+          })}
+        </section>
+      ))}
+    </div>
+  )
+}

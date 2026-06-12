@@ -1,0 +1,100 @@
+import { useMemo, useState } from 'react'
+import { useNavigate, useParams } from 'react-router-dom'
+import { motion } from 'framer-motion'
+import { Zap, Target, Timer } from 'lucide-react'
+import { courses, getLesson } from '../content'
+import type { CourseId } from '../content/types'
+import { generateLessonExercises } from '../engine/exercise-gen'
+import { LessonPlayer, type LessonResult } from '../exercises/LessonPlayer'
+import { renderExercise } from '../exercises/render'
+import { useProgress } from '../state/progress'
+import { BADGES } from '../state/badges'
+import { Confetti } from '../ui/Confetti'
+import { ClayButton } from '../ui/ClayButton'
+import { playFanfare } from '../audio/sfx'
+
+export function LessonScreen() {
+  const { courseId, lessonId } = useParams<{ courseId: CourseId; lessonId: string }>()
+  const navigate = useNavigate()
+  const data = useProgress((s) => s.data)
+  const { addXp, addStudyMinutes, completeLesson, reviewVocab, earnBadge } = useProgress()
+  const [result, setResult] = useState<LessonResult | null>(null)
+
+  const course = courseId ? courses[courseId] : undefined
+  const lesson = course && lessonId ? getLesson(course, lessonId) : undefined
+  const crowns = course && lessonId ? (data.courses[course.id]?.lessonCompletions[lessonId] ?? 0) : 0
+
+  const exercises = useMemo(
+    () => (course && lesson ? generateLessonExercises(course, lesson, crowns) : []),
+    // regenerate only per lesson visit
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    [course?.id, lesson?.id],
+  )
+
+  if (!course || !lesson) {
+    return <p className="p-8 text-center text-fg-muted">Lesson not found.</p>
+  }
+
+  const handleComplete = (r: LessonResult) => {
+    completeLesson(course.id, lesson.id, lesson.vocabIds)
+    addXp(r.xp)
+    addStudyMinutes(r.minutes)
+    for (const [vocabId, correct] of Object.entries(r.vocabOutcomes)) {
+      reviewVocab(course.id, vocabId, correct)
+    }
+    // badge sweep with fresh store state
+    const fresh = useProgress.getState().data
+    for (const badge of BADGES) {
+      if (badge.earned(fresh)) earnBadge(badge.id)
+    }
+    playFanfare()
+    setResult(r)
+  }
+
+  if (result) {
+    const accuracy = result.total > 0 ? Math.round((result.correct / result.total) * 100) : 100
+    return (
+      <main className="flex min-h-dvh flex-col items-center justify-center gap-8 p-6">
+        <Confetti />
+        <motion.h1
+          initial={{ scale: 0.5, opacity: 0 }}
+          animate={{ scale: 1, opacity: 1 }}
+          transition={{ type: 'spring', stiffness: 200 }}
+          className="font-display text-4xl font-extrabold text-primary"
+        >
+          Lesson complete!
+        </motion.h1>
+        <div className="flex gap-4">
+          <motion.div initial={{ y: 20, opacity: 0 }} animate={{ y: 0, opacity: 1 }} transition={{ delay: 0.2 }} className="clay flex flex-col items-center gap-1 p-5">
+            <Zap className="size-6 text-gold" aria-hidden />
+            <span className="font-display text-2xl font-bold">+{result.xp}</span>
+            <span className="text-sm text-fg-muted">XP</span>
+          </motion.div>
+          <motion.div initial={{ y: 20, opacity: 0 }} animate={{ y: 0, opacity: 1 }} transition={{ delay: 0.35 }} className="clay flex flex-col items-center gap-1 p-5">
+            <Target className="size-6 text-accent" aria-hidden />
+            <span className="font-display text-2xl font-bold">{accuracy}%</span>
+            <span className="text-sm text-fg-muted">accuracy</span>
+          </motion.div>
+          <motion.div initial={{ y: 20, opacity: 0 }} animate={{ y: 0, opacity: 1 }} transition={{ delay: 0.5 }} className="clay flex flex-col items-center gap-1 p-5">
+            <Timer className="size-6 text-primary" aria-hidden />
+            <span className="font-display text-2xl font-bold">{Math.max(1, Math.round(result.minutes))}m</span>
+            <span className="text-sm text-fg-muted">studied</span>
+          </motion.div>
+        </div>
+        <ClayButton variant="primary" className="min-w-48" onClick={() => navigate('/')}>
+          Continue
+        </ClayButton>
+      </main>
+    )
+  }
+
+  return (
+    <LessonPlayer
+      exercises={exercises}
+      ttsLang={course.ttsLang}
+      renderExercise={(ex, onAnswer) => renderExercise(ex, course.ttsLang, onAnswer)}
+      onComplete={handleComplete}
+      onExit={() => navigate('/')}
+    />
+  )
+}

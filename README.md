@@ -1,73 +1,32 @@
-# React + TypeScript + Vite
+# LingoForge
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+Fun, Duolingo-style web app for learning **Russian** and **Spanish** from English. Local-first PWA — no backend, no accounts, no cost. Progress lives in your browser (per-profile export/import included).
 
-Currently, two official plugins are available:
+## Why it works (the methodology)
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Oxc](https://oxc.rs)
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/)
+- **Cyrillic first** — 33 letters in 4 similarity groups (identical → false friends → new shapes → unique sounds), with mnemonics and audio drills. Russian is phonetic: read = pronounce.
+- **Frequency-first vocabulary** — top words inside reusable **sentence patterns** (*Я хочу ___*, *¿Dónde está ___?*), never naked flashcards. Words are stored with their inflected forms.
+- **Spaced repetition (SRS)** — every word gets FSRS-style scheduling; the Practice tab resurfaces words right before you forget them.
+- **Daily loop** — review first, then one new 3–5 minute lesson. Honest active-minutes tracking (pauses when idle), daily goal ring, streaks, XP with combo multipliers, badges.
 
-## React Compiler
+## Features
 
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
+- 7 exercise types: multiple choice, word bank, listening (browser TTS), typing with tolerant checking (ё/е, Spanish accents), matching pairs, Cyrillic drills, pattern substitution
+- Multiple local profiles (Netflix-style picker), each with its own courses and progress
+- Stats: weekly minutes chart, 4-week streak heatmap, badges, JSON backup
+- Installable PWA, mobile-first, claymorphism design, reduced-motion support
 
-## Expanding the ESLint configuration
+## Run
 
-If you are developing a production application, we recommend updating the configuration to enable type-aware lint rules:
-
-```js
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
-
-      // Remove tseslint.configs.recommended and replace with this
-      tseslint.configs.recommendedTypeChecked,
-      // Alternatively, use this for stricter rules
-      tseslint.configs.strictTypeChecked,
-      // Optionally, add this for stylistic rules
-      tseslint.configs.stylisticTypeChecked,
-
-      // Other configs...
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
+```bash
+npm install
+npm run dev      # http://localhost:5173
+npm test         # engine + content integrity tests
+npm run build    # production build (dist/)
 ```
 
-You can also install [eslint-plugin-react-x](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-x) and [eslint-plugin-react-dom](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-dom) for React-specific lint rules:
+Audio uses the Web Speech API — Edge/Chrome on desktop include ru-RU and es-ES voices.
 
-```js
-// eslint.config.js
-import reactX from 'eslint-plugin-react-x'
-import reactDom from 'eslint-plugin-react-dom'
+## Adding content
 
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
-      // Enable lint rules for React
-      reactX.configs['recommended-typescript'],
-      // Enable lint rules for React DOM
-      reactDom.configs.recommended,
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
-```
+Courses are typed data in `src/content/courses/*.ts` (validated by `src/content/content.test.ts`). Add vocab/lessons/units there — no app code changes needed.
