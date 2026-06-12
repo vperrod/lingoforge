@@ -8,7 +8,8 @@
     "build": "tsc -b && vite build",
     "lint": "eslint .",
     "preview": "vite preview",
-    "build:single": "vite build --mode singlefile"
+    "build:single": "vite build --mode singlefile",
+    "test": "vitest run"
   },
   "dependencies": {
     "framer-motion": "^12.40.0",
