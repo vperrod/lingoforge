@@ -99,6 +99,63 @@ export const esCourse: Course = {
     { id: 'ahora', lemma: 'ahora', translation: 'now' },
     { id: 'cuando', lemma: 'cuándo', translation: 'when' },
     { id: 'cuanto', lemma: 'cuánto', translation: 'how much' },
+    // Unit 6 — describing things
+    { id: 'rojo', lemma: 'rojo', translation: 'red', forms: ['roja'] },
+    { id: 'azul', lemma: 'azul', translation: 'blue' },
+    { id: 'verde', lemma: 'verde', translation: 'green' },
+    { id: 'amarillo', lemma: 'amarillo', translation: 'yellow', forms: ['amarilla'] },
+    { id: 'negro', lemma: 'negro', translation: 'black', forms: ['negra'] },
+    { id: 'blanco', lemma: 'blanco', translation: 'white', forms: ['blanca'] },
+    { id: 'grande', lemma: 'grande', translation: 'big' },
+    { id: 'pequeno', lemma: 'pequeño', translation: 'small', forms: ['pequeña'] },
+    { id: 'nuevo', lemma: 'nuevo', translation: 'new', forms: ['nueva'] },
+    { id: 'viejo', lemma: 'viejo', translation: 'old', forms: ['vieja'] },
+    { id: 'bonito', lemma: 'bonito', translation: 'beautiful / pretty', forms: ['bonita'] },
+    { id: 'rico', lemma: 'rico', translation: 'tasty / delicious', forms: ['rica'] },
+    // Unit 7 — days & questions
+    { id: 'lunes', lemma: 'lunes', translation: 'Monday' },
+    { id: 'martes', lemma: 'martes', translation: 'Tuesday' },
+    { id: 'miercoles', lemma: 'miércoles', translation: 'Wednesday' },
+    { id: 'jueves', lemma: 'jueves', translation: 'Thursday' },
+    { id: 'viernes', lemma: 'viernes', translation: 'Friday' },
+    { id: 'sabado', lemma: 'sábado', translation: 'Saturday' },
+    { id: 'domingo', lemma: 'domingo', translation: 'Sunday' },
+    { id: 'semana', lemma: 'semana', translation: 'week' },
+    { id: 'como', lemma: 'cómo', translation: 'how' },
+    { id: 'por-que', lemma: 'por qué', translation: 'why' },
+    { id: 'cual', lemma: 'cuál', translation: 'which' },
+    // Unit 8 — food & shopping
+    { id: 'carne', lemma: 'carne', translation: 'meat' },
+    { id: 'pescado', lemma: 'pescado', translation: 'fish' },
+    { id: 'fruta', lemma: 'fruta', translation: 'fruit' },
+    { id: 'verduras', lemma: 'verduras', translation: 'vegetables' },
+    { id: 'azucar', lemma: 'azúcar', translation: 'sugar' },
+    { id: 'sal', lemma: 'sal', translation: 'salt' },
+    { id: 'huevo', lemma: 'huevo', translation: 'egg' },
+    { id: 'comprar', lemma: 'comprar', translation: 'to buy', forms: ['compro', 'compras'] },
+    { id: 'cuesta', lemma: 'cuesta', translation: 'costs' },
+    { id: 'caro', lemma: 'caro', translation: 'expensive', forms: ['cara'] },
+    { id: 'barato', lemma: 'barato', translation: 'cheap', forms: ['barata'] },
+    // Unit 9 — action verbs
+    { id: 'ir', lemma: 'ir', translation: 'to go', forms: ['voy', 'vas', 'va'], hint: 'voy (I go)' },
+    { id: 'comer', lemma: 'comer', translation: 'to eat', forms: ['como', 'comes', 'come'], hint: 'como (I eat)' },
+    { id: 'beber', lemma: 'beber', translation: 'to drink', forms: ['bebo', 'bebes', 'bebe'], hint: 'bebo (I drink)' },
+    { id: 'ver-verb', lemma: 'ver', translation: 'to see', forms: ['veo', 'ves', 've'], hint: 'veo (I see)' },
+    { id: 'hacer', lemma: 'hacer', translation: 'to do / to make', forms: ['hago', 'haces', 'hace'], hint: 'hago (I do)' },
+    { id: 'pensar', lemma: 'pensar', translation: 'to think', forms: ['pienso', 'piensas', 'piensa'], hint: 'pienso (I think)' },
+    { id: 'dormir', lemma: 'dormir', translation: 'to sleep', forms: ['duermo', 'duermes', 'duerme'], hint: 'duermo (I sleep)' },
+    { id: 'parque', lemma: 'parque', translation: 'park' },
+    // Unit 10 — weather & feelings
+    { id: 'tiempo', lemma: 'tiempo', translation: 'weather / time' },
+    { id: 'frio', lemma: 'frío', translation: 'cold' },
+    { id: 'calor', lemma: 'calor', translation: 'heat / hot' },
+    { id: 'lluvia', lemma: 'lluvia', translation: 'rain' },
+    { id: 'nieve', lemma: 'nieve', translation: 'snow' },
+    { id: 'sol', lemma: 'sol', translation: 'sun' },
+    { id: 'cansado', lemma: 'cansado', translation: 'tired', forms: ['cansada'] },
+    { id: 'feliz', lemma: 'feliz', translation: 'happy' },
+    { id: 'hambre', lemma: 'hambre', translation: 'hunger' },
+    { id: 'sed', lemma: 'sed', translation: 'thirst' },
   ],
   patterns: [
     {
@@ -174,6 +231,53 @@ export const esCourse: Course = {
         { vocabId: 'espana', form: 'España', translation: 'Spain' },
         { vocabId: 'ciudad', form: 'la ciudad', translation: 'the city' },
         { vocabId: 'casa', form: 'una casa', translation: 'a house' },
+      ],
+    },
+    {
+      id: 'es-muy-x',
+      frame: 'Es muy ___',
+      frameTranslation: 'It is very ___',
+      slots: [
+        { vocabId: 'bien', form: 'bueno', translation: 'good' },
+        { vocabId: 'bonito', form: 'bonito', translation: 'beautiful' },
+        { vocabId: 'rico', form: 'rico', translation: 'tasty' },
+        { vocabId: 'grande', form: 'grande', translation: 'big' },
+        { vocabId: 'caro', form: 'caro', translation: 'expensive' },
+      ],
+    },
+    {
+      id: 'cuanto-cuesta-x',
+      frame: '¿Cuánto cuesta ___?',
+      frameTranslation: 'How much does ___ cost?',
+      slots: [
+        { vocabId: 'pan', form: 'el pan', translation: 'the bread' },
+        { vocabId: 'queso', form: 'el queso', translation: 'the cheese' },
+        { vocabId: 'cafe', form: 'el café', translation: 'the coffee' },
+        { vocabId: 'libro', form: 'el libro', translation: 'the book' },
+        { vocabId: 'pescado', form: 'el pescado', translation: 'the fish' },
+      ],
+    },
+    {
+      id: 'voy-a-x',
+      frame: 'Voy a ___',
+      frameTranslation: 'I am going to ___',
+      slots: [
+        { vocabId: 'tienda', form: 'la tienda', translation: 'the shop' },
+        { vocabId: 'escuela', form: 'la escuela', translation: 'school' },
+        { vocabId: 'restaurante', form: 'el restaurante', translation: 'the restaurant' },
+        { vocabId: 'parque', form: 'el parque', translation: 'the park' },
+        { vocabId: 'casa', form: 'casa', translation: 'home' },
+      ],
+    },
+    {
+      id: 'tengo-feeling-x',
+      frame: 'Tengo ___',
+      frameTranslation: 'I am / I feel ___ (lit. I have)',
+      slots: [
+        { vocabId: 'frio', form: 'frío', translation: 'cold' },
+        { vocabId: 'calor', form: 'calor', translation: 'hot' },
+        { vocabId: 'hambre', form: 'hambre', translation: 'hungry' },
+        { vocabId: 'sed', form: 'sed', translation: 'thirsty' },
       ],
     },
   ],
@@ -476,6 +580,287 @@ export const esCourse: Course = {
                 { text: '¿Cuándo? ¿Hoy o mañana?', translation: 'When? Today or tomorrow?', vocabIds: ['cuando', 'hoy', 'manana-time'] },
                 { text: '¡Ahora!', translation: 'Now!', vocabIds: ['ahora'] },
                 { text: '¿Cuánto es esto?', translation: 'How much is this?', vocabIds: ['cuanto', 'es', 'esto'] },
+              ],
+            },
+          ],
+        },
+      ],
+    },
+    {
+      id: 'u6',
+      title: 'Describing things',
+      description: 'Colors and your first adjectives',
+      skills: [
+        {
+          id: 'u6s1',
+          title: 'Colors',
+          icon: 'sparkles',
+          lessons: [
+            {
+              id: 'u6s1l1',
+              title: 'Red, blue, green',
+              vocabIds: ['rojo', 'azul', 'verde'],
+              sentences: [
+                { text: 'Esto es una casa roja.', translation: 'This is a red house.', vocabIds: ['esto', 'es', 'casa', 'rojo'] },
+                { text: '¿El gato es azul? ¡No!', translation: 'Is the cat blue? No!', vocabIds: ['gato', 'es', 'azul', 'no'] },
+                { text: 'El parque es verde.', translation: 'The park is green.', vocabIds: ['parque', 'es', 'verde'] },
+              ],
+            },
+            {
+              id: 'u6s1l2',
+              title: 'Yellow, black, white',
+              vocabIds: ['amarillo', 'negro', 'blanco'],
+              sentences: [
+                { text: 'El sol es amarillo.', translation: 'The sun is yellow.', vocabIds: ['sol', 'es', 'amarillo'] },
+                { text: 'Un gato negro y un perro blanco.', translation: 'A black cat and a white dog.', vocabIds: ['gato', 'negro', 'perro', 'blanco'] },
+                { text: 'La nieve es blanca.', translation: 'Snow is white.', vocabIds: ['nieve', 'es', 'blanco'] },
+              ],
+            },
+          ],
+        },
+        {
+          id: 'u6s2',
+          title: 'Big & small',
+          icon: 'package',
+          lessons: [
+            {
+              id: 'u6s2l1',
+              title: 'Size & age',
+              vocabIds: ['grande', 'pequeno', 'nuevo', 'viejo'],
+              sentences: [
+                { text: 'Es una ciudad grande.', translation: 'It is a big city.', vocabIds: ['es', 'ciudad', 'grande'] },
+                { text: 'Un gato pequeño, un perro grande.', translation: 'A small cat, a big dog.', vocabIds: ['gato', 'pequeno', 'perro', 'grande'] },
+                { text: 'Tengo un teléfono nuevo.', translation: 'I have a new phone.', vocabIds: ['tengo', 'telefono', 'nuevo'] },
+                { text: 'Es una casa vieja.', translation: 'It is an old house.', vocabIds: ['es', 'casa', 'viejo'] },
+              ],
+            },
+            {
+              id: 'u6s2l2',
+              title: 'Beautiful & tasty',
+              vocabIds: ['bonito', 'rico'],
+              patternIds: ['es-muy-x'],
+              sentences: [
+                { text: 'Madrid es una ciudad bonita.', translation: 'Madrid is a beautiful city.', vocabIds: ['madrid', 'es', 'ciudad', 'bonito'] },
+                { text: '¡La sopa está muy rica!', translation: 'The soup is very tasty!', vocabIds: ['sopa', 'muy', 'rico'] },
+                { text: 'Es muy bonito.', translation: 'It is very beautiful.', vocabIds: ['es', 'muy', 'bonito'] },
+              ],
+            },
+          ],
+        },
+      ],
+    },
+    {
+      id: 'u7',
+      title: 'Days & questions',
+      description: 'The week and how to ask about anything',
+      skills: [
+        {
+          id: 'u7s1',
+          title: 'Days of the week',
+          icon: 'clock',
+          lessons: [
+            {
+              id: 'u7s1l1',
+              title: 'Monday to Thursday',
+              vocabIds: ['lunes', 'martes', 'miercoles', 'jueves'],
+              sentences: [
+                { text: 'Hoy es lunes.', translation: 'Today is Monday.', vocabIds: ['hoy', 'es', 'lunes'] },
+                { text: 'Mañana es martes.', translation: 'Tomorrow is Tuesday.', vocabIds: ['manana-time', 'es', 'martes'] },
+                { text: '¿Miércoles o jueves?', translation: 'Wednesday or Thursday?', vocabIds: ['miercoles', 'jueves'] },
+              ],
+            },
+            {
+              id: 'u7s1l2',
+              title: 'The weekend',
+              vocabIds: ['viernes', 'sabado', 'domingo', 'semana'],
+              sentences: [
+                { text: '¡Amo el viernes!', translation: 'I love Friday!', vocabIds: ['amo', 'viernes'] },
+                { text: 'Sábado y domingo.', translation: 'Saturday and Sunday.', vocabIds: ['sabado', 'domingo'] },
+                { text: 'Una semana es siete días.', translation: 'A week is seven days.', vocabIds: ['semana', 'es', 'siete', 'dia'] },
+              ],
+            },
+          ],
+        },
+        {
+          id: 'u7s2',
+          title: 'Asking questions',
+          icon: 'message-circle',
+          lessons: [
+            {
+              id: 'u7s2l1',
+              title: 'How, why, which',
+              vocabIds: ['como', 'por-que', 'cual'],
+              sentences: [
+                { text: '¿Cómo estás?', translation: 'How are you?', vocabIds: ['como'] },
+                { text: '¿Por qué no?', translation: 'Why not?', vocabIds: ['por-que', 'no'] },
+                { text: '¿Cuál es tu color?', translation: 'Which is your color?', vocabIds: ['cual', 'es'] },
+                { text: '¿Qué día es hoy?', translation: 'What day is it today?', vocabIds: ['que', 'dia', 'es', 'hoy'] },
+              ],
+            },
+          ],
+        },
+      ],
+    },
+    {
+      id: 'u8',
+      title: 'Food & shopping',
+      description: 'Buy food and ask prices like a local',
+      skills: [
+        {
+          id: 'u8s1',
+          title: 'More food',
+          icon: 'coffee',
+          lessons: [
+            {
+              id: 'u8s1l1',
+              title: 'Meat & fish',
+              vocabIds: ['carne', 'pescado', 'huevo', 'comer'],
+              sentences: [
+                { text: 'Como carne y pescado.', translation: 'I eat meat and fish.', vocabIds: ['comer', 'carne', 'pescado'] },
+                { text: 'Esto es un huevo.', translation: 'This is an egg.', vocabIds: ['esto', 'es', 'huevo'] },
+                { text: '¿Comes pescado?', translation: 'Do you eat fish?', vocabIds: ['comer', 'pescado'] },
+              ],
+            },
+            {
+              id: 'u8s1l2',
+              title: 'Fruit & veg',
+              vocabIds: ['fruta', 'verduras', 'azucar', 'sal'],
+              sentences: [
+                { text: 'La fruta y las verduras son buenas.', translation: 'Fruit and vegetables are good.', vocabIds: ['fruta', 'verduras', 'bien'] },
+                { text: '¿Azúcar o sal?', translation: 'Sugar or salt?', vocabIds: ['azucar', 'sal'] },
+                { text: 'Quiero fruta.', translation: 'I want fruit.', vocabIds: ['quiero', 'fruta'] },
+              ],
+            },
+          ],
+        },
+        {
+          id: 'u8s2',
+          title: 'How much?',
+          icon: 'hash',
+          lessons: [
+            {
+              id: 'u8s2l1',
+              title: 'Prices',
+              vocabIds: ['comprar', 'cuesta', 'caro', 'barato'],
+              patternIds: ['cuanto-cuesta-x'],
+              sentences: [
+                { text: '¿Cuánto cuesta el pan?', translation: 'How much does the bread cost?', vocabIds: ['cuanto', 'cuesta', 'pan'] },
+                { text: '¡Es muy caro!', translation: 'It is very expensive!', vocabIds: ['es', 'muy', 'caro'] },
+                { text: '¡Barato! Quiero comprar.', translation: 'Cheap! I want to buy it.', vocabIds: ['barato', 'quiero', 'comprar'] },
+              ],
+            },
+          ],
+        },
+      ],
+    },
+    {
+      id: 'u9',
+      title: 'Action verbs',
+      description: 'Go, eat, drink, see, do, think, sleep',
+      skills: [
+        {
+          id: 'u9s1',
+          title: 'Going places',
+          icon: 'map-pin',
+          lessons: [
+            {
+              id: 'u9s1l1',
+              title: 'I am going…',
+              vocabIds: ['ir', 'parque'],
+              patternIds: ['voy-a-x'],
+              sentences: [
+                { text: 'Voy a la tienda.', translation: 'I am going to the shop.', vocabIds: ['ir', 'tienda'] },
+                { text: 'Vamos al parque.', translation: 'We are going to the park.', vocabIds: ['ir', 'parque'] },
+                { text: '¿Adónde vas?', translation: 'Where are you going?', vocabIds: ['ir'] },
+              ],
+            },
+            {
+              id: 'u9s1l2',
+              title: 'Eat & drink',
+              vocabIds: ['beber'],
+              sentences: [
+                { text: 'Bebo café.', translation: 'I drink coffee.', vocabIds: ['beber', 'cafe'] },
+                { text: 'Él bebe té, ella bebe zumo.', translation: 'He drinks tea, she drinks juice.', vocabIds: ['el', 'beber', 'te', 'ella', 'zumo'] },
+                { text: 'Como y bebo.', translation: 'I eat and drink.', vocabIds: ['comer', 'beber'] },
+              ],
+            },
+          ],
+        },
+        {
+          id: 'u9s2',
+          title: 'Think & do',
+          icon: 'sparkles',
+          lessons: [
+            {
+              id: 'u9s2l1',
+              title: 'See, do, think',
+              vocabIds: ['ver-verb', 'hacer', 'pensar'],
+              sentences: [
+                { text: 'Veo un gato.', translation: 'I see a cat.', vocabIds: ['ver-verb', 'gato'] },
+                { text: '¿Qué haces?', translation: 'What are you doing?', vocabIds: ['que', 'hacer'] },
+                { text: 'Pienso que es bueno.', translation: 'I think it is good.', vocabIds: ['pensar', 'es', 'bien'] },
+              ],
+            },
+            {
+              id: 'u9s2l2',
+              title: 'Sleep',
+              vocabIds: ['dormir'],
+              sentences: [
+                { text: 'Duermo.', translation: 'I am sleeping.', vocabIds: ['dormir'] },
+                { text: 'El gato duerme en casa.', translation: 'The cat sleeps at home.', vocabIds: ['gato', 'dormir', 'casa'] },
+                { text: 'De noche duermo, de mañana trabajo.', translation: 'At night I sleep, in the morning I work.', vocabIds: ['noche', 'dormir', 'manana-time', 'trabajo-v'] },
+              ],
+            },
+          ],
+        },
+      ],
+    },
+    {
+      id: 'u10',
+      title: 'Weather & feelings',
+      description: 'Talk about the weather and how you feel',
+      skills: [
+        {
+          id: 'u10s1',
+          title: 'Weather',
+          icon: 'home',
+          lessons: [
+            {
+              id: 'u10s1l1',
+              title: 'Hot & cold',
+              vocabIds: ['tiempo', 'frio', 'calor', 'hambre', 'sed'],
+              patternIds: ['tengo-feeling-x'],
+              sentences: [
+                { text: '¿Qué tiempo hace hoy?', translation: 'What is the weather today?', vocabIds: ['que', 'tiempo', 'hoy'] },
+                { text: '¡Tengo frío!', translation: 'I am cold!', vocabIds: ['tengo', 'frio'] },
+                { text: 'Tengo hambre y sed.', translation: 'I am hungry and thirsty.', vocabIds: ['tengo', 'hambre', 'sed'] },
+              ],
+            },
+            {
+              id: 'u10s1l2',
+              title: 'Rain & snow',
+              vocabIds: ['lluvia', 'nieve', 'sol'],
+              sentences: [
+                { text: '¿Lluvia o nieve?', translation: 'Rain or snow?', vocabIds: ['lluvia', 'nieve'] },
+                { text: 'Amo el sol.', translation: 'I love the sun.', vocabIds: ['amo', 'sol'] },
+                { text: 'Hoy hace sol.', translation: 'It is sunny today.', vocabIds: ['hoy', 'sol'] },
+              ],
+            },
+          ],
+        },
+        {
+          id: 'u10s2',
+          title: 'Feelings',
+          icon: 'users',
+          lessons: [
+            {
+              id: 'u10s2l1',
+              title: 'Tired & happy',
+              vocabIds: ['cansado', 'feliz'],
+              sentences: [
+                { text: 'Estoy cansado. Voy a dormir.', translation: 'I am tired. I am going to sleep.', vocabIds: ['cansado', 'ir', 'dormir'] },
+                { text: '¡Estoy muy feliz!', translation: 'I am very happy!', vocabIds: ['muy', 'feliz'] },
+                { text: 'Hoy estoy bien.', translation: 'Today I feel good.', vocabIds: ['hoy', 'bien'] },
               ],
             },
           ],

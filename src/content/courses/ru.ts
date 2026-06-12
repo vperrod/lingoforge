@@ -99,6 +99,62 @@ export const ruCourse: Course = {
     { id: 'seychas', lemma: 'сейчас', translation: 'now', hint: 'seychas' },
     { id: 'kogda', lemma: 'когда', translation: 'when', hint: 'kagda' },
     { id: 'skolko', lemma: 'сколько', translation: 'how much / how many', hint: 'skolka' },
+    // Unit 6 — describing things
+    { id: 'krasny', lemma: 'красный', translation: 'red', hint: 'krasny' },
+    { id: 'siniy', lemma: 'синий', translation: 'blue', hint: 'siniy' },
+    { id: 'zelyony', lemma: 'зелёный', translation: 'green', hint: 'zelyony' },
+    { id: 'zholty', lemma: 'жёлтый', translation: 'yellow', hint: 'zholty' },
+    { id: 'cherny', lemma: 'чёрный', translation: 'black', hint: 'chorny' },
+    { id: 'bely', lemma: 'белый', translation: 'white', hint: 'byely' },
+    { id: 'bolshoy', lemma: 'большой', translation: 'big', hint: 'balshoy' },
+    { id: 'malenkiy', lemma: 'маленький', translation: 'small', hint: 'malenkiy' },
+    { id: 'novy', lemma: 'новый', translation: 'new', hint: 'novy' },
+    { id: 'stary', lemma: 'старый', translation: 'old', hint: 'stary' },
+    { id: 'krasivy', lemma: 'красивый', translation: 'beautiful', forms: ['красиво'], hint: 'krasivy' },
+    { id: 'vkusny', lemma: 'вкусный', translation: 'tasty / delicious', forms: ['вкусно'], hint: 'fkusny' },
+    // Unit 7 — days & questions
+    { id: 'ponedelnik', lemma: 'понедельник', translation: 'Monday', hint: 'panedelnik' },
+    { id: 'vtornik', lemma: 'вторник', translation: 'Tuesday', hint: 'ftornik' },
+    { id: 'sreda', lemma: 'среда', translation: 'Wednesday', hint: 'sreda' },
+    { id: 'chetverg', lemma: 'четверг', translation: 'Thursday', hint: 'chetverk' },
+    { id: 'pyatnitsa', lemma: 'пятница', translation: 'Friday', hint: 'pyatnitsa' },
+    { id: 'subbota', lemma: 'суббота', translation: 'Saturday', hint: 'subbota' },
+    { id: 'voskresene', lemma: 'воскресенье', translation: 'Sunday', hint: 'vaskresenye' },
+    { id: 'nedelya', lemma: 'неделя', translation: 'week', hint: 'nedyelya' },
+    { id: 'kak', lemma: 'как', translation: 'how' },
+    { id: 'pochemu', lemma: 'почему', translation: 'why', hint: 'pachemu' },
+    { id: 'kakoy', lemma: 'какой', translation: 'which / what kind', hint: 'kakoy' },
+    // Unit 8 — food & shopping
+    { id: 'myaso', lemma: 'мясо', translation: 'meat', hint: 'myasa' },
+    { id: 'ryba', lemma: 'рыба', translation: 'fish' },
+    { id: 'frukty', lemma: 'фрукты', translation: 'fruit', hint: 'frukty' },
+    { id: 'ovoshchi', lemma: 'овощи', translation: 'vegetables', hint: 'ovashchi' },
+    { id: 'sakhar', lemma: 'сахар', translation: 'sugar', hint: 'sakhar' },
+    { id: 'sol', lemma: 'соль', translation: 'salt', hint: 'sol' },
+    { id: 'yaytso', lemma: 'яйцо', translation: 'egg', hint: 'yaytso' },
+    { id: 'kupit', lemma: 'купить', translation: 'to buy', forms: ['куплю', 'купи'], hint: 'kupit' },
+    { id: 'stoit', lemma: 'стоит', translation: 'costs', hint: 'stoit' },
+    { id: 'dorogo', lemma: 'дорого', translation: 'expensive', hint: 'doraga' },
+    { id: 'deshevo', lemma: 'дёшево', translation: 'cheap', hint: 'dyosheva' },
+    // Unit 9 — action verbs
+    { id: 'idti', lemma: 'идти', translation: 'to go (on foot)', forms: ['иду', 'идёшь', 'идёт'], hint: 'idu (I go)' },
+    { id: 'est-eat', lemma: 'есть (кушать)', translation: 'to eat', forms: ['ем', 'ешь', 'ест'], hint: 'yem (I eat)' },
+    { id: 'pit', lemma: 'пить', translation: 'to drink', forms: ['пью', 'пьёшь', 'пьёт'], hint: 'pyu (I drink)' },
+    { id: 'videt', lemma: 'видеть', translation: 'to see', forms: ['вижу', 'видишь', 'видит'], hint: 'vizhu (I see)' },
+    { id: 'delat', lemma: 'делать', translation: 'to do / to make', forms: ['делаю', 'делаешь', 'делает'], hint: 'dyelayu (I do)' },
+    { id: 'dumat', lemma: 'думать', translation: 'to think', forms: ['думаю', 'думаешь', 'думает'], hint: 'dumayu (I think)' },
+    { id: 'spat', lemma: 'спать', translation: 'to sleep', forms: ['сплю', 'спишь', 'спит'], hint: 'splyu (I sleep)' },
+    { id: 'park', lemma: 'парк', translation: 'park' },
+    // Unit 10 — weather & feelings
+    { id: 'pogoda', lemma: 'погода', translation: 'weather', hint: 'pagoda' },
+    { id: 'kholodno', lemma: 'холодно', translation: 'cold', hint: 'kholadna' },
+    { id: 'zharko', lemma: 'жарко', translation: 'hot', hint: 'zharka' },
+    { id: 'dozhd', lemma: 'дождь', translation: 'rain', hint: 'dozhd' },
+    { id: 'sneg', lemma: 'снег', translation: 'snow', hint: 'snyek' },
+    { id: 'solntse', lemma: 'солнце', translation: 'sun', hint: 'sontse' },
+    { id: 'ustal', lemma: 'устал', translation: 'tired (m.)', forms: ['устала'], hint: 'ustal' },
+    { id: 'rad', lemma: 'рад', translation: 'glad (m.)', forms: ['рада'], hint: 'rat' },
+    { id: 'mne', lemma: 'мне', translation: 'to me / I feel', hint: 'mnye' },
   ],
   patterns: [
     {
@@ -187,6 +243,52 @@ export const ruCourse: Course = {
         { vocabId: 'rossiya', form: 'России', translation: 'Russia' },
         { vocabId: 'gorod', form: 'городе', translation: 'the city' },
         { vocabId: 'dom', form: 'доме', translation: 'the house' },
+      ],
+    },
+    {
+      id: 'eto-ochen-x',
+      frame: 'Это очень ___',
+      frameTranslation: 'This is very ___',
+      slots: [
+        { vocabId: 'khorosho', form: 'хорошо', translation: 'good' },
+        { vocabId: 'krasivy', form: 'красиво', translation: 'beautiful' },
+        { vocabId: 'vkusny', form: 'вкусно', translation: 'tasty' },
+        { vocabId: 'plokho', form: 'плохо', translation: 'bad' },
+        { vocabId: 'dorogo', form: 'дорого', translation: 'expensive' },
+      ],
+    },
+    {
+      id: 'skolko-stoit-x',
+      frame: 'Сколько стоит ___?',
+      frameTranslation: 'How much does ___ cost?',
+      slots: [
+        { vocabId: 'khleb', form: 'хлеб', translation: 'the bread' },
+        { vocabId: 'syr', form: 'сыр', translation: 'the cheese' },
+        { vocabId: 'kofe', form: 'кофе', translation: 'the coffee' },
+        { vocabId: 'kniga', form: 'книга', translation: 'the book' },
+        { vocabId: 'ryba', form: 'рыба', translation: 'the fish' },
+      ],
+    },
+    {
+      id: 'ya-idu-v-x',
+      frame: 'Я иду в ___',
+      frameTranslation: 'I am going to ___',
+      slots: [
+        { vocabId: 'magazin', form: 'магазин', translation: 'the shop' },
+        { vocabId: 'shkola', form: 'школу', translation: 'school' },
+        { vocabId: 'restoran', form: 'ресторан', translation: 'the restaurant' },
+        { vocabId: 'park', form: 'парк', translation: 'the park' },
+      ],
+    },
+    {
+      id: 'mne-x',
+      frame: 'Мне ___',
+      frameTranslation: 'I feel ___',
+      slots: [
+        { vocabId: 'kholodno', form: 'холодно', translation: 'cold' },
+        { vocabId: 'zharko', form: 'жарко', translation: 'hot' },
+        { vocabId: 'khorosho', form: 'хорошо', translation: 'good' },
+        { vocabId: 'plokho', form: 'плохо', translation: 'bad' },
       ],
     },
   ],
@@ -491,6 +593,287 @@ export const ruCourse: Course = {
                 { text: 'Когда? Сегодня или завтра?', translation: 'When? Today or tomorrow?', vocabIds: ['kogda', 'segodnya', 'zavtra'] },
                 { text: 'Сейчас!', translation: 'Now!', vocabIds: ['seychas'] },
                 { text: 'Сколько это?', translation: 'How much is this?', vocabIds: ['skolko', 'eto'] },
+              ],
+            },
+          ],
+        },
+      ],
+    },
+    {
+      id: 'u6',
+      title: 'Describing things',
+      description: 'Colors and your first adjectives',
+      skills: [
+        {
+          id: 'u6s1',
+          title: 'Colors',
+          icon: 'sparkles',
+          lessons: [
+            {
+              id: 'u6s1l1',
+              title: 'Red, blue, green',
+              vocabIds: ['krasny', 'siniy', 'zelyony'],
+              sentences: [
+                { text: 'Это красный дом.', translation: 'This is a red house.', vocabIds: ['eto', 'krasny', 'dom'] },
+                { text: 'Кот синий? Нет!', translation: 'Is the cat blue? No!', vocabIds: ['kot', 'siniy', 'net'] },
+                { text: 'Парк зелёный.', translation: 'The park is green.', vocabIds: ['park', 'zelyony'] },
+              ],
+            },
+            {
+              id: 'u6s1l2',
+              title: 'Yellow, black, white',
+              vocabIds: ['zholty', 'cherny', 'bely'],
+              sentences: [
+                { text: 'Солнце жёлтое.', translation: 'The sun is yellow.', vocabIds: ['solntse', 'zholty'] },
+                { text: 'Чёрный кот и белая собака.', translation: 'A black cat and a white dog.', vocabIds: ['cherny', 'kot', 'bely', 'sobaka'] },
+                { text: 'Снег белый.', translation: 'Snow is white.', vocabIds: ['sneg', 'bely'] },
+              ],
+            },
+          ],
+        },
+        {
+          id: 'u6s2',
+          title: 'Big & small',
+          icon: 'package',
+          lessons: [
+            {
+              id: 'u6s2l1',
+              title: 'Size & age',
+              vocabIds: ['bolshoy', 'malenkiy', 'novy', 'stary'],
+              sentences: [
+                { text: 'Это большой город.', translation: 'This is a big city.', vocabIds: ['eto', 'bolshoy', 'gorod'] },
+                { text: 'Маленький кот, большая собака.', translation: 'A small cat, a big dog.', vocabIds: ['malenkiy', 'kot', 'bolshoy', 'sobaka'] },
+                { text: 'У меня есть новый телефон.', translation: 'I have a new phone.', vocabIds: ['u-menya-est', 'novy', 'telefon'] },
+                { text: 'Это старый дом.', translation: 'This is an old house.', vocabIds: ['eto', 'stary', 'dom'] },
+              ],
+            },
+            {
+              id: 'u6s2l2',
+              title: 'Beautiful & tasty',
+              vocabIds: ['krasivy', 'vkusny'],
+              patternIds: ['eto-ochen-x'],
+              sentences: [
+                { text: 'Москва — красивый город.', translation: 'Moscow is a beautiful city.', vocabIds: ['moskva', 'krasivy', 'gorod'] },
+                { text: 'Суп очень вкусный!', translation: 'The soup is very tasty!', vocabIds: ['sup', 'ochen', 'vkusny'] },
+                { text: 'Это очень красиво.', translation: 'This is very beautiful.', vocabIds: ['eto', 'ochen', 'krasivy'] },
+              ],
+            },
+          ],
+        },
+      ],
+    },
+    {
+      id: 'u7',
+      title: 'Days & questions',
+      description: 'The week and how to ask about anything',
+      skills: [
+        {
+          id: 'u7s1',
+          title: 'Days of the week',
+          icon: 'clock',
+          lessons: [
+            {
+              id: 'u7s1l1',
+              title: 'Monday to Thursday',
+              vocabIds: ['ponedelnik', 'vtornik', 'sreda', 'chetverg'],
+              sentences: [
+                { text: 'Сегодня понедельник.', translation: 'Today is Monday.', vocabIds: ['segodnya', 'ponedelnik'] },
+                { text: 'Завтра вторник.', translation: 'Tomorrow is Tuesday.', vocabIds: ['zavtra', 'vtornik'] },
+                { text: 'Среда или четверг?', translation: 'Wednesday or Thursday?', vocabIds: ['sreda', 'chetverg'] },
+              ],
+            },
+            {
+              id: 'u7s1l2',
+              title: 'The weekend',
+              vocabIds: ['pyatnitsa', 'subbota', 'voskresene', 'nedelya'],
+              sentences: [
+                { text: 'Я люблю пятницу!', translation: 'I love Friday!', vocabIds: ['lyublyu', 'pyatnitsa'] },
+                { text: 'Суббота и воскресенье.', translation: 'Saturday and Sunday.', vocabIds: ['subbota', 'voskresene'] },
+                { text: 'Неделя — это семь дней.', translation: 'A week is seven days.', vocabIds: ['nedelya', 'eto', 'sem', 'den'] },
+              ],
+            },
+          ],
+        },
+        {
+          id: 'u7s2',
+          title: 'Asking questions',
+          icon: 'message-circle',
+          lessons: [
+            {
+              id: 'u7s2l1',
+              title: 'How, why, which',
+              vocabIds: ['kak', 'pochemu', 'kakoy'],
+              sentences: [
+                { text: 'Как вы?', translation: 'How are you?', vocabIds: ['kak', 'vy'] },
+                { text: 'Почему нет?', translation: 'Why not?', vocabIds: ['pochemu', 'net'] },
+                { text: 'Какой сегодня день?', translation: 'What day is it today?', vocabIds: ['kakoy', 'segodnya', 'den'] },
+                { text: 'Какой это цвет? Красный.', translation: 'What color is this? Red.', vocabIds: ['kakoy', 'eto', 'krasny'] },
+              ],
+            },
+          ],
+        },
+      ],
+    },
+    {
+      id: 'u8',
+      title: 'Food & shopping',
+      description: 'Buy food and ask prices like a local',
+      skills: [
+        {
+          id: 'u8s1',
+          title: 'More food',
+          icon: 'coffee',
+          lessons: [
+            {
+              id: 'u8s1l1',
+              title: 'Meat & fish',
+              vocabIds: ['myaso', 'ryba', 'yaytso', 'est-eat'],
+              sentences: [
+                { text: 'Я ем мясо и рыбу.', translation: 'I eat meat and fish.', vocabIds: ['est-eat', 'myaso', 'ryba'] },
+                { text: 'Это яйцо.', translation: 'This is an egg.', vocabIds: ['eto', 'yaytso'] },
+                { text: 'Ты ешь рыбу?', translation: 'Do you eat fish?', vocabIds: ['ty', 'est-eat', 'ryba'] },
+              ],
+            },
+            {
+              id: 'u8s1l2',
+              title: 'Fruit & veg',
+              vocabIds: ['frukty', 'ovoshchi', 'sakhar', 'sol'],
+              sentences: [
+                { text: 'Фрукты и овощи — это хорошо.', translation: 'Fruit and vegetables are good.', vocabIds: ['frukty', 'ovoshchi', 'eto', 'khorosho'] },
+                { text: 'Сахар или соль?', translation: 'Sugar or salt?', vocabIds: ['sakhar', 'sol'] },
+                { text: 'Я хочу фрукты.', translation: 'I want fruit.', vocabIds: ['khochu', 'frukty'] },
+              ],
+            },
+          ],
+        },
+        {
+          id: 'u8s2',
+          title: 'How much?',
+          icon: 'hash',
+          lessons: [
+            {
+              id: 'u8s2l1',
+              title: 'Prices',
+              vocabIds: ['kupit', 'stoit', 'dorogo', 'deshevo'],
+              patternIds: ['skolko-stoit-x'],
+              sentences: [
+                { text: 'Сколько стоит хлеб?', translation: 'How much does the bread cost?', vocabIds: ['skolko', 'stoit', 'khleb'] },
+                { text: 'Это очень дорого!', translation: 'This is very expensive!', vocabIds: ['eto', 'ochen', 'dorogo'] },
+                { text: 'Дёшево! Я хочу купить.', translation: 'Cheap! I want to buy it.', vocabIds: ['deshevo', 'khochu', 'kupit'] },
+              ],
+            },
+          ],
+        },
+      ],
+    },
+    {
+      id: 'u9',
+      title: 'Action verbs',
+      description: 'Go, eat, drink, see, do, think, sleep',
+      skills: [
+        {
+          id: 'u9s1',
+          title: 'Going places',
+          icon: 'map-pin',
+          lessons: [
+            {
+              id: 'u9s1l1',
+              title: 'I am going…',
+              vocabIds: ['idti', 'park'],
+              patternIds: ['ya-idu-v-x'],
+              sentences: [
+                { text: 'Я иду в магазин.', translation: 'I am going to the shop.', vocabIds: ['idti', 'magazin'] },
+                { text: 'Мы идём в парк.', translation: 'We are going to the park.', vocabIds: ['my', 'idti', 'park'] },
+                { text: 'Куда ты идёшь?', translation: 'Where are you going?', vocabIds: ['ty', 'idti'] },
+              ],
+            },
+            {
+              id: 'u9s1l2',
+              title: 'Eat & drink',
+              vocabIds: ['pit'],
+              sentences: [
+                { text: 'Я пью кофе.', translation: 'I drink coffee.', vocabIds: ['pit', 'kofe'] },
+                { text: 'Он пьёт чай, она пьёт сок.', translation: 'He drinks tea, she drinks juice.', vocabIds: ['on', 'pit', 'chay', 'ona', 'sok'] },
+                { text: 'Я ем и пью.', translation: 'I eat and drink.', vocabIds: ['est-eat', 'pit'] },
+              ],
+            },
+          ],
+        },
+        {
+          id: 'u9s2',
+          title: 'Think & do',
+          icon: 'sparkles',
+          lessons: [
+            {
+              id: 'u9s2l1',
+              title: 'See, do, think',
+              vocabIds: ['videt', 'delat', 'dumat'],
+              sentences: [
+                { text: 'Я вижу кота.', translation: 'I see a cat.', vocabIds: ['videt', 'kot'] },
+                { text: 'Что ты делаешь?', translation: 'What are you doing?', vocabIds: ['chto', 'ty', 'delat'] },
+                { text: 'Я думаю, это хорошо.', translation: 'I think this is good.', vocabIds: ['dumat', 'eto', 'khorosho'] },
+              ],
+            },
+            {
+              id: 'u9s2l2',
+              title: 'Sleep',
+              vocabIds: ['spat'],
+              sentences: [
+                { text: 'Я сплю.', translation: 'I am sleeping.', vocabIds: ['spat'] },
+                { text: 'Кот спит дома.', translation: 'The cat sleeps at home.', vocabIds: ['kot', 'spat', 'dom'] },
+                { text: 'Ночью я сплю, утром я работаю.', translation: 'At night I sleep, in the morning I work.', vocabIds: ['noch', 'spat', 'utro', 'rabotayu'] },
+              ],
+            },
+          ],
+        },
+      ],
+    },
+    {
+      id: 'u10',
+      title: 'Weather & feelings',
+      description: 'Talk about the weather and how you feel',
+      skills: [
+        {
+          id: 'u10s1',
+          title: 'Weather',
+          icon: 'home',
+          lessons: [
+            {
+              id: 'u10s1l1',
+              title: 'Hot & cold',
+              vocabIds: ['pogoda', 'kholodno', 'zharko', 'mne'],
+              patternIds: ['mne-x'],
+              sentences: [
+                { text: 'Какая сегодня погода?', translation: 'What is the weather today?', vocabIds: ['kakoy', 'segodnya', 'pogoda'] },
+                { text: 'Мне холодно!', translation: 'I am cold!', vocabIds: ['mne', 'kholodno'] },
+                { text: 'Сегодня жарко.', translation: 'It is hot today.', vocabIds: ['segodnya', 'zharko'] },
+              ],
+            },
+            {
+              id: 'u10s1l2',
+              title: 'Rain & snow',
+              vocabIds: ['dozhd', 'sneg', 'solntse'],
+              sentences: [
+                { text: 'Дождь или снег?', translation: 'Rain or snow?', vocabIds: ['dozhd', 'sneg'] },
+                { text: 'Я люблю солнце.', translation: 'I love the sun.', vocabIds: ['lyublyu', 'solntse'] },
+                { text: 'Зимой снег, летом солнце.', translation: 'In winter snow, in summer sun.', vocabIds: ['sneg', 'solntse'] },
+              ],
+            },
+          ],
+        },
+        {
+          id: 'u10s2',
+          title: 'Feelings',
+          icon: 'users',
+          lessons: [
+            {
+              id: 'u10s2l1',
+              title: 'Tired & glad',
+              vocabIds: ['ustal', 'rad'],
+              sentences: [
+                { text: 'Я устал. Я иду спать.', translation: 'I am tired. I am going to sleep.', vocabIds: ['ustal', 'idti', 'spat'] },
+                { text: 'Я очень рад!', translation: 'I am very glad!', vocabIds: ['ochen', 'rad'] },
+                { text: 'Мне хорошо.', translation: 'I feel good.', vocabIds: ['mne', 'khorosho'] },
               ],
             },
           ],
