@@ -1,4 +1,41 @@
-/** Web Speech API wrapper with voice detection per course language. */
+/**
+ * TTS layer: tries pre-generated neural-voice MP3 first, falls back to Web Speech API.
+ * Pre-generated files live at /audio/{lang}/{encodeURIComponent(text)}.mp3
+ * Generate with: python scripts/gen-audio.py
+ */
+
+const audioCache = new Map<string, HTMLAudioElement>()
+
+function audioUrl(text: string, lang: string): string {
+  const prefix = lang.split('-')[0]
+  return `/audio/${prefix}/${encodeURIComponent(text)}.mp3`
+}
+
+async function playAudioFile(url: string): Promise<boolean> {
+  return new Promise((resolve) => {
+    const cached = audioCache.get(url)
+    const el = cached ?? new Audio()
+
+    el.onerror = () => resolve(false)
+    el.onended = () => resolve(true)
+
+    if (!cached) {
+      el.src = url
+      // Probe whether the file exists before we cache it
+      el.onerror = () => resolve(false)
+      el.oncanplaythrough = () => {
+        audioCache.set(url, el)
+        el.play().catch(() => resolve(false))
+      }
+      el.load()
+    } else {
+      el.currentTime = 0
+      el.play().catch(() => resolve(false))
+    }
+  })
+}
+
+// ── Web Speech API fallback ────────────────────────────────────────────────
 
 let voicesLoaded = false
 
@@ -11,15 +48,10 @@ function ensureVoices(): Promise<SpeechSynthesisVoice[]> {
       resolve(voices)
       return
     }
-    synth.addEventListener(
-      'voiceschanged',
-      () => {
-        voicesLoaded = true
-        resolve(synth.getVoices())
-      },
-      { once: true },
-    )
-    // Safety net: some browsers never fire voiceschanged
+    synth.addEventListener('voiceschanged', () => {
+      voicesLoaded = true
+      resolve(synth.getVoices())
+    }, { once: true })
     setTimeout(() => resolve(synth.getVoices()), 1500)
   })
 }
@@ -35,10 +67,11 @@ export async function findVoice(lang: string): Promise<SpeechSynthesisVoice | nu
 }
 
 export async function hasVoice(lang: string): Promise<boolean> {
-  return (await findVoice(lang)) !== null
+  // With pre-generated files we always have audio for supported languages
+  return ['ru', 'es'].includes(lang.split('-')[0]) || (await findVoice(lang)) !== null
 }
 
-export async function speak(text: string, lang: string, rate = 0.9): Promise<void> {
+async function speakWebSpeech(text: string, lang: string, rate: number): Promise<void> {
   if (!('speechSynthesis' in window)) return
   const synth = window.speechSynthesis
   synth.cancel()
@@ -52,4 +85,13 @@ export async function speak(text: string, lang: string, rate = 0.9): Promise<voi
     utterance.onerror = () => resolve()
     synth.speak(utterance)
   })
+}
+
+export async function speak(text: string, lang: string, rate = 0.9): Promise<void> {
+  const url = audioUrl(text, lang)
+  const played = await playAudioFile(url)
+  if (!played) {
+    // Pre-generated file missing or blocked — fall back to Web Speech API
+    await speakWebSpeech(text, lang, rate)
+  }
 }

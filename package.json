@@ -9,6 +9,7 @@
     "lint": "eslint .",
     "preview": "vite preview",
     "build:single": "vite build --mode singlefile",
+    "gen-audio": "python scripts/gen-audio.py",
     "test": "vitest run"
   },
   "dependencies": {

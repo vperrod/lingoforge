@@ -19,6 +19,18 @@ export default defineConfig(({ mode }) => {
       : [
           VitePWA({
             registerType: 'autoUpdate',
+            workbox: {
+              runtimeCaching: [
+                {
+                  urlPattern: /\/audio\/.+\.mp3$/,
+                  handler: 'CacheFirst',
+                  options: {
+                    cacheName: 'lingoforge-audio-v1',
+                    expiration: { maxEntries: 600 },
+                  },
+                },
+              ],
+            },
             manifest: {
               name: 'LingoForge',
               short_name: 'LingoForge',
