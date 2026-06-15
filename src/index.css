@@ -37,27 +37,29 @@ h1, h2, h3, h4 {
   font-family: var(--font-display);
 }
 
-/* Clay surface — soft 3D card per claymorphism design system */
-.clay {
-  border-radius: var(--radius-clay);
-  border: 3px solid var(--color-border-soft);
-  background: var(--color-surface);
-  box-shadow: var(--shadow-clay);
-  transition: transform 0.15s ease-out, box-shadow 0.15s ease-out;
-}
+/* Clay surface — in @layer components so Tailwind utility classes (bg-*, text-*) can override */
+@layer components {
+  .clay {
+    border-radius: var(--radius-clay);
+    border: 3px solid var(--color-border-soft);
+    background: var(--color-surface);
+    box-shadow: var(--shadow-clay);
+    transition: transform 0.15s ease-out, box-shadow 0.15s ease-out;
+  }
 
-.clay-press {
-  cursor: pointer;
-}
+  .clay-press {
+    cursor: pointer;
+  }
 
-.clay-press:active {
-  transform: translateY(3px) scale(0.98);
-  box-shadow: var(--shadow-clay-pressed);
-}
+  .clay-press:active {
+    transform: translateY(3px) scale(0.98);
+    box-shadow: var(--shadow-clay-pressed);
+  }
 
-.clay-press:focus-visible {
-  outline: 3px solid var(--color-primary);
-  outline-offset: 2px;
+  .clay-press:focus-visible {
+    outline: 3px solid var(--color-primary);
+    outline-offset: 2px;
+  }
 }
 
 @media (prefers-reduced-motion: reduce) {
