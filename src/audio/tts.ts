@@ -8,7 +8,8 @@ const audioCache = new Map<string, HTMLAudioElement>()
 
 function audioUrl(text: string, lang: string): string {
   const prefix = lang.split('-')[0]
-  return `/audio/${prefix}/${encodeURIComponent(text)}.mp3`
+  // import.meta.env.BASE_URL is '/lingoforge/' on GitHub Pages, './' locally
+  return `${import.meta.env.BASE_URL}audio/${prefix}/${encodeURIComponent(text)}.mp3`
 }
 
 async function playAudioFile(url: string): Promise<boolean> {
