@@ -2,15 +2,16 @@
 Generate MP3 audio files for all LingoForge content using edge-tts neural voices.
 Run from the project root: python scripts/gen-audio.py
 
-Files saved to public/audio/{lang}/{percent_encoded_text}.mp3
-tts.ts uses encodeURIComponent(text) which produces the same encoding.
+Files saved to public/audio/{lang}/{safe_text}.mp3
+  safe_text = text with '/' replaced by '-' (only char unsafe in filenames)
+tts.ts uses the same safeText() transformation, no percent-encoding.
+When the browser fetches the URL, it auto-encodes Unicode → server decodes → matches file.
 """
 
 import asyncio
 import re
 import sys
 from pathlib import Path
-from urllib.parse import quote
 
 import edge_tts
 
@@ -25,16 +26,18 @@ VOICES = {
 OUT_DIR = Path("public/audio")
 
 
+def safe_filename(text: str) -> str:
+    """Make text safe for use as a filename. Only replace chars invalid in paths."""
+    return text.replace("/", "-").replace("\\", "-")
+
+
 def extract_lemmas(ts_path: str) -> list[str]:
-    """Extract lemma values from a course TS file."""
     text = Path(ts_path).read_text(encoding="utf-8")
     return re.findall(r"lemma:\s*['\"]([^'\"]+)['\"]", text)
 
 
 def extract_forms(ts_path: str) -> list[str]:
-    """Extract word forms from a course TS file."""
     text = Path(ts_path).read_text(encoding="utf-8")
-    # forms: ['word1', 'word2']
     matches = re.findall(r"forms:\s*\[([^\]]+)\]", text)
     words = []
     for m in matches:
@@ -43,57 +46,56 @@ def extract_forms(ts_path: str) -> list[str]:
 
 
 def extract_alphabet(ts_path: str) -> tuple[list[str], list[str]]:
-    """Extract letters and example words from the alphabet TS file."""
     text = Path(ts_path).read_text(encoding="utf-8")
-    # letter: 'А'
     letters = re.findall(r"letter:\s*['\"]([^'\"]+)['\"]", text)
-    # lower: 'а'
     lowers = re.findall(r"lower:\s*['\"]([^'\"]+)['\"]", text)
-    # word: 'мама'
     words = re.findall(r"word:\s*['\"]([^'\"]+)['\"]", text)
     return list(set(letters + lowers)), words
 
 
-async def generate(text: str, voice: str, out_path: Path) -> None:
-    if out_path.exists():
-        return  # skip already generated
-    communicate = edge_tts.Communicate(text, voice)
-    await communicate.save(str(out_path))
-    print(f"  OK  {out_path.name}  ({text})")
+async def generate(text: str, voice: str, out_dir: Path) -> None:
+    out_path = out_dir / (safe_filename(text) + ".mp3")
+    if out_path.exists() and out_path.stat().st_size > 0:
+        return
+    try:
+        communicate = edge_tts.Communicate(text, voice)
+        await communicate.save(str(out_path))
+        print(f"  OK  {out_path.name}")
+    except Exception as e:
+        print(f"  SKIP  {text!r}  ({e})")
 
 
-async def generate_batch(items: list[tuple[str, str]], lang: str) -> None:
+async def generate_batch(texts: list[str], lang: str) -> None:
     voice = VOICES[lang]
     out_dir = OUT_DIR / lang
     out_dir.mkdir(parents=True, exist_ok=True)
+    sem = asyncio.Semaphore(4)  # cap concurrent edge-tts requests to avoid rate limiting
 
-    tasks = []
-    for text, label in items:
-        filename = quote(text, safe="") + ".mp3"
-        out_path = out_dir / filename
-        tasks.append(generate(text, voice, out_path))
+    async def throttled(text: str) -> None:
+        async with sem:
+            await generate(text, voice, out_dir)
 
-    await asyncio.gather(*tasks)
+    await asyncio.gather(*[throttled(t) for t in texts])
 
 
 async def main() -> None:
     print("=== LingoForge audio generation ===\n")
 
-    # Russian vocab
-    ru_lemmas = extract_lemmas("src/content/courses/ru.ts")
-    ru_forms = extract_forms("src/content/courses/ru.ts")
-    ru_letters, ru_alpha_words = extract_alphabet("src/content/courses/ru-alphabet.ts")
-
-    ru_texts = list(dict.fromkeys(ru_lemmas + ru_forms + ru_letters + ru_alpha_words))
+    ru_texts = list(dict.fromkeys(
+        extract_lemmas("src/content/courses/ru.ts")
+        + extract_forms("src/content/courses/ru.ts")
+        + extract_alphabet("src/content/courses/ru-alphabet.ts")[0]
+        + extract_alphabet("src/content/courses/ru-alphabet.ts")[1]
+    ))
     print(f"Russian: {len(ru_texts)} unique texts")
-    await generate_batch([(t, t) for t in ru_texts], "ru")
+    await generate_batch(ru_texts, "ru")
 
-    # Spanish vocab
-    es_lemmas = extract_lemmas("src/content/courses/es.ts")
-    es_forms = extract_forms("src/content/courses/es.ts")
-    es_texts = list(dict.fromkeys(es_lemmas + es_forms))
+    es_texts = list(dict.fromkeys(
+        extract_lemmas("src/content/courses/es.ts")
+        + extract_forms("src/content/courses/es.ts")
+    ))
     print(f"\nSpanish: {len(es_texts)} unique texts")
-    await generate_batch([(t, t) for t in es_texts], "es")
+    await generate_batch(es_texts, "es")
 
     print(f"\nDone. Files in {OUT_DIR}/")
 

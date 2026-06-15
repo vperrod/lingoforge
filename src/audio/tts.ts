@@ -1,38 +1,27 @@
 /**
- * TTS layer: tries pre-generated neural-voice MP3 first, falls back to Web Speech API.
- * Pre-generated files live at /audio/{lang}/{encodeURIComponent(text)}.mp3
- * Generate with: python scripts/gen-audio.py
+ * TTS: tries pre-generated neural-voice MP3 first, falls back to Web Speech API.
+ *
+ * Files live at /audio/{lang}/{safeText}.mp3 — same transform used in gen-audio.py.
+ * Browser auto-encodes Unicode chars in the URL; server decodes → matches filename.
+ * No manual percent-encoding: that caused double-encoding (file %D0%BF.mp3 ≠ path привет).
  */
 
-const audioCache = new Map<string, HTMLAudioElement>()
+function safeText(text: string): string {
+  return text.replace(/\//g, '-').replace(/\\/g, '-')
+}
 
 function audioUrl(text: string, lang: string): string {
   const prefix = lang.split('-')[0]
-  // import.meta.env.BASE_URL is '/lingoforge/' on GitHub Pages, './' locally
-  return `${import.meta.env.BASE_URL}audio/${prefix}/${encodeURIComponent(text)}.mp3`
+  // import.meta.env.BASE_URL = '/lingoforge/' on GitHub Pages, './' locally
+  return `${import.meta.env.BASE_URL}audio/${prefix}/${safeText(text)}.mp3`
 }
 
 async function playAudioFile(url: string): Promise<boolean> {
   return new Promise((resolve) => {
-    const cached = audioCache.get(url)
-    const el = cached ?? new Audio()
-
-    el.onerror = () => resolve(false)
+    const el = new Audio(url)
     el.onended = () => resolve(true)
-
-    if (!cached) {
-      el.src = url
-      // Probe whether the file exists before we cache it
-      el.onerror = () => resolve(false)
-      el.oncanplaythrough = () => {
-        audioCache.set(url, el)
-        el.play().catch(() => resolve(false))
-      }
-      el.load()
-    } else {
-      el.currentTime = 0
-      el.play().catch(() => resolve(false))
-    }
+    el.onerror = () => resolve(false)
+    el.play().catch(() => resolve(false))
   })
 }
 
@@ -68,7 +57,6 @@ export async function findVoice(lang: string): Promise<SpeechSynthesisVoice | nu
 }
 
 export async function hasVoice(lang: string): Promise<boolean> {
-  // With pre-generated files we always have audio for supported languages
   return ['ru', 'es'].includes(lang.split('-')[0]) || (await findVoice(lang)) !== null
 }
 
@@ -89,10 +77,8 @@ async function speakWebSpeech(text: string, lang: string, rate: number): Promise
 }
 
 export async function speak(text: string, lang: string, rate = 0.9): Promise<void> {
-  const url = audioUrl(text, lang)
-  const played = await playAudioFile(url)
+  const played = await playAudioFile(audioUrl(text, lang))
   if (!played) {
-    // Pre-generated file missing or blocked — fall back to Web Speech API
     await speakWebSpeech(text, lang, rate)
   }
 }
