@@ -121,16 +121,13 @@ export function LessonPlayer({ exercises, renderExercise, onComplete, onExit }: 
         {current && renderExercise(current, handleAnswer)}
       </motion.section>
 
-      {/* Persistent footer: animating via state (not AnimatePresence exit) so a
-          missed unmount can never leave a stale Continue handler behind */}
-      <motion.footer
-        initial={false}
-        animate={{ y: feedback ? 0 : 140 }}
-        transition={{ duration: 0.2, ease: 'easeOut' }}
+      {/* Persistent footer: CSS transition (not framer-motion) avoids stacking-context
+          issues with fixed positioning inside transformed ancestors */}
+      <footer
         aria-hidden={!feedback}
-        className={`fixed inset-x-0 bottom-0 border-t-4 ${feedback ? '' : 'pointer-events-none'} ${
-          feedback && !feedback.correct ? 'border-danger bg-danger-soft' : 'border-accent bg-accent-soft'
-        }`}
+        className={`fixed inset-x-0 bottom-0 z-50 border-t-4 transition-transform duration-200 ease-out ${
+          feedback ? 'translate-y-0' : 'translate-y-40 pointer-events-none'
+        } ${feedback && !feedback.correct ? 'border-danger bg-danger-soft' : 'border-accent bg-accent-soft'}`}
       >
         <div className="mx-auto flex w-full max-w-2xl items-center justify-between gap-4 p-4">
           <div>
@@ -152,7 +149,7 @@ export function LessonPlayer({ exercises, renderExercise, onComplete, onExit }: 
             Continue
           </ClayButton>
         </div>
-      </motion.footer>
+      </footer>
     </div>
   )
 }
