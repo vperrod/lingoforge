@@ -128,7 +128,7 @@ export function AlphabetScreen() {
                 <button
                   key={letter.letter}
                   type="button"
-                  onClick={() => speak(`${letter.lower}. ${letter.example.word}`, TTS_LANG)}
+                  onClick={async () => { await speak(letter.lower, TTS_LANG); await speak(letter.example.word, TTS_LANG) }}
                   className="clay clay-press flex flex-col items-center gap-1 p-3"
                   aria-label={`Letter ${letter.letter}, sounds like ${letter.sound}. Play audio`}
                 >
