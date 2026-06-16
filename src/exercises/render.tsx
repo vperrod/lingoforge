@@ -5,6 +5,13 @@ import { ListeningExercise } from './ListeningExercise'
 import { TypingExercise } from './TypingExercise'
 import { MatchingExercise } from './MatchingExercise'
 import { PatternExercise } from './PatternExercise'
+import { ClozeExercise } from './ClozeExercise'
+import { DictationExercise } from './DictationExercise'
+import { SpeakExercise } from './SpeakExercise'
+import { ErrorCorrectionExercise } from './ErrorCorrectionExercise'
+import { ReorderDictationExercise } from './ReorderDictationExercise'
+import { DialogueExercise } from './DialogueExercise'
+import { PhraseOrderExercise } from './PhraseOrderExercise'
 
 export function renderExercise(
   exercise: ExerciseInstance,
@@ -56,6 +63,65 @@ export function renderExercise(
       )
     case 'matching':
       return <MatchingExercise pairs={exercise.pairs} onAnswer={onAnswer} />
+    case 'cloze':
+      return (
+        <ClozeExercise
+          tokens={exercise.tokens}
+          blankIndex={exercise.blankIndex}
+          translation={exercise.translation}
+          answer={exercise.answer}
+          onAnswer={onAnswer}
+        />
+      )
+    case 'dictation':
+      return (
+        <DictationExercise
+          ttsText={exercise.ttsText}
+          ttsLang={ttsLang}
+          accept={exercise.accept}
+          answer={exercise.answer}
+          onAnswer={onAnswer}
+        />
+      )
+    case 'translate':
+      return (
+        <TypingExercise
+          prompt={exercise.prompt}
+          accept={exercise.accept}
+          answer={exercise.answer}
+          onAnswer={onAnswer}
+        />
+      )
+    case 'speak':
+      return (
+        <SpeakExercise
+          ttsText={exercise.ttsText}
+          ttsLang={ttsLang}
+          accept={exercise.accept}
+          answer={exercise.answer}
+          onAnswer={onAnswer}
+        />
+      )
+    case 'errorCorrection':
+      return (
+        <ErrorCorrectionExercise
+          tokens={exercise.tokens}
+          errorIndex={exercise.errorIndex}
+          correctToken={exercise.correctToken}
+          translation={exercise.translation}
+          onAnswer={onAnswer}
+        />
+      )
+    case 'reorderDictation':
+      return (
+        <ReorderDictationExercise
+          sentence={exercise.sentence}
+          ttsLang={ttsLang}
+          answerChips={exercise.answerChips}
+          distractorChips={exercise.distractorChips}
+          onAnswer={onAnswer}
+        />
+      )
     case 'pattern':
       return (
         <PatternExercise
@@ -64,6 +130,21 @@ export function renderExercise(
           slotTranslation={exercise.slotTranslation}
           options={exercise.options}
           correctIndex={exercise.correctIndex}
+          onAnswer={onAnswer}
+        />
+      )
+    case 'dialogue':
+      return (
+        <DialogueExercise
+          lines={exercise.lines}
+          ttsLang={exercise.ttsLang}
+          onAnswer={onAnswer}
+        />
+      )
+    case 'phraseOrder':
+      return (
+        <PhraseOrderExercise
+          phrases={exercise.phrases}
           onAnswer={onAnswer}
         />
       )

@@ -1,4 +1,5 @@
 import { useRef } from 'react'
+import { Link } from 'react-router-dom'
 import { Download, Upload, Zap, BookOpen, Flame, Footprints, Library, Trophy, Type } from 'lucide-react'
 import type { LucideIcon } from 'lucide-react'
 import { useProgress, computeStreak, todayKey } from '../state/progress'
@@ -170,6 +171,14 @@ export function StatsScreen() {
             )
           })}
         </div>
+      </section>
+
+      <section className="clay flex flex-col gap-3 p-5">
+        <h2 className="font-display text-xl font-bold">Placement test</h2>
+        <p className="text-sm text-fg-muted">Re-assess your level and skip ahead on the path.</p>
+        <Link to={`/placement/${data.activeCourse}`}>
+          <ClayButton>Retake placement test</ClayButton>
+        </Link>
       </section>
 
       <section className="clay flex flex-col gap-3 p-5">

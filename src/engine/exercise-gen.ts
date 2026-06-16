@@ -1,4 +1,5 @@
 import type { Course, Lesson, VocabItem } from '../content/types'
+import { isSpeechSupported } from '../audio/stt'
 
 export type ExerciseInstance =
   | {
@@ -50,6 +51,62 @@ export type ExerciseInstance =
       correctIndex: number
       vocabIds: string[]
     }
+  | {
+      kind: 'cloze'
+      /** Whitespace-split tokens, punctuation attached */
+      tokens: string[]
+      blankIndex: number
+      translation: string
+      answer: string
+      vocabIds: string[]
+    }
+  | {
+      kind: 'dictation'
+      ttsText: string
+      accept: string[]
+      answer: string
+      vocabIds: string[]
+    }
+  | {
+      kind: 'translate'
+      prompt: string
+      accept: string[]
+      answer: string
+      vocabIds: string[]
+    }
+  | {
+      kind: 'speak'
+      ttsText: string
+      accept: string[]
+      answer: string
+      vocabIds: string[]
+    }
+  | {
+      kind: 'errorCorrection'
+      /** Sentence tokens with one word swapped for a wrong form */
+      tokens: string[]
+      errorIndex: number
+      correctToken: string
+      translation: string
+      vocabIds: string[]
+    }
+  | {
+      kind: 'reorderDictation'
+      sentence: string
+      translation: string
+      answerChips: string[]
+      distractorChips: string[]
+      vocabIds: string[]
+    }
+  | {
+      kind: 'dialogue'
+      lines: { speaker: 'you' | 'other'; line: string; translation: string }[]
+      ttsLang: string
+    }
+  | {
+      kind: 'phraseOrder'
+      phrases: { line: string; translation: string }[]
+    }
 
 function shuffle<T>(arr: T[]): T[] {
   const a = [...arr]
@@ -60,7 +117,7 @@ function shuffle<T>(arr: T[]): T[] {
   return a
 }
 
-function sample<T>(arr: T[], n: number): T[] {
+export function sample<T>(arr: T[], n: number): T[] {
   return shuffle(arr).slice(0, n)
 }
 
@@ -74,7 +131,7 @@ function distractorLemmas(course: Course, exclude: VocabItem, n: number): string
   return sample([...new Set(pool.map((v) => v.lemma))], n)
 }
 
-function choiceToEnglish(course: Course, vocab: VocabItem): ExerciseInstance {
+export function choiceToEnglish(course: Course, vocab: VocabItem): ExerciseInstance {
   const options = shuffle([vocab.translation, ...distractorTranslations(course, vocab, 3)])
   return {
     kind: 'choice',
@@ -86,7 +143,7 @@ function choiceToEnglish(course: Course, vocab: VocabItem): ExerciseInstance {
   }
 }
 
-function choiceToTarget(course: Course, vocab: VocabItem): ExerciseInstance {
+export function choiceToTarget(course: Course, vocab: VocabItem): ExerciseInstance {
   const options = shuffle([vocab.lemma, ...distractorLemmas(course, vocab, 3)])
   return {
     kind: 'choice',
@@ -135,6 +192,127 @@ function wordBankExercise(course: Course, sentence: { text: string; translation:
   }
 }
 
+function clozeExercise(sentence: { text: string; translation: string; vocabIds: string[] }): ExerciseInstance {
+  const tokens = sentence.text.split(/\s+/)
+  const candidates = tokens
+    .map((t, i) => ({ t, i }))
+    .filter(({ t }) => t.replace(/[¿¡?!.,;:'"«»—–-]/g, '').length >= 3)
+  const pick = candidates.length > 0 ? sample(candidates, 1)[0] : { t: tokens[0], i: 0 }
+  return {
+    kind: 'cloze',
+    tokens,
+    blankIndex: pick.i,
+    translation: sentence.translation,
+    answer: pick.t,
+    vocabIds: sentence.vocabIds,
+  }
+}
+
+function dictationExercise(sentence: { text: string; translation: string; vocabIds: string[] }): ExerciseInstance {
+  return {
+    kind: 'dictation',
+    ttsText: sentence.text,
+    accept: [sentence.text],
+    answer: sentence.text,
+    vocabIds: sentence.vocabIds,
+  }
+}
+
+function translateExercise(sentence: { text: string; translation: string; vocabIds: string[] }): ExerciseInstance {
+  return {
+    kind: 'translate',
+    prompt: sentence.translation,
+    accept: [sentence.text],
+    answer: sentence.text,
+    vocabIds: sentence.vocabIds,
+  }
+}
+
+function speakExercise(vocab: VocabItem): ExerciseInstance {
+  return {
+    kind: 'speak',
+    ttsText: vocab.lemma,
+    accept: [vocab.lemma, ...(vocab.forms ?? [])],
+    answer: vocab.lemma,
+    vocabIds: [vocab.id],
+  }
+}
+
+function splitPunctuation(token: string): { core: string; suffix: string } {
+  const match = token.match(/^(.*?)([¿¡?!.,;:'"«»—–-]*)$/)
+  return { core: match?.[1] ?? token, suffix: match?.[2] ?? '' }
+}
+
+function errorCorrectionExercise(
+  course: Course,
+  sentence: { text: string; translation: string; vocabIds: string[] },
+): ExerciseInstance {
+  const tokens = sentence.text.split(/\s+/)
+  const vocabInSentence = sentence.vocabIds
+    .map((id) => course.vocab.find((v) => v.id === id))
+    .filter((v): v is VocabItem => Boolean(v))
+
+  const candidates = tokens
+    .map((t, i) => ({ i, core: splitPunctuation(t).core }))
+    .map(({ i, core }) => ({
+      i,
+      core,
+      vocab: vocabInSentence.find(
+        (v) =>
+          v.lemma.toLowerCase() === core.toLowerCase() ||
+          (v.forms ?? []).some((f) => f.toLowerCase() === core.toLowerCase()),
+      ),
+    }))
+    .filter((c) => c.vocab)
+
+  const pick = candidates.length > 0 ? sample(candidates, 1)[0] : null
+  const errorIndex = pick?.i ?? Math.floor(Math.random() * tokens.length)
+  const original = tokens[errorIndex]
+  const { core, suffix } = splitPunctuation(original)
+
+  let wrongCore: string
+  if (pick?.vocab) {
+    const altForms = [pick.vocab.lemma, ...(pick.vocab.forms ?? [])].filter(
+      (f) => f.toLowerCase() !== core.toLowerCase(),
+    )
+    wrongCore = altForms.length > 0 ? sample(altForms, 1)[0] : distractorLemmas(course, pick.vocab, 1)[0]
+  } else {
+    wrongCore = sample([...new Set(course.vocab.map((v) => v.lemma))], 1)[0]
+  }
+
+  const swapped = [...tokens]
+  swapped[errorIndex] = wrongCore + suffix
+
+  return {
+    kind: 'errorCorrection',
+    tokens: swapped,
+    errorIndex,
+    correctToken: original,
+    translation: sentence.translation,
+    vocabIds: sentence.vocabIds,
+  }
+}
+
+function reorderDictationExercise(
+  course: Course,
+  sentence: { text: string; translation: string; vocabIds: string[] },
+): ExerciseInstance {
+  const chips = sentence.text.replace(/[?!.,—]/g, '').split(/\s+/).filter(Boolean)
+  const chipsLower = chips.map((c) => c.toLowerCase())
+  const distractors = sample(
+    course.vocab.filter((v) => !chipsLower.includes(v.lemma.toLowerCase()) && !v.lemma.includes(' ')),
+    Math.min(2, Math.max(0, 8 - chips.length)),
+  ).map((v) => v.lemma)
+  return {
+    kind: 'reorderDictation',
+    sentence: sentence.text,
+    translation: sentence.translation,
+    answerChips: chips,
+    distractorChips: distractors,
+    vocabIds: sentence.vocabIds,
+  }
+}
+
 export function generateLessonExercises(course: Course, lesson: Lesson, crownLevel: number): ExerciseInstance[] {
   const vocab = lesson.vocabIds
     .map((id) => course.vocab.find((v) => v.id === id))
@@ -155,9 +333,35 @@ export function generateLessonExercises(course: Course, lesson: Lesson, crownLev
   for (const v of sample(vocab, Math.min(2, vocab.length))) {
     exercises.push(listeningExercise(course, v))
   }
-  // Sentences as word banks
-  for (const s of sample(lesson.sentences, Math.min(3, lesson.sentences.length))) {
+  // Sentences as word banks (reduced share — mixed with other sentence practice below)
+  for (const s of sample(lesson.sentences, Math.min(2, lesson.sentences.length))) {
     exercises.push(wordBankExercise(course, s))
+  }
+  // Fill-in-the-blank
+  for (const s of sample(lesson.sentences, Math.min(2, lesson.sentences.length))) {
+    exercises.push(clozeExercise(s))
+  }
+  // Dictation: hear it, type it
+  for (const s of sample(lesson.sentences, Math.min(1, lesson.sentences.length))) {
+    exercises.push(dictationExercise(s))
+  }
+  // Free translate: full-sentence production
+  for (const s of sample(lesson.sentences, Math.min(1, lesson.sentences.length))) {
+    exercises.push(translateExercise(s))
+  }
+  // Speak-back: pronunciation practice, only where the browser supports speech recognition
+  if (isSpeechSupported()) {
+    for (const v of sample(vocab, Math.min(2, vocab.length))) {
+      exercises.push(speakExercise(v))
+    }
+  }
+  // Error correction: spot the wrong word
+  for (const s of sample(lesson.sentences, Math.min(1, lesson.sentences.length))) {
+    exercises.push(errorCorrectionExercise(course, s))
+  }
+  // Reorder dictation: hear it, arrange it (no transcript shown)
+  for (const s of sample(lesson.sentences, Math.min(1, lesson.sentences.length))) {
+    exercises.push(reorderDictationExercise(course, s))
   }
   // Pattern drills
   for (const pid of lesson.patternIds ?? []) {

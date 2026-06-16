@@ -156,6 +156,65 @@ export const esCourse: Course = {
     { id: 'feliz', lemma: 'feliz', translation: 'happy' },
     { id: 'hambre', lemma: 'hambre', translation: 'hunger' },
     { id: 'sed', lemma: 'sed', translation: 'thirst' },
+    // Unit 11 (A2) — preterite, reflexive verbs, gustar, ir a + infinitive, pronouns
+    { id: 'ayer', lemma: 'ayer', translation: 'yesterday' },
+    { id: 'estar', lemma: 'estar', translation: 'to be (location/state)', forms: ['estuve', 'estuviste', 'estuvo'] },
+    { id: 'leer', lemma: 'leer', translation: 'to read', forms: ['leo', 'lees', 'lee', 'leí'] },
+    { id: 'escribir', lemma: 'escribir', translation: 'to write', forms: ['escribo', 'escribes', 'escribe', 'escribí'] },
+    { id: 'escuchar', lemma: 'escuchar', translation: 'to listen', forms: ['escucho', 'escuchas', 'escucha'] },
+    { id: 'jugar', lemma: 'jugar', translation: 'to play', forms: ['juego', 'juegas', 'juega'] },
+    { id: 'pelicula', lemma: 'película', translation: 'movie' },
+    { id: 'musica', lemma: 'música', translation: 'music' },
+    { id: 'levantarse', lemma: 'levantarse', translation: 'to get up', forms: ['me levanto', 'te levantas', 'se levanta'] },
+    { id: 'ducharse', lemma: 'ducharse', translation: 'to shower', forms: ['me ducho', 'te duchas'] },
+    { id: 'vestirse', lemma: 'vestirse', translation: 'to get dressed', forms: ['me visto', 'te vistes'] },
+    { id: 'acostarse', lemma: 'acostarse', translation: 'to go to bed', forms: ['me acuesto', 'te acuestas'] },
+    { id: 'apartamento', lemma: 'apartamento', translation: 'apartment' },
+    { id: 'habitacion', lemma: 'habitación', translation: 'room / bedroom' },
+    { id: 'cocina', lemma: 'cocina', translation: 'kitchen' },
+    { id: 'entonces', lemma: 'entonces', translation: 'then / so' },
+    { id: 'necesito', lemma: 'necesitar', translation: 'to need', forms: ['necesito', 'necesitas'], hint: 'necesito (I need)' },
+    { id: 've', lemma: 've', translation: 'go! (imperative)' },
+    { id: 'mira', lemma: 'mira', translation: 'look! (imperative)' },
+    { id: 'di', lemma: 'di', translation: 'tell/say! (imperative)' },
+    { id: 'gustar', lemma: 'gustar', translation: 'to please (me gusta = I like)' },
+    { id: 'mas', lemma: 'más', translation: 'more' },
+    { id: 'menos', lemma: 'menos', translation: 'less' },
+    { id: 'lo', lemma: 'lo', translation: 'it / him (direct object)' },
+    { id: 'le', lemma: 'le', translation: 'to him/her (indirect object)' },
+    { id: 'enfermo', lemma: 'enfermo', translation: 'sick', forms: ['enferma'] },
+    { id: 'dolor', lemma: 'dolor', translation: 'pain' },
+    { id: 'medico', lemma: 'médico', translation: 'doctor', forms: ['médica'] },
+    { id: 'estudiar', lemma: 'estudiar', translation: 'to study', forms: ['estudio', 'estudias', 'estudia'] },
+    { id: 'oficina', lemma: 'oficina', translation: 'office' },
+    { id: 'universidad', lemma: 'universidad', translation: 'university' },
+    // Unit 12 (B1) — present subjunctive, perfect tenses, por vs. para
+    { id: 'espero', lemma: 'esperar', translation: 'to hope / wait', forms: ['espero', 'esperas'], hint: 'espero (I hope)' },
+    { id: 'ojala', lemma: 'ojalá', translation: 'hopefully / I wish', hint: 'ohala' },
+    { id: 'venga', lemma: 'venga', translation: '(that) come (subjunctive of venir)', hint: 'venga' },
+    { id: 'tenga', lemma: 'tenga', translation: '(that) have (subjunctive of tener)', hint: 'tenga' },
+    { id: 'quizas', lemma: 'quizás', translation: 'maybe / perhaps', hint: 'kisas' },
+    { id: 'he', lemma: 'haber', translation: 'to have (auxiliary)', forms: ['he', 'has', 'ha', 'hemos'], hint: 'e (I have - aux)' },
+    { id: 'comido', lemma: 'comido', translation: 'eaten (past participle)', hint: 'komido' },
+    { id: 'hablado', lemma: 'hablado', translation: 'spoken (past participle)', hint: 'ablado' },
+    { id: 'vivido', lemma: 'vivido', translation: 'lived (past participle)', hint: 'bibido' },
+    { id: 'por', lemma: 'por', translation: 'for / through / by', hint: 'por' },
+    { id: 'para', lemma: 'para', translation: 'for / in order to', hint: 'para' },
+    // Unit 13 (B2) — conditional mood, relative clauses, passive voice, reported speech
+    { id: 'seria', lemma: 'sería', translation: 'would be (conditional of ser)', hint: 'seria' },
+    { id: 'tendria', lemma: 'tendría', translation: 'would have (conditional of tener)', hint: 'tendria' },
+    { id: 'gustaria', lemma: 'gustaría', translation: 'would like (conditional of gustar)', hint: 'gustaria' },
+    { id: 'si-if', lemma: 'si', translation: 'if', hint: 'si (if)' },
+    { id: 'que-rel', lemma: 'que', translation: 'that / which / who (relative pronoun)', hint: 'ke' },
+    { id: 'quien-rel', lemma: 'quien', translation: 'who (relative pronoun)', hint: 'kyen' },
+    { id: 'mi', lemma: 'mi', translation: 'my', hint: 'mi' },
+    { id: 'abierto', lemma: 'abierto', translation: 'open (passive participle)', forms: ['abierta'], hint: 'abyerto' },
+    { id: 'cerrado', lemma: 'cerrado', translation: 'closed (passive participle)', forms: ['cerrada'], hint: 'serrado' },
+    { id: 'hecho', lemma: 'hecho', translation: 'done / made (passive participle)', forms: ['hecha'], hint: 'echo' },
+    { id: 'dijo', lemma: 'dijo', translation: 'said (he/she said)', hint: 'diho' },
+    { id: 'me', lemma: 'me', translation: 'me / to me', hint: 'me' },
+    { id: 'te-pron', lemma: 'te', translation: 'you / to you (object pronoun)', hint: 'te' },
+    { id: 'nos', lemma: 'nos', translation: 'us / to us', hint: 'nos' },
   ],
   patterns: [
     {
@@ -280,12 +339,35 @@ export const esCourse: Course = {
         { vocabId: 'sed', form: 'sed', translation: 'thirsty' },
       ],
     },
+    {
+      id: 'voy-a-infinitivo-x',
+      frame: 'Mañana voy a ___',
+      frameTranslation: 'Tomorrow I am going to ___',
+      slots: [
+        { vocabId: 'leer', form: 'leer', translation: 'read' },
+        { vocabId: 'escribir', form: 'escribir', translation: 'write' },
+        { vocabId: 'jugar', form: 'jugar', translation: 'play' },
+        { vocabId: 'estudiar', form: 'estudiar', translation: 'study' },
+      ],
+    },
+    {
+      id: 'me-gusta-x',
+      frame: 'Me gusta ___',
+      frameTranslation: 'I like ___',
+      slots: [
+        { vocabId: 'te', form: 'el té', translation: 'tea' },
+        { vocabId: 'cafe', form: 'el café', translation: 'coffee' },
+        { vocabId: 'libro', form: 'el libro', translation: 'this book' },
+        { vocabId: 'trabajo-n', form: 'el trabajo', translation: 'this job' },
+      ],
+    },
   ],
   units: [
     {
       id: 'u1',
       title: 'Survival patterns',
       description: 'Greetings, yes/no, and your first sentences',
+      level: 'A1',
       skills: [
         {
           id: 'u1s1',
@@ -351,6 +433,7 @@ export const esCourse: Course = {
       id: 'u2',
       title: 'I want / I have',
       description: 'Order food and talk about what you own',
+      level: 'A1',
       skills: [
         {
           id: 'u2s1',
@@ -415,6 +498,7 @@ export const esCourse: Course = {
       id: 'u3',
       title: 'People & verbs',
       description: 'Family, friends, and your first verbs',
+      level: 'A1',
       skills: [
         {
           id: 'u3s1',
@@ -478,6 +562,7 @@ export const esCourse: Course = {
       id: 'u4',
       title: 'Places',
       description: 'Ask where things are and say where you live',
+      level: 'A1',
       skills: [
         {
           id: 'u4s1',
@@ -531,6 +616,7 @@ export const esCourse: Course = {
       id: 'u5',
       title: 'Numbers & time',
       description: 'Count to ten and talk about your day',
+      level: 'A1',
       skills: [
         {
           id: 'u5s1',
@@ -590,6 +676,7 @@ export const esCourse: Course = {
       id: 'u6',
       title: 'Describing things',
       description: 'Colors and your first adjectives',
+      level: 'A1',
       skills: [
         {
           id: 'u6s1',
@@ -653,6 +740,7 @@ export const esCourse: Course = {
       id: 'u7',
       title: 'Days & questions',
       description: 'The week and how to ask about anything',
+      level: 'A1',
       skills: [
         {
           id: 'u7s1',
@@ -705,6 +793,7 @@ export const esCourse: Course = {
       id: 'u8',
       title: 'Food & shopping',
       description: 'Buy food and ask prices like a local',
+      level: 'A1',
       skills: [
         {
           id: 'u8s1',
@@ -757,6 +846,7 @@ export const esCourse: Course = {
       id: 'u9',
       title: 'Action verbs',
       description: 'Go, eat, drink, see, do, think, sleep',
+      level: 'A1',
       skills: [
         {
           id: 'u9s1',
@@ -819,6 +909,7 @@ export const esCourse: Course = {
       id: 'u10',
       title: 'Weather & feelings',
       description: 'Talk about the weather and how you feel',
+      level: 'A1',
       skills: [
         {
           id: 'u10s1',
@@ -861,6 +952,380 @@ export const esCourse: Course = {
                 { text: 'Estoy cansado. Voy a dormir.', translation: 'I am tired. I am going to sleep.', vocabIds: ['cansado', 'ir', 'dormir'] },
                 { text: '¡Estoy muy feliz!', translation: 'I am very happy!', vocabIds: ['muy', 'feliz'] },
                 { text: 'Hoy estoy bien.', translation: 'Today I feel good.', vocabIds: ['hoy', 'bien'] },
+              ],
+            },
+          ],
+        },
+      ],
+    },
+    {
+      id: 'u11',
+      title: 'Yesterday & tomorrow',
+      description: 'Past tense, reflexive verbs, gustar, and plans for the future',
+      level: 'A2',
+      skills: [
+        {
+          id: 'u11s1',
+          title: 'Past tense',
+          icon: 'clock',
+          lessons: [
+            {
+              id: 'u11s1l1',
+              title: 'Yesterday',
+              vocabIds: ['ayer', 'estar', 'leer', 'escribir'],
+              sentences: [
+                { text: 'Ayer leí un libro.', translation: 'Yesterday I read a book.', vocabIds: ['ayer', 'leer', 'libro'] },
+                { text: 'Ayer estuvo frío.', translation: 'Yesterday it was cold.', vocabIds: ['ayer', 'estar', 'frio'] },
+                { text: 'Escribí ayer.', translation: 'I wrote yesterday.', vocabIds: ['escribir', 'ayer'] },
+                { text: '¿Estuviste en casa ayer?', translation: 'Were you home yesterday?', vocabIds: ['estar', 'casa', 'ayer'] },
+              ],
+            },
+            {
+              id: 'u11s1l2',
+              title: 'What we did',
+              vocabIds: ['escuchar', 'jugar', 'pelicula', 'musica'],
+              sentences: [
+                { text: 'Vi una película.', translation: 'I watched a movie.', vocabIds: ['ver-verb', 'pelicula'] },
+                { text: '¿Escuchas música?', translation: 'Are you listening to music?', vocabIds: ['escuchar', 'musica'] },
+                { text: 'Jugamos en el parque.', translation: 'We play in the park.', vocabIds: ['jugar', 'parque'] },
+                { text: 'Juego y escucho música.', translation: 'I play and listen to music.', vocabIds: ['jugar', 'escuchar', 'musica'] },
+              ],
+            },
+          ],
+        },
+        {
+          id: 'u11s2',
+          title: 'Reflexive verbs & routines',
+          icon: 'home',
+          lessons: [
+            {
+              id: 'u11s2l1',
+              title: 'Morning routine',
+              vocabIds: ['levantarse', 'ducharse', 'vestirse'],
+              sentences: [
+                { text: 'Me levanto a las siete.', translation: 'I get up at seven.', vocabIds: ['levantarse', 'siete'] },
+                { text: 'Me ducho por la mañana.', translation: 'I shower in the morning.', vocabIds: ['ducharse', 'manana-time'] },
+                { text: '¿Te vistes ahora?', translation: 'Are you getting dressed now?', vocabIds: ['vestirse', 'ahora'] },
+                { text: 'Me levanto, me ducho y me visto.', translation: 'I get up, shower, and get dressed.', vocabIds: ['levantarse', 'ducharse', 'vestirse'] },
+              ],
+            },
+            {
+              id: 'u11s2l2',
+              title: 'Around the house',
+              vocabIds: ['acostarse', 'apartamento', 'habitacion', 'cocina'],
+              sentences: [
+                { text: 'Me acuesto a las diez.', translation: 'I go to bed at ten.', vocabIds: ['acostarse', 'diez'] },
+                { text: 'Tengo un apartamento pequeño.', translation: 'I have a small apartment.', vocabIds: ['tengo', 'apartamento', 'pequeno'] },
+                { text: 'La habitación es grande.', translation: 'The bedroom is big.', vocabIds: ['habitacion', 'es', 'grande'] },
+                { text: 'La cocina está aquí.', translation: 'The kitchen is here.', vocabIds: ['cocina', 'esta', 'aqui'] },
+              ],
+            },
+          ],
+        },
+        {
+          id: 'u11s3',
+          title: 'Future plans',
+          icon: 'sparkles',
+          lessons: [
+            {
+              id: 'u11s3l1',
+              title: 'Tomorrow',
+              vocabIds: ['entonces', 'necesito'],
+              patternIds: ['voy-a-infinitivo-x'],
+              sentences: [
+                { text: 'Mañana voy a leer.', translation: 'Tomorrow I am going to read.', vocabIds: ['manana-time', 'ir', 'leer'] },
+                { text: 'Necesito trabajar, entonces voy a dormir.', translation: 'I need to work, so I am going to sleep.', vocabIds: ['necesito', 'trabajo-n', 'entonces', 'ir', 'dormir'] },
+                { text: '¿Qué vas a hacer mañana?', translation: 'What are you going to do tomorrow?', vocabIds: ['que', 'ir', 'hacer', 'manana-time'] },
+                { text: 'Mañana va a estar bien.', translation: 'Tomorrow is going to be good.', vocabIds: ['manana-time', 'estar', 'bien'] },
+              ],
+            },
+            {
+              id: 'u11s3l2',
+              title: 'Commands',
+              vocabIds: ['ve', 'mira', 'di'],
+              sentences: [
+                { text: 'Necesito ir.', translation: 'I need to go.', vocabIds: ['necesito', 'ir'] },
+                { text: '¡Ve a casa!', translation: 'Go home!', vocabIds: ['ve', 'casa'] },
+                { text: '¡Mira! Es un gato.', translation: 'Look! It is a cat.', vocabIds: ['mira', 'es', 'gato'] },
+                { text: 'Di, por favor, ¿dónde está el metro?', translation: 'Please tell me, where is the metro?', vocabIds: ['di', 'por-favor', 'donde', 'esta', 'metro-es'] },
+              ],
+            },
+          ],
+        },
+        {
+          id: 'u11s4',
+          title: 'Likes & pronouns',
+          icon: 'message-circle',
+          lessons: [
+            {
+              id: 'u11s4l1',
+              title: 'I like',
+              vocabIds: ['gustar', 'mas', 'menos'],
+              patternIds: ['me-gusta-x'],
+              sentences: [
+                { text: 'Me gusta el té.', translation: 'I like tea.', vocabIds: ['gustar', 'te'] },
+                { text: '¿Te gusta el café?', translation: 'Do you like coffee?', vocabIds: ['gustar', 'cafe'] },
+                { text: 'Me gusta más el café que el té.', translation: 'I like coffee more than tea.', vocabIds: ['gustar', 'mas', 'cafe', 'que', 'te'] },
+                { text: 'Me gusta menos el frío.', translation: 'I like the cold less.', vocabIds: ['gustar', 'menos', 'frio'] },
+              ],
+            },
+            {
+              id: 'u11s4l2',
+              title: 'Pronouns',
+              vocabIds: ['lo', 'le'],
+              sentences: [
+                { text: 'Lo tengo.', translation: 'I have it.', vocabIds: ['lo', 'tengo'] },
+                { text: 'Le hablo.', translation: 'I speak to him/her.', vocabIds: ['le', 'hablo'] },
+                { text: '¿Lo ves?', translation: 'Do you see it?', vocabIds: ['lo', 'ver-verb'] },
+                { text: 'Le gusta el libro.', translation: 'He/she likes the book.', vocabIds: ['le', 'gustar', 'libro'] },
+              ],
+            },
+          ],
+        },
+        {
+          id: 'u11s5',
+          title: 'Health, work & study',
+          icon: 'users',
+          lessons: [
+            {
+              id: 'u11s5l1',
+              title: 'Health',
+              vocabIds: ['enfermo', 'dolor', 'medico'],
+              sentences: [
+                { text: 'Estoy enfermo.', translation: 'I am sick.', vocabIds: ['enfermo'] },
+                { text: 'Tengo dolor.', translation: 'I have pain.', vocabIds: ['tengo', 'dolor'] },
+                { text: 'El médico está aquí.', translation: 'The doctor is here.', vocabIds: ['medico', 'esta', 'aqui'] },
+                { text: 'Ella es médica.', translation: 'She is a doctor.', vocabIds: ['ella', 'medico'] },
+              ],
+            },
+            {
+              id: 'u11s5l2',
+              title: 'Work & study',
+              vocabIds: ['estudiar', 'oficina', 'universidad'],
+              sentences: [
+                { text: 'Estudio en la universidad.', translation: 'I study at the university.', vocabIds: ['estudiar', 'universidad'] },
+                { text: 'Trabajo en una oficina.', translation: 'I work in an office.', vocabIds: ['trabajo-n', 'oficina'] },
+                { text: '¿Qué estudias?', translation: 'What do you study?', vocabIds: ['que', 'estudiar'] },
+                { text: 'Mi padre trabaja en una oficina grande.', translation: 'My father works in a big office.', vocabIds: ['padre', 'trabajo-n', 'oficina', 'grande'] },
+              ],
+            },
+          ],
+        },
+      ],
+    },
+    {
+      id: 'u12',
+      title: 'Mastering tenses',
+      description: 'Present subjunctive, perfect tenses, and por vs. para',
+      level: 'B1',
+      skills: [
+        {
+          id: 'u12s1',
+          title: 'Present subjunctive',
+          icon: 'sparkles',
+          lessons: [
+            {
+              id: 'u12s1l1',
+              title: 'Hoping & wishing',
+              vocabIds: ['espero', 'ojala', 'venga', 'tenga'],
+              sentences: [
+                { text: 'Espero que tengas tiempo.', translation: 'I hope you have time.', vocabIds: ['espero', 'tenga', 'tiempo'] },
+                { text: 'Ojalá tengas dinero.', translation: 'I wish you have money.', vocabIds: ['ojala', 'tenga', 'dinero'] },
+                { text: 'Espero que estés bien.', translation: 'I hope you are well.', vocabIds: ['espero', 'estar', 'bien'] },
+                { text: 'Ojalá vengas mañana.', translation: 'I wish you come tomorrow.', vocabIds: ['ojala', 'venga', 'manana-time'] },
+              ],
+            },
+            {
+              id: 'u12s1l2',
+              title: 'Maybe & possibility',
+              vocabIds: ['quizas'],
+              sentences: [
+                { text: 'Quizás venga mañana.', translation: 'Maybe he will come tomorrow.', vocabIds: ['quizas', 'venga', 'manana-time'] },
+                { text: 'Quizás tenga tiempo.', translation: 'Maybe she has time.', vocabIds: ['quizas', 'tenga', 'tiempo'] },
+                { text: 'Espero que venga.', translation: 'I hope he comes.', vocabIds: ['espero', 'venga'] },
+                { text: 'Quizás esté en casa.', translation: 'Maybe she is at home.', vocabIds: ['quizas', 'estar', 'casa'] },
+              ],
+            },
+          ],
+        },
+        {
+          id: 'u12s2',
+          title: 'Perfect tenses',
+          icon: 'clock',
+          lessons: [
+            {
+              id: 'u12s2l1',
+              title: 'I have done',
+              vocabIds: ['he', 'comido', 'hablado'],
+              sentences: [
+                { text: 'He comido.', translation: 'I have eaten.', vocabIds: ['he', 'comido'] },
+                { text: 'He hablado español.', translation: 'I have spoken Spanish.', vocabIds: ['he', 'hablado', 'espanol'] },
+                { text: '¿Has comido?', translation: 'Have you eaten?', vocabIds: ['he', 'comido'] },
+                { text: 'Ella ha hablado con el médico.', translation: 'She has spoken with the doctor.', vocabIds: ['ella', 'he', 'hablado', 'medico'] },
+              ],
+            },
+            {
+              id: 'u12s2l2',
+              title: 'I have lived',
+              vocabIds: ['vivido'],
+              sentences: [
+                { text: 'He vivido en Madrid.', translation: 'I have lived in Madrid.', vocabIds: ['he', 'vivido', 'madrid'] },
+                { text: '¿Has vivido aquí?', translation: 'Have you lived here?', vocabIds: ['he', 'vivido', 'aqui'] },
+                { text: 'Hemos vivido en España.', translation: 'We have lived in Spain.', vocabIds: ['he', 'vivido', 'espana'] },
+                { text: 'Ha vivido aquí.', translation: 'She has lived here.', vocabIds: ['he', 'vivido', 'aqui'] },
+              ],
+            },
+          ],
+        },
+        {
+          id: 'u12s3',
+          title: 'Por vs. para',
+          icon: 'map-pin',
+          lessons: [
+            {
+              id: 'u12s3l1',
+              title: 'Para — purpose & destination',
+              vocabIds: ['para'],
+              sentences: [
+                { text: 'Esto es para ti.', translation: 'This is for you.', vocabIds: ['esto', 'para', 'tu'] },
+                { text: 'Voy para Madrid.', translation: 'I am heading to Madrid.', vocabIds: ['ir', 'para', 'madrid'] },
+                { text: 'Trabajo para vivir.', translation: 'I work in order to live.', vocabIds: ['trabajo-v', 'para', 'vivo'] },
+                { text: 'Para mí, es bueno.', translation: 'For me, it is good.', vocabIds: ['para', 'yo', 'bien'] },
+              ],
+            },
+            {
+              id: 'u12s3l2',
+              title: 'Por — reason & exchange',
+              vocabIds: ['por'],
+              sentences: [
+                { text: 'Gracias por el café.', translation: 'Thanks for the coffee.', vocabIds: ['gracias', 'por', 'cafe'] },
+                { text: 'Voy por la calle.', translation: 'I walk through the street.', vocabIds: ['ir', 'por', 'calle'] },
+                { text: 'Trabajo por dinero.', translation: 'I work for money.', vocabIds: ['trabajo-v', 'por', 'dinero'] },
+                { text: 'Por la mañana, trabajo.', translation: 'In the morning, I work.', vocabIds: ['por', 'manana-time', 'trabajo-v'] },
+              ],
+            },
+          ],
+        },
+      ],
+    },
+    {
+      id: 'u13',
+      title: 'Real fluency',
+      description: 'Conditional mood, relative clauses, passive voice, and reported speech',
+      level: 'B2',
+      skills: [
+        {
+          id: 'u13s1',
+          title: 'Conditional mood',
+          icon: 'sparkles',
+          lessons: [
+            {
+              id: 'u13s1l1',
+              title: 'Would',
+              vocabIds: ['seria', 'tendria'],
+              sentences: [
+                { text: 'Sería bueno.', translation: 'It would be good.', vocabIds: ['seria', 'bien'] },
+                { text: 'Tendría tiempo.', translation: 'I would have time.', vocabIds: ['tendria', 'tiempo'] },
+                { text: 'Sería un médico.', translation: 'He would be a doctor.', vocabIds: ['seria', 'medico'] },
+                { text: 'Si tengo dinero, sería feliz.', translation: 'If I have money, I would be happy.', vocabIds: ['si-if', 'tengo', 'dinero', 'seria', 'feliz'] },
+              ],
+            },
+            {
+              id: 'u13s1l2',
+              title: 'I would like',
+              vocabIds: ['gustaria', 'si-if'],
+              sentences: [
+                { text: 'Me gustaría un café.', translation: 'I would like a coffee.', vocabIds: ['gustar', 'gustaria', 'cafe'] },
+                { text: 'Si tengo tiempo, me gustaría leer.', translation: 'If I have time, I would like to read.', vocabIds: ['si-if', 'tengo', 'tiempo', 'gustaria', 'leer'] },
+                { text: '¿Te gustaría ir al parque?', translation: 'Would you like to go to the park?', vocabIds: ['gustaria', 'ir', 'parque'] },
+                { text: 'Me gustaría vivir en Madrid.', translation: 'I would like to live in Madrid.', vocabIds: ['gustaria', 'vivo', 'madrid'] },
+              ],
+            },
+          ],
+        },
+        {
+          id: 'u13s2',
+          title: 'Relative clauses',
+          icon: 'users',
+          lessons: [
+            {
+              id: 'u13s2l1',
+              title: 'The person who...',
+              vocabIds: ['que-rel'],
+              sentences: [
+                { text: 'La persona que trabaja aquí es médica.', translation: 'The person who works here is a doctor.', vocabIds: ['persona', 'que-rel', 'trabajo-v', 'aqui', 'medico'] },
+                { text: 'El libro que leo es bueno.', translation: 'The book that I am reading is good.', vocabIds: ['libro', 'que-rel', 'leer', 'bien'] },
+                { text: 'La casa que tengo es grande.', translation: 'The house that I have is big.', vocabIds: ['casa', 'que-rel', 'tengo', 'grande'] },
+                { text: 'El amigo que vive aquí es bueno.', translation: 'The friend who lives here is good.', vocabIds: ['amigo', 'que-rel', 'vivo', 'aqui', 'bien'] },
+              ],
+            },
+            {
+              id: 'u13s2l2',
+              title: 'The one who...',
+              vocabIds: ['quien-rel', 'mi'],
+              sentences: [
+                { text: 'Quien trabaja, sabe.', translation: 'Whoever works, knows.', vocabIds: ['quien-rel', 'trabajo-v', 'se'] },
+                { text: 'El médico, quien vive aquí, es bueno.', translation: 'The doctor, who lives here, is good.', vocabIds: ['medico', 'quien-rel', 'vivo', 'aqui', 'bien'] },
+                { text: 'Mi amiga, quien es médica, trabaja aquí.', translation: 'My friend, who is a doctor, works here.', vocabIds: ['mi', 'quien-rel', 'medico', 'trabajo-v', 'aqui'] },
+                { text: 'La persona, quien trabaja aquí, es feliz.', translation: 'The person, who works here, is happy.', vocabIds: ['persona', 'quien-rel', 'trabajo-v', 'aqui', 'feliz'] },
+              ],
+            },
+          ],
+        },
+        {
+          id: 'u13s3',
+          title: 'Passive voice',
+          icon: 'home',
+          lessons: [
+            {
+              id: 'u13s3l1',
+              title: 'Open & closed',
+              vocabIds: ['abierto', 'cerrado'],
+              sentences: [
+                { text: 'La tienda está abierta.', translation: 'The shop is open.', vocabIds: ['tienda', 'abierto'] },
+                { text: 'La escuela está cerrada.', translation: 'The school is closed.', vocabIds: ['escuela', 'cerrado'] },
+                { text: 'Hoy la tienda está cerrada.', translation: 'Today the shop is closed.', vocabIds: ['hoy', 'tienda', 'cerrado'] },
+                { text: 'El parque está abierto.', translation: 'The park is open.', vocabIds: ['parque', 'abierto'] },
+              ],
+            },
+            {
+              id: 'u13s3l2',
+              title: 'It is done',
+              vocabIds: ['hecho'],
+              sentences: [
+                { text: 'Esto está hecho.', translation: 'This is done.', vocabIds: ['esto', 'hecho'] },
+                { text: 'El trabajo está bien hecho.', translation: 'The work is well done.', vocabIds: ['trabajo-n', 'bien', 'hecho'] },
+                { text: 'La casa está mal hecha.', translation: 'The house is badly made.', vocabIds: ['casa', 'mal', 'hecho'] },
+                { text: 'Esto está mal hecho.', translation: 'This is badly done.', vocabIds: ['esto', 'mal', 'hecho'] },
+              ],
+            },
+          ],
+        },
+        {
+          id: 'u13s4',
+          title: 'Reported speech',
+          icon: 'message-circle',
+          lessons: [
+            {
+              id: 'u13s4l1',
+              title: 'He/she said that...',
+              vocabIds: ['dijo'],
+              sentences: [
+                { text: 'Ella dijo que está bien.', translation: 'She said that she is well.', vocabIds: ['ella', 'dijo', 'que-rel', 'estar', 'bien'] },
+                { text: 'Él dijo que tiene tiempo.', translation: 'He said that he has time.', vocabIds: ['el', 'dijo', 'que-rel', 'tengo', 'tiempo'] },
+                { text: 'Mi amigo dijo que vive aquí.', translation: 'My friend said that he lives here.', vocabIds: ['mi', 'amigo', 'dijo', 'que-rel', 'vivo', 'aqui'] },
+                { text: 'El médico dijo que el trabajo está hecho.', translation: 'The doctor said that the work is done.', vocabIds: ['medico', 'dijo', 'que-rel', 'trabajo-n', 'hecho'] },
+              ],
+            },
+            {
+              id: 'u13s4l2',
+              title: 'Told me, you, us',
+              vocabIds: ['me', 'te-pron', 'nos'],
+              sentences: [
+                { text: 'Me dijo que va a la tienda.', translation: 'He told me that he is going to the shop.', vocabIds: ['me', 'dijo', 'ir', 'tienda'] },
+                { text: 'Me dijo que es feliz.', translation: 'She told me that she is happy.', vocabIds: ['me', 'dijo', 'feliz'] },
+                { text: 'Te dijo que tiene hambre.', translation: 'He told you that he is hungry.', vocabIds: ['te-pron', 'dijo', 'tengo', 'hambre'] },
+                { text: 'Nos dijo que trabaja aquí.', translation: 'She told us that she works here.', vocabIds: ['nos', 'dijo', 'trabajo-v', 'aqui'] },
               ],
             },
           ],

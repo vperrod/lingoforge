@@ -1,4 +1,5 @@
 import { create } from 'zustand'
+import { courses } from '../content'
 import type { CourseId } from '../content/types'
 import type { SrsItem } from '../engine/srs'
 import { newSrsItem, review } from '../engine/srs'
@@ -70,6 +71,8 @@ interface ProgressState {
   addXp: (amount: number) => void
   addStudyMinutes: (minutes: number) => void
   completeLesson: (course: CourseId, lessonId: string, newVocabIds: string[]) => void
+  /** Marks every lesson in the unlocked units before `unitIndex` as completed (placement test skip-ahead) */
+  skipToUnit: (course: CourseId, unitIndex: number) => void
   reviewVocab: (course: CourseId, vocabId: string, correct: boolean) => void
   earnBadge: (badgeId: string) => void
   exportData: () => string
@@ -144,6 +147,23 @@ export const useProgress = create<ProgressState>()((set, get) => {
           },
         }
         return bumpDay(next, { lessons: 1 })
+      }),
+
+    skipToUnit: (course, unitIndex) =>
+      update((d) => {
+        const cp = d.courses[course] ?? emptyCourseProgress()
+        const unlockedUnits = courses[course].units.filter((u) => !u.locked)
+        const lessonIds = unlockedUnits
+          .slice(0, unitIndex)
+          .flatMap((u) => u.skills.flatMap((s) => s.lessons.map((l) => l.id)))
+        const lessonCompletions = { ...cp.lessonCompletions }
+        for (const id of lessonIds) {
+          lessonCompletions[id] = Math.max(1, lessonCompletions[id] ?? 0)
+        }
+        return {
+          ...d,
+          courses: { ...d.courses, [course]: { ...cp, lessonCompletions } },
+        }
       }),
 
     reviewVocab: (course, vocabId, correct) =>

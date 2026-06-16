@@ -50,10 +50,15 @@ export interface Skill {
   lessons: Lesson[]
 }
 
+export type CefrLevel = 'A1' | 'A2' | 'B1' | 'B2'
+
 export interface Unit {
   id: string
   title: string
   description: string
+  level: CefrLevel
+  /** true = roadmap shell, no content yet — shown as "coming soon", not clickable */
+  locked?: boolean
   skills: Skill[]
 }
 

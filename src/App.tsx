@@ -6,9 +6,14 @@ import { ProfilePicker } from './app/ProfilePicker'
 import { Layout } from './app/Layout'
 import { PathScreen } from './app/PathScreen'
 import { LessonScreen } from './app/LessonScreen'
+import { PlacementScreen } from './app/PlacementScreen'
 import { AlphabetScreen } from './app/AlphabetScreen'
 import { ReviewScreen } from './app/ReviewScreen'
 import { StatsScreen } from './app/StatsScreen'
+import { TopicPickerScreen } from './app/TopicPickerScreen'
+import { TopicLessonScreen } from './app/TopicLessonScreen'
+import { ScenarioPickerScreen } from './app/ScenarioPickerScreen'
+import { ScenarioLessonScreen } from './app/ScenarioLessonScreen'
 
 export default function App() {
   const { profiles, activeProfileId } = useProfiles()
@@ -28,11 +33,16 @@ export default function App() {
     <HashRouter>
       <Routes>
         <Route path="/lesson/:courseId/:lessonId" element={<LessonScreen />} />
+        <Route path="/placement/:courseId" element={<PlacementScreen />} />
+        <Route path="/topic-lesson/play" element={<TopicLessonScreen />} />
+        <Route path="/scenario-lesson/play" element={<ScenarioLessonScreen />} />
         <Route element={<Layout />}>
           <Route path="/" element={<PathScreen />} />
           <Route path="/alphabet" element={<AlphabetScreen />} />
           <Route path="/review" element={<ReviewScreen />} />
           <Route path="/stats" element={<StatsScreen />} />
+          <Route path="/topic-lesson" element={<TopicPickerScreen />} />
+          <Route path="/scenario-lesson" element={<ScenarioPickerScreen />} />
         </Route>
       </Routes>
     </HashRouter>

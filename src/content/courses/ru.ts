@@ -155,6 +155,73 @@ export const ruCourse: Course = {
     { id: 'ustal', lemma: 'устал', translation: 'tired (m.)', forms: ['устала'], hint: 'ustal' },
     { id: 'rad', lemma: 'рад', translation: 'glad (m.)', forms: ['рада'], hint: 'rat' },
     { id: 'mne', lemma: 'мне', translation: 'to me / I feel', hint: 'mnye' },
+    // Unit 11 (A2) — past/future tense, prepositional/dative/genitive, family, jobs
+    { id: 'vchera', lemma: 'вчера', translation: 'yesterday', hint: 'vchera' },
+    { id: 'byl', lemma: 'был', translation: 'was (m.)', forms: ['была', 'было', 'были'], hint: 'byl' },
+    { id: 'budu', lemma: 'буду', translation: 'will be / I will', forms: ['будешь', 'будет'], hint: 'budu' },
+    { id: 'potom', lemma: 'потом', translation: 'then / afterwards', hint: 'patom' },
+    { id: 'chitat', lemma: 'читать', translation: 'to read', forms: ['читаю', 'читаешь', 'читает', 'читал'], hint: 'chitat' },
+    { id: 'pisat', lemma: 'писать', translation: 'to write', forms: ['пишу', 'пишешь', 'пишет', 'писал'], hint: 'pisat' },
+    { id: 'smotret', lemma: 'смотреть', translation: 'to watch', forms: ['смотрю', 'смотришь', 'смотрит', 'смотрел'], hint: 'smatryet' },
+    { id: 'slushat', lemma: 'слушать', translation: 'to listen', forms: ['слушаю', 'слушаешь', 'слушает'], hint: 'slushat' },
+    { id: 'igrat', lemma: 'играть', translation: 'to play', forms: ['играю', 'играешь', 'играет'], hint: 'igrat' },
+    { id: 'uchit', lemma: 'учить', translation: 'to learn / to study', forms: ['учу', 'учишь', 'учит'], hint: 'uchit' },
+    { id: 'film', lemma: 'фильм', translation: 'movie', hint: "fil'm" },
+    { id: 'muzyka', lemma: 'музыка', translation: 'music', forms: ['музыку'], hint: 'muzyka' },
+    { id: 'o', lemma: 'о', translation: 'about', hint: 'o' },
+    { id: 'mir', lemma: 'мир', translation: 'world / peace', hint: 'mir' },
+    { id: 'strana', lemma: 'страна', translation: 'country', hint: 'strana' },
+    { id: 'yug', lemma: 'юг', translation: 'south', hint: 'yuk' },
+    { id: 'sever', lemma: 'север', translation: 'north', hint: 'syever' },
+    { id: 'reka', lemma: 'река', translation: 'river', hint: 'ryeka' },
+    { id: 'gora', lemma: 'гора', translation: 'mountain', hint: 'gara' },
+    { id: 'nravitsya', lemma: 'нравится', translation: 'pleases (мне нравится = I like)', hint: 'nravitsya' },
+    { id: 'tebe', lemma: 'тебе', translation: 'to you (informal)', hint: 'tyebye' },
+    { id: 'emu', lemma: 'ему', translation: 'to him', hint: 'yemu' },
+    { id: 'ey', lemma: 'ей', translation: 'to her', hint: 'yey' },
+    { id: 'god', lemma: 'год', translation: 'year', forms: ['года', 'лет'], hint: 'got' },
+    { id: 'vrach', lemma: 'врач', translation: 'doctor', hint: 'vrach' },
+    { id: 'uchitel', lemma: 'учитель', translation: 'teacher', hint: 'uchityel' },
+    { id: 'inzhener', lemma: 'инженер', translation: 'engineer', hint: 'inzhenyer' },
+    { id: 'direktor', lemma: 'директор', translation: 'director / boss', hint: 'direktar' },
+    { id: 'zhena', lemma: 'жена', translation: 'wife', hint: 'zhena' },
+    { id: 'muzh', lemma: 'муж', translation: 'husband', hint: 'muzh' },
+    { id: 'deti', lemma: 'дети', translation: 'children', hint: 'dyeti' },
+    { id: 'babushka', lemma: 'бабушка', translation: 'grandmother', hint: 'babushka' },
+    { id: 'dedushka', lemma: 'дедушка', translation: 'grandfather', hint: 'dyedushka' },
+    { id: 'syn', lemma: 'сын', translation: 'son', hint: 'syn' },
+    { id: 'doch', lemma: 'дочь', translation: 'daughter', hint: 'doch' },
+    { id: 'u-menya-net', lemma: 'у меня нет', translation: "I don't have", hint: 'u menya nyet' },
+    { id: 'vremya', lemma: 'время', translation: 'time', forms: ['времени'], hint: 'vryemya' },
+    { id: 'rynok', lemma: 'рынок', translation: 'market', hint: 'rynak' },
+    { id: 'tsena', lemma: 'цена', translation: 'price', hint: 'tsyena' },
+    { id: 'rubl', lemma: 'рубль', translation: 'ruble', forms: ['рублей'], hint: 'rubl' },
+    { id: 'nuzhno', lemma: 'нужно', translation: 'necessary / need to', hint: 'nuzhna' },
+    { id: 'idi', lemma: 'иди', translation: 'go! (imperative)', hint: 'idi' },
+    { id: 'posmotri', lemma: 'посмотри', translation: 'look! (imperative)', hint: 'pasmatri' },
+    { id: 'skazhi', lemma: 'скажи', translation: 'tell/say! (imperative)', hint: 'skazhi' },
+    // Unit 12 (B1) — instrumental case, verb aspect, motion verbs with prefixes
+    { id: 'moy', lemma: 'мой', translation: 'my', forms: ['моя', 'моё', 'мои'], hint: 'moy' },
+    { id: 's-with', lemma: 'с', translation: 'with (+instrumental)', hint: 's' },
+    { id: 'kem', lemma: 'кем', translation: 'whom (instrumental)', hint: 'kyem' },
+    { id: 'prochitat', lemma: 'прочитать', translation: 'to read (perfective)', forms: ['прочитал', 'прочитала'], hint: 'prachitat' },
+    { id: 'napisat', lemma: 'написать', translation: 'to write (perfective)', forms: ['написал', 'написала'], hint: 'napisat' },
+    { id: 'posmotret-pf', lemma: 'посмотреть', translation: 'to watch (perfective)', forms: ['посмотрел', 'посмотрела'], hint: 'pasmatryet' },
+    { id: 'poyti', lemma: 'пойти', translation: 'to set off (perfective, on foot)', forms: ['пошёл', 'пошла'], hint: 'payti' },
+    { id: 'priyti', lemma: 'прийти', translation: 'to arrive (perfective, on foot)', forms: ['пришёл', 'пришла'], hint: 'priyti' },
+    { id: 'uyti', lemma: 'уйти', translation: 'to leave (perfective, on foot)', forms: ['ушёл', 'ушла'], hint: 'uyti' },
+    { id: 'domoy', lemma: 'домой', translation: 'home (homeward)', hint: 'damoy' },
+    { id: 'kuda', lemma: 'куда', translation: 'where to', hint: 'kuda' },
+    // Unit 13 (B2) — conditional mood, participles, чтобы-clauses, passive voice
+    { id: 'esli', lemma: 'если', translation: 'if', hint: 'yesli' },
+    { id: 'by', lemma: 'бы', translation: '(conditional particle) would', hint: 'by' },
+    { id: 'chtoby', lemma: 'чтобы', translation: 'in order to / so that', hint: 'chtoby' },
+    { id: 'potomu-chto', lemma: 'потому что', translation: 'because', hint: 'patamu shto' },
+    { id: 'rabotayushchiy', lemma: 'работающий', translation: 'working (active participle)', forms: ['работающего', 'работающая'], hint: 'rabotayushchiy' },
+    { id: 'chitayushchiy', lemma: 'читающий', translation: 'reading (active participle)', forms: ['читающего', 'читающая'], hint: 'chitayushchiy' },
+    { id: 'otkryt', lemma: 'открыт', translation: 'open / opened (passive)', forms: ['открыта', 'открыто'], hint: 'atkryt' },
+    { id: 'zakryt', lemma: 'закрыт', translation: 'closed (passive)', forms: ['закрыта', 'закрыто'], hint: 'zakryt' },
+    { id: 'sdelano', lemma: 'сделано', translation: 'done / made (passive)', hint: 'sdyelana' },
   ],
   patterns: [
     {
@@ -291,12 +358,57 @@ export const ruCourse: Course = {
         { vocabId: 'plokho', form: 'плохо', translation: 'bad' },
       ],
     },
+    {
+      id: 'budu-x',
+      frame: 'Завтра я буду ___',
+      frameTranslation: 'Tomorrow I will ___',
+      slots: [
+        { vocabId: 'chitat', form: 'читать', translation: 'read' },
+        { vocabId: 'pisat', form: 'писать', translation: 'write' },
+        { vocabId: 'smotret', form: 'смотреть', translation: 'watch' },
+        { vocabId: 'igrat', form: 'играть', translation: 'play' },
+      ],
+    },
+    {
+      id: 'mne-nravitsya-x',
+      frame: 'Мне нравится ___',
+      frameTranslation: 'I like ___',
+      slots: [
+        { vocabId: 'chay', form: 'чай', translation: 'tea' },
+        { vocabId: 'kofe', form: 'кофе', translation: 'coffee' },
+        { vocabId: 'kniga', form: 'книга', translation: 'this book' },
+        { vocabId: 'rabota', form: 'работа', translation: 'this job' },
+      ],
+    },
+    {
+      id: 'u-menya-net-x',
+      frame: 'У меня нет ___',
+      frameTranslation: 'I do not have ___',
+      slots: [
+        { vocabId: 'vremya', form: 'времени', translation: 'time' },
+        { vocabId: 'dengi', form: 'денег', translation: 'money' },
+        { vocabId: 'telefon', form: 'телефона', translation: 'a phone' },
+        { vocabId: 'kot', form: 'кота', translation: 'a cat' },
+      ],
+    },
+    {
+      id: 'rabotayu-x',
+      frame: 'Я работаю ___',
+      frameTranslation: 'I work as ___',
+      slots: [
+        { vocabId: 'vrach', form: 'врачом', translation: 'a doctor' },
+        { vocabId: 'uchitel', form: 'учителем', translation: 'a teacher' },
+        { vocabId: 'inzhener', form: 'инженером', translation: 'an engineer' },
+        { vocabId: 'direktor', form: 'директором', translation: 'a director' },
+      ],
+    },
   ],
   units: [
     {
       id: 'u1',
       title: 'Survival patterns',
       description: 'Greetings, yes/no, and your first sentences',
+      level: 'A1',
       skills: [
         {
           id: 'u1s1',
@@ -363,6 +475,7 @@ export const ruCourse: Course = {
       id: 'u2',
       title: 'I want / I have',
       description: 'Order food and talk about what you own',
+      level: 'A1',
       skills: [
         {
           id: 'u2s1',
@@ -428,6 +541,7 @@ export const ruCourse: Course = {
       id: 'u3',
       title: 'People & verbs',
       description: 'Family, friends, and your first verbs',
+      level: 'A1',
       skills: [
         {
           id: 'u3s1',
@@ -491,6 +605,7 @@ export const ruCourse: Course = {
       id: 'u4',
       title: 'Places',
       description: 'Ask where things are and say where you live',
+      level: 'A1',
       skills: [
         {
           id: 'u4s1',
@@ -544,6 +659,7 @@ export const ruCourse: Course = {
       id: 'u5',
       title: 'Numbers & time',
       description: 'Count to ten and talk about your day',
+      level: 'A1',
       skills: [
         {
           id: 'u5s1',
@@ -603,6 +719,7 @@ export const ruCourse: Course = {
       id: 'u6',
       title: 'Describing things',
       description: 'Colors and your first adjectives',
+      level: 'A1',
       skills: [
         {
           id: 'u6s1',
@@ -666,6 +783,7 @@ export const ruCourse: Course = {
       id: 'u7',
       title: 'Days & questions',
       description: 'The week and how to ask about anything',
+      level: 'A1',
       skills: [
         {
           id: 'u7s1',
@@ -718,6 +836,7 @@ export const ruCourse: Course = {
       id: 'u8',
       title: 'Food & shopping',
       description: 'Buy food and ask prices like a local',
+      level: 'A1',
       skills: [
         {
           id: 'u8s1',
@@ -770,6 +889,7 @@ export const ruCourse: Course = {
       id: 'u9',
       title: 'Action verbs',
       description: 'Go, eat, drink, see, do, think, sleep',
+      level: 'A1',
       skills: [
         {
           id: 'u9s1',
@@ -832,6 +952,7 @@ export const ruCourse: Course = {
       id: 'u10',
       title: 'Weather & feelings',
       description: 'Talk about the weather and how you feel',
+      level: 'A1',
       skills: [
         {
           id: 'u10s1',
@@ -874,6 +995,354 @@ export const ruCourse: Course = {
                 { text: 'Я устал. Я иду спать.', translation: 'I am tired. I am going to sleep.', vocabIds: ['ustal', 'idti', 'spat'] },
                 { text: 'Я очень рад!', translation: 'I am very glad!', vocabIds: ['ochen', 'rad'] },
                 { text: 'Мне хорошо.', translation: 'I feel good.', vocabIds: ['mne', 'khorosho'] },
+              ],
+            },
+          ],
+        },
+      ],
+    },
+    {
+      id: 'u11',
+      title: 'Yesterday & tomorrow',
+      description: 'Past tense, future plans, and your growing family',
+      level: 'A2',
+      skills: [
+        {
+          id: 'u11s1',
+          title: 'Past tense',
+          icon: 'clock',
+          lessons: [
+            {
+              id: 'u11s1l1',
+              title: 'Yesterday',
+              vocabIds: ['vchera', 'byl', 'chitat', 'pisat'],
+              sentences: [
+                { text: 'Вчера я читал книгу.', translation: 'Yesterday I read a book.', vocabIds: ['vchera', 'chitat', 'kniga'] },
+                { text: 'Вчера было холодно.', translation: 'Yesterday it was cold.', vocabIds: ['vchera', 'byl', 'kholodno'] },
+                { text: 'Я писал вчера.', translation: 'I wrote yesterday.', vocabIds: ['pisat', 'vchera'] },
+                { text: 'Ты был дома вчера?', translation: 'Were you home yesterday?', vocabIds: ['ty', 'byl', 'dom', 'vchera'] },
+              ],
+            },
+            {
+              id: 'u11s1l2',
+              title: 'What we did',
+              vocabIds: ['smotret', 'slushat', 'igrat', 'uchit', 'film', 'muzyka'],
+              sentences: [
+                { text: 'Я смотрел фильм.', translation: 'I watched a movie.', vocabIds: ['smotret', 'film'] },
+                { text: 'Ты слушаешь музыку?', translation: 'Are you listening to music?', vocabIds: ['ty', 'slushat', 'muzyka'] },
+                { text: 'Мы играем в парке.', translation: 'We play in the park.', vocabIds: ['my', 'igrat', 'park'] },
+                { text: 'Я учу русский язык.', translation: 'I am learning Russian.', vocabIds: ['uchit'] },
+              ],
+            },
+          ],
+        },
+        {
+          id: 'u11s2',
+          title: 'Future plans',
+          icon: 'sparkles',
+          lessons: [
+            {
+              id: 'u11s2l1',
+              title: 'Tomorrow',
+              vocabIds: ['budu', 'potom'],
+              patternIds: ['budu-x'],
+              sentences: [
+                { text: 'Завтра я буду читать.', translation: 'Tomorrow I will read.', vocabIds: ['zavtra', 'budu', 'chitat'] },
+                { text: 'Я буду работать, потом я буду спать.', translation: 'I will work, then I will sleep.', vocabIds: ['budu', 'rabotayu', 'potom', 'spat'] },
+                { text: 'Что ты будешь делать завтра?', translation: 'What will you do tomorrow?', vocabIds: ['chto', 'ty', 'budu', 'delat', 'zavtra'] },
+                { text: 'Завтра будет хорошо.', translation: 'Tomorrow will be good.', vocabIds: ['zavtra', 'budu', 'khorosho'] },
+              ],
+            },
+            {
+              id: 'u11s2l2',
+              title: 'Needs & commands',
+              vocabIds: ['nuzhno', 'idi', 'posmotri', 'skazhi'],
+              sentences: [
+                { text: 'Мне нужно идти.', translation: 'I need to go.', vocabIds: ['mne', 'nuzhno', 'idti'] },
+                { text: 'Иди домой!', translation: 'Go home!', vocabIds: ['idi', 'dom'] },
+                { text: 'Посмотри! Это кот.', translation: 'Look! It is a cat.', vocabIds: ['posmotri', 'eto', 'kot'] },
+                { text: 'Скажи, пожалуйста, где метро?', translation: 'Please tell me, where is the metro?', vocabIds: ['skazhi', 'pozhaluysta', 'gde', 'metro'] },
+              ],
+            },
+          ],
+        },
+        {
+          id: 'u11s3',
+          title: 'Country & geography',
+          icon: 'map-pin',
+          lessons: [
+            {
+              id: 'u11s3l1',
+              title: 'About...',
+              vocabIds: ['o', 'mir', 'strana'],
+              sentences: [
+                { text: 'Россия — это большая страна.', translation: 'Russia is a big country.', vocabIds: ['rossiya', 'eto', 'bolshoy', 'strana'] },
+                { text: 'Я думаю о доме.', translation: 'I am thinking about home.', vocabIds: ['dumat', 'o', 'dom'] },
+                { text: 'Это книга о России.', translation: 'This is a book about Russia.', vocabIds: ['eto', 'kniga', 'o', 'rossiya'] },
+                { text: 'Мир большой.', translation: 'The world is big.', vocabIds: ['mir', 'bolshoy'] },
+              ],
+            },
+            {
+              id: 'u11s3l2',
+              title: 'Geography',
+              vocabIds: ['yug', 'sever', 'reka', 'gora'],
+              sentences: [
+                { text: 'На юге жарко, на севере холодно.', translation: 'In the south it is hot, in the north it is cold.', vocabIds: ['yug', 'zharko', 'sever', 'kholodno'] },
+                { text: 'Это красивая река.', translation: 'This is a beautiful river.', vocabIds: ['eto', 'krasivy', 'reka'] },
+                { text: 'Гора большая и красивая.', translation: 'The mountain is big and beautiful.', vocabIds: ['gora', 'bolshoy', 'krasivy'] },
+                { text: 'Москва не на юге.', translation: 'Moscow is not in the south.', vocabIds: ['moskva', 'yug'] },
+              ],
+            },
+          ],
+        },
+        {
+          id: 'u11s4',
+          title: 'Likes, age & jobs',
+          icon: 'users',
+          lessons: [
+            {
+              id: 'u11s4l1',
+              title: 'I like',
+              vocabIds: ['nravitsya', 'tebe', 'emu', 'ey'],
+              patternIds: ['mne-nravitsya-x'],
+              sentences: [
+                { text: 'Мне нравится чай.', translation: 'I like tea.', vocabIds: ['mne', 'nravitsya', 'chay'] },
+                { text: 'Тебе нравится кофе?', translation: 'Do you like coffee?', vocabIds: ['tebe', 'nravitsya', 'kofe'] },
+                { text: 'Ему нравится работа.', translation: 'He likes the job.', vocabIds: ['emu', 'nravitsya', 'rabota'] },
+                { text: 'Ей нравится книга.', translation: 'She likes the book.', vocabIds: ['ey', 'nravitsya', 'kniga'] },
+              ],
+            },
+            {
+              id: 'u11s4l2',
+              title: 'Age & job',
+              vocabIds: ['god', 'vrach', 'uchitel', 'inzhener', 'direktor'],
+              sentences: [
+                { text: 'Сколько тебе лет?', translation: 'How old are you?', vocabIds: ['skolko', 'tebe', 'god'] },
+                { text: 'Мне десять лет.', translation: 'I am ten years old.', vocabIds: ['mne', 'desyat', 'god'] },
+                { text: 'Она врач, а он учитель.', translation: 'She is a doctor, and he is a teacher.', vocabIds: ['ona', 'vrach', 'on', 'uchitel'] },
+                { text: 'Папа — инженер. Мама — директор.', translation: 'Dad is an engineer. Mom is a director.', vocabIds: ['papa', 'inzhener', 'mama', 'direktor'] },
+              ],
+            },
+          ],
+        },
+        {
+          id: 'u11s5',
+          title: 'Family & shopping',
+          icon: 'home',
+          lessons: [
+            {
+              id: 'u11s5l1',
+              title: 'Bigger family',
+              vocabIds: ['zhena', 'muzh', 'deti', 'babushka', 'dedushka', 'syn', 'doch'],
+              sentences: [
+                { text: 'Это моя жена, а это мой муж.', translation: 'This is my wife, and this is my husband.', vocabIds: ['eto', 'zhena', 'muzh'] },
+                { text: 'У меня есть сын и дочь.', translation: 'I have a son and a daughter.', vocabIds: ['u-menya-est', 'syn', 'doch'] },
+                { text: 'Бабушка и дедушка живут здесь.', translation: 'Grandma and grandpa live here.', vocabIds: ['babushka', 'dedushka', 'zhivu', 'zdes'] },
+                { text: 'Дети играют.', translation: 'The children are playing.', vocabIds: ['deti', 'igrat'] },
+              ],
+            },
+            {
+              id: 'u11s5l2',
+              title: 'No money, no time',
+              vocabIds: ['u-menya-net', 'vremya', 'rynok', 'tsena', 'rubl'],
+              patternIds: ['u-menya-net-x'],
+              sentences: [
+                { text: 'У меня нет времени.', translation: 'I do not have time.', vocabIds: ['u-menya-net', 'vremya'] },
+                { text: 'У меня нет денег.', translation: 'I do not have money.', vocabIds: ['u-menya-net', 'dengi'] },
+                { text: 'Какая цена на рынке?', translation: 'What is the price at the market?', vocabIds: ['kakoy', 'tsena', 'rynok'] },
+                { text: 'Это стоит десять рублей.', translation: 'This costs ten rubles.', vocabIds: ['eto', 'stoit', 'desyat', 'rubl'] },
+              ],
+            },
+          ],
+        },
+      ],
+    },
+    {
+      id: 'u12',
+      title: 'Mastering the cases',
+      description: 'The instrumental case, verb aspect in the past tense, and motion verbs with prefixes',
+      level: 'B1',
+      skills: [
+        {
+          id: 'u12s1',
+          title: 'Instrumental case',
+          icon: 'users',
+          lessons: [
+            {
+              id: 'u12s1l1',
+              title: 'With someone',
+              vocabIds: ['s-with', 'kem'],
+              patternIds: ['rabotayu-x'],
+              sentences: [
+                { text: 'Я иду с другом.', translation: 'I am going with a friend.', vocabIds: ['idti', 's-with', 'drug'] },
+                { text: 'С кем ты говоришь?', translation: 'Who are you speaking with?', vocabIds: ['kem', 'govoryu'] },
+                { text: 'Я работаю врачом.', translation: 'I work as a doctor.', vocabIds: ['rabotayu', 'vrach'] },
+                { text: 'Брат идёт с другом.', translation: 'Brother is going with a friend.', vocabIds: ['brat', 'idti', 's-with', 'drug'] },
+              ],
+            },
+            {
+              id: 'u12s1l2',
+              title: 'Working as',
+              vocabIds: ['moy'],
+              patternIds: ['rabotayu-x'],
+              sentences: [
+                { text: 'Мой брат работает учителем.', translation: 'My brother works as a teacher.', vocabIds: ['moy', 'brat', 'rabotayu', 'uchitel'] },
+                { text: 'Она работает инженером.', translation: 'She works as an engineer.', vocabIds: ['ona', 'rabotayu', 'inzhener'] },
+                { text: 'Он будет работать директором.', translation: 'He will work as a director.', vocabIds: ['on', 'budu', 'rabotayu', 'direktor'] },
+                { text: 'Мой друг работает врачом.', translation: 'My friend works as a doctor.', vocabIds: ['moy', 'drug', 'rabotayu', 'vrach'] },
+              ],
+            },
+          ],
+        },
+        {
+          id: 'u12s2',
+          title: 'Verb aspect — past tense',
+          icon: 'clock',
+          lessons: [
+            {
+              id: 'u12s2l1',
+              title: 'Finished actions',
+              vocabIds: ['prochitat', 'napisat'],
+              sentences: [
+                { text: 'Я прочитал книгу.', translation: 'I read the book (and finished it).', vocabIds: ['prochitat', 'kniga'] },
+                { text: 'Она написала книгу.', translation: 'She wrote a book.', vocabIds: ['napisat', 'kniga'] },
+                { text: 'Сегодня я написал книгу.', translation: 'Today I wrote a book.', vocabIds: ['segodnya', 'napisat', 'kniga'] },
+                { text: 'Друг прочитал книгу.', translation: 'A friend read the book.', vocabIds: ['drug', 'prochitat', 'kniga'] },
+              ],
+            },
+            {
+              id: 'u12s2l2',
+              title: 'In progress vs. finished',
+              vocabIds: ['posmotret-pf'],
+              sentences: [
+                { text: 'Я смотрел фильм.', translation: 'I was watching a movie.', vocabIds: ['smotret', 'film'] },
+                { text: 'Я посмотрел фильм.', translation: 'I watched the whole movie.', vocabIds: ['posmotret-pf', 'film'] },
+                { text: 'Она читала книгу.', translation: 'She was reading a book.', vocabIds: ['chitat', 'kniga'] },
+                { text: 'Она прочитала книгу.', translation: 'She finished reading the book.', vocabIds: ['prochitat', 'kniga'] },
+              ],
+            },
+          ],
+        },
+        {
+          id: 'u12s3',
+          title: 'Motion verbs with prefixes',
+          icon: 'map-pin',
+          lessons: [
+            {
+              id: 'u12s3l1',
+              title: 'Setting off & arriving',
+              vocabIds: ['poyti', 'priyti', 'domoy', 'kuda'],
+              sentences: [
+                { text: 'Я пошёл домой.', translation: 'I set off for home.', vocabIds: ['poyti', 'domoy'] },
+                { text: 'Он пришёл домой.', translation: 'He arrived home.', vocabIds: ['priyti', 'domoy'] },
+                { text: 'Куда ты пошёл?', translation: 'Where did you go?', vocabIds: ['kuda', 'poyti'] },
+                { text: 'Друг пришёл в школу.', translation: 'A friend arrived at school.', vocabIds: ['drug', 'priyti', 'shkola'] },
+              ],
+            },
+            {
+              id: 'u12s3l2',
+              title: 'Leaving',
+              vocabIds: ['uyti'],
+              sentences: [
+                { text: 'Она ушла домой.', translation: 'She left for home.', vocabIds: ['uyti', 'domoy'] },
+                { text: 'Брат ушёл домой.', translation: 'Brother left for home.', vocabIds: ['brat', 'uyti', 'domoy'] },
+                { text: 'Куда она ушла?', translation: 'Where did she go (leave to)?', vocabIds: ['kuda', 'uyti'] },
+                { text: 'Друг ушёл, и я пошёл домой.', translation: 'A friend left, and I set off for home.', vocabIds: ['drug', 'uyti', 'poyti', 'domoy'] },
+              ],
+            },
+          ],
+        },
+      ],
+    },
+    {
+      id: 'u13',
+      title: 'Real fluency',
+      description: 'Conditional mood, participles, чтобы-clauses, and passive voice',
+      level: 'B2',
+      skills: [
+        {
+          id: 'u13s1',
+          title: 'Conditional mood',
+          icon: 'sparkles',
+          lessons: [
+            {
+              id: 'u13s1l1',
+              title: 'If... would',
+              vocabIds: ['esli', 'by'],
+              sentences: [
+                { text: 'Если я знаю, я скажу.', translation: 'If I know, I will say.', vocabIds: ['esli', 'znayu', 'skazhi'] },
+                { text: 'Я бы пошёл домой.', translation: 'I would go home.', vocabIds: ['by', 'poyti', 'domoy'] },
+                { text: 'Если бы у меня было время, я бы читал.', translation: 'If I had time, I would read.', vocabIds: ['esli', 'by', 'vremya', 'chitat'] },
+                { text: 'Она бы работала врачом.', translation: 'She would work as a doctor.', vocabIds: ['by', 'rabotayu', 'vrach'] },
+              ],
+            },
+            {
+              id: 'u13s1l2',
+              title: 'Because & so that',
+              vocabIds: ['potomu-chto', 'chtoby'],
+              sentences: [
+                { text: 'Я устал, потому что я работал.', translation: 'I am tired because I worked.', vocabIds: ['ustal', 'potomu-chto', 'rabotayu'] },
+                { text: 'Я иду домой, чтобы спать.', translation: 'I am going home in order to sleep.', vocabIds: ['idti', 'domoy', 'chtoby', 'spat'] },
+                { text: 'Она читает, чтобы знать.', translation: 'She reads in order to know.', vocabIds: ['chitat', 'chtoby', 'znayu'] },
+                { text: 'Потому что я рад, я работаю.', translation: 'Because I am glad, I work.', vocabIds: ['potomu-chto', 'rad', 'rabotayu'] },
+              ],
+            },
+          ],
+        },
+        {
+          id: 'u13s2',
+          title: 'Active participles',
+          icon: 'users',
+          lessons: [
+            {
+              id: 'u13s2l1',
+              title: 'The person who works',
+              vocabIds: ['chelovek', 'rabotayushchiy'],
+              sentences: [
+                { text: 'Человек, работающий здесь, — врач.', translation: 'The person working here is a doctor.', vocabIds: ['chelovek', 'rabotayushchiy', 'zdes', 'vrach'] },
+                { text: 'Я знаю человека, работающего в школе.', translation: 'I know a person working at school.', vocabIds: ['znayu', 'chelovek', 'rabotayushchiy', 'shkola'] },
+                { text: 'Учитель, работающий в школе, хороший.', translation: 'The teacher working at school is good.', vocabIds: ['uchitel', 'rabotayushchiy', 'shkola', 'khorosho'] },
+                { text: 'Друг, читающий книгу, там.', translation: 'The friend reading the book is there.', vocabIds: ['drug', 'chitayushchiy', 'kniga', 'tam'] },
+              ],
+            },
+            {
+              id: 'u13s2l2',
+              title: 'The person who reads',
+              vocabIds: ['chitayushchiy'],
+              sentences: [
+                { text: 'Человек, читающий книгу, — врач.', translation: 'The person reading the book is a doctor.', vocabIds: ['chelovek', 'chitayushchiy', 'kniga', 'vrach'] },
+                { text: 'Я вижу человека, читающего книгу.', translation: 'I see a person reading a book.', vocabIds: ['videt', 'chelovek', 'chitayushchiy', 'kniga'] },
+                { text: 'Дети, читающие книги, там.', translation: 'The children reading books are there.', vocabIds: ['deti', 'chitayushchiy', 'kniga', 'tam'] },
+                { text: 'Это человек, читающий книгу.', translation: 'This is a person reading a book.', vocabIds: ['eto', 'chelovek', 'chitayushchiy', 'kniga'] },
+              ],
+            },
+          ],
+        },
+        {
+          id: 'u13s3',
+          title: 'Passive voice',
+          icon: 'home',
+          lessons: [
+            {
+              id: 'u13s3l1',
+              title: 'Open & closed',
+              vocabIds: ['otkryt', 'zakryt'],
+              sentences: [
+                { text: 'Магазин открыт.', translation: 'The shop is open.', vocabIds: ['magazin', 'otkryt'] },
+                { text: 'Школа закрыта.', translation: 'The school is closed.', vocabIds: ['shkola', 'zakryt'] },
+                { text: 'Сегодня магазин закрыт.', translation: 'Today the shop is closed.', vocabIds: ['segodnya', 'magazin', 'zakryt'] },
+                { text: 'Парк открыт.', translation: 'The park is open.', vocabIds: ['park', 'otkryt'] },
+              ],
+            },
+            {
+              id: 'u13s3l2',
+              title: 'It is done',
+              vocabIds: ['sdelano'],
+              sentences: [
+                { text: 'Это сделано.', translation: 'This is done.', vocabIds: ['eto', 'sdelano'] },
+                { text: 'Работа сделана хорошо.', translation: 'The work is done well.', vocabIds: ['rabota', 'sdelano', 'khorosho'] },
+                { text: 'Дом сделан хорошо.', translation: 'The house is built well.', vocabIds: ['dom', 'sdelano', 'khorosho'] },
+                { text: 'Это плохо сделано.', translation: 'This is badly done.', vocabIds: ['eto', 'plokho', 'sdelano'] },
               ],
             },
           ],

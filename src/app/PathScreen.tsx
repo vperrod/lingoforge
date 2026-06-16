@@ -1,6 +1,6 @@
 import { Link } from 'react-router-dom'
 import { motion } from 'framer-motion'
-import { Lock, Check, Star, Hand, Sparkles, Coffee, Package, Users, MessageCircle, MapPin, Home, Hash, Clock } from 'lucide-react'
+import { Lock, Check, Star, Hand, Sparkles, Coffee, Package, Users, MessageCircle, MapPin, Home, Hash, Clock, Wand2, Theater } from 'lucide-react'
 import type { LucideIcon } from 'lucide-react'
 import { courses } from '../content'
 import type { CourseId } from '../content/types'
@@ -71,13 +71,50 @@ export function PathScreen() {
         </Link>
       )}
 
+      {Object.keys(completions).length === 0 && !(course.id === 'ru' && unlockedUpTo === 0) && (
+        <Link to={`/placement/${course.id}`} className="clay clay-press block border-gold bg-amber-50 p-4">
+          <p className="font-display text-lg font-bold">Already know some {course.name}?</p>
+          <p className="text-fg-muted">Take a 2-minute placement test to skip ahead.</p>
+        </Link>
+      )}
+
+      <Link to="/topic-lesson" className="clay clay-press flex items-center gap-4 border-primary bg-indigo-50 p-4">
+        <span className="flex size-12 shrink-0 items-center justify-center rounded-full border-3 border-indigo-700 bg-primary text-on-primary">
+          <Wand2 aria-hidden />
+        </span>
+        <span className="grow text-left">
+          <span className="block font-display text-lg font-bold">Topic Lesson</span>
+          <span className="text-sm text-fg-muted">AI-generated vocab on any topic</span>
+        </span>
+      </Link>
+
+      <Link to="/scenario-lesson" className="clay clay-press flex items-center gap-4 border-accent bg-emerald-50 p-4">
+        <span className="flex size-12 shrink-0 items-center justify-center rounded-full border-3 border-green-700 bg-accent text-on-primary">
+          <Theater aria-hidden />
+        </span>
+        <span className="grow text-left">
+          <span className="block font-display text-lg font-bold">Scenario Lesson</span>
+          <span className="text-sm text-fg-muted">Practice real-life situations with AI dialogues</span>
+        </span>
+      </Link>
+
       {course.units.map((unit) => (
         <section key={unit.id} className="flex flex-col gap-4">
-          <div className="clay bg-primary p-4 text-on-primary">
-            <h2 className="font-display text-xl font-bold">{unit.title}</h2>
+          <div className={`clay bg-primary p-4 text-on-primary ${unit.locked ? 'opacity-60' : ''}`}>
+            <div className="flex items-center justify-between gap-2">
+              <h2 className="font-display text-xl font-bold">{unit.title}</h2>
+              <span className="rounded-full border-2 border-on-primary/40 px-2 py-0.5 text-xs font-bold">
+                {unit.level}
+              </span>
+            </div>
             <p className="text-sm opacity-90">{unit.description}</p>
+            {unit.locked && (
+              <span className="mt-2 inline-block rounded-full bg-on-primary/20 px-2 py-0.5 text-xs font-bold">
+                Coming soon
+              </span>
+            )}
           </div>
-          {unit.skills.map((skill) => {
+          {!unit.locked && unit.skills.map((skill) => {
             const Icon = skillIcons[skill.icon] ?? Sparkles
             return (
               <div key={skill.id} className="flex flex-col items-center gap-3">
