@@ -1,6 +1,6 @@
 import { Link } from 'react-router-dom'
 import { motion } from 'framer-motion'
-import { Lock, Check, Star, Hand, Sparkles, Coffee, Package, Users, MessageCircle, MapPin, Home, Hash, Clock, Wand2, Theater } from 'lucide-react'
+import { Lock, Check, Star, Hand, Sparkles, Coffee, Package, Users, MessageCircle, MapPin, Home, Hash, Clock, Wand2, Theater, Camera } from 'lucide-react'
 import type { LucideIcon } from 'lucide-react'
 import { courses } from '../content'
 import type { CourseId } from '../content/types'
@@ -95,6 +95,16 @@ export function PathScreen() {
         <span className="grow text-left">
           <span className="block font-display text-lg font-bold">Scenario Lesson</span>
           <span className="text-sm text-fg-muted">Practice real-life situations with AI dialogues</span>
+        </span>
+      </Link>
+
+      <Link to="/point-learn" className="clay clay-press flex items-center gap-4 border-gold bg-amber-50 p-4">
+        <span className="flex size-12 shrink-0 items-center justify-center rounded-full border-3 border-amber-700 bg-gold text-white">
+          <Camera aria-hidden />
+        </span>
+        <span className="grow text-left">
+          <span className="block font-display text-lg font-bold">Point &amp; Learn</span>
+          <span className="text-sm text-fg-muted">Snap a photo — AI labels objects in {course.name}</span>
         </span>
       </Link>
 

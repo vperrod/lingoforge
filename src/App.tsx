@@ -14,6 +14,7 @@ import { TopicPickerScreen } from './app/TopicPickerScreen'
 import { TopicLessonScreen } from './app/TopicLessonScreen'
 import { ScenarioPickerScreen } from './app/ScenarioPickerScreen'
 import { ScenarioLessonScreen } from './app/ScenarioLessonScreen'
+import { PointLearnScreen } from './app/PointLearnScreen'
 
 export default function App() {
   const { profiles, activeProfileId } = useProfiles()
@@ -36,6 +37,7 @@ export default function App() {
         <Route path="/placement/:courseId" element={<PlacementScreen />} />
         <Route path="/topic-lesson/play" element={<TopicLessonScreen />} />
         <Route path="/scenario-lesson/play" element={<ScenarioLessonScreen />} />
+        <Route path="/point-learn" element={<PointLearnScreen />} />
         <Route element={<Layout />}>
           <Route path="/" element={<PathScreen />} />
           <Route path="/alphabet" element={<AlphabetScreen />} />
