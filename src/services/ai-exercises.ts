@@ -41,7 +41,6 @@ Rules:
 
 export function topicVocabToExercises(
   vocabItems: GeneratedVocab[],
-  ttsLang: string,
 ): ExerciseInstance[] {
   if (vocabItems.length === 0) return []
 

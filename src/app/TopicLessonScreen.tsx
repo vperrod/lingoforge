@@ -29,7 +29,7 @@ export function TopicLessonScreen() {
   }, [])
 
   const exercises = useMemo(
-    () => lessonData ? topicVocabToExercises(lessonData.vocab, lessonData.ttsLang) : [],
+    () => lessonData ? topicVocabToExercises(lessonData.vocab) : [],
     [lessonData],
   )
 
