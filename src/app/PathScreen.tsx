@@ -1,9 +1,10 @@
 import { Link } from 'react-router-dom'
 import { motion } from 'framer-motion'
-import { Lock, Check, Star, Hand, Sparkles, Coffee, Package, Users, MessageCircle, MapPin, Home, Hash, Clock, Wand2, Theater, Camera } from 'lucide-react'
+import { Lock, Check, Star, Hand, Sparkles, Coffee, Package, Users, MessageCircle, MapPin, Home, Hash, Clock, Wand2, Theater, Camera, GraduationCap, ChevronDown, ChevronUp } from 'lucide-react'
 import type { LucideIcon } from 'lucide-react'
 import { courses } from '../content'
 import type { CourseId } from '../content/types'
+import { useState } from 'react'
 import { useProfiles } from '../state/profiles'
 import { useProgress } from '../state/progress'
 import { VoiceWarning } from '../ui/VoiceWarning'
@@ -34,6 +35,14 @@ export function PathScreen() {
   const orderedLessons = course.units.flatMap((u) => u.skills.flatMap((s) => s.lessons))
   const firstIncomplete = orderedLessons.findIndex((l) => !completions[l.id])
   const unlockedUpTo = firstIncomplete === -1 ? orderedLessons.length : firstIncomplete
+
+  const [roadmapOpen, setRoadmapOpen] = useState(false)
+
+  const unitProgress = course.units.map((unit) => {
+    const unitLessons = unit.skills.flatMap((s) => s.lessons)
+    const completed = unitLessons.filter((l) => (completions[l.id] ?? 0) > 0).length
+    return { unit, total: unitLessons.length, completed }
+  })
 
   let lessonIndex = -1
 
@@ -71,12 +80,73 @@ export function PathScreen() {
         </Link>
       )}
 
-      {Object.keys(completions).length === 0 && !(course.id === 'ru' && unlockedUpTo === 0) && (
-        <Link to={`/placement/${course.id}`} className="clay clay-press block border-gold bg-amber-50 p-4">
-          <p className="font-display text-lg font-bold">Already know some {course.name}?</p>
-          <p className="text-fg-muted">Take a 2-minute placement test to skip ahead.</p>
-        </Link>
-      )}
+      <Link to={`/placement/${course.id}`} className="clay clay-press flex items-center gap-4 border-gold bg-amber-50 p-4">
+        <span className="flex size-12 shrink-0 items-center justify-center rounded-full border-3 border-amber-700 bg-gold text-white">
+          <GraduationCap aria-hidden />
+        </span>
+        <span className="grow text-left">
+          <span className="block font-display text-lg font-bold">
+            {Object.keys(completions).length === 0 ? 'Placement Test' : 'Level Test'}
+          </span>
+          <span className="text-sm text-fg-muted">
+            {Object.keys(completions).length === 0
+              ? `Already know some ${course.name}? Skip ahead.`
+              : 'Test your level and unlock higher lessons'}
+          </span>
+        </span>
+      </Link>
+
+      {/* Roadmap overview */}
+      <div className="clay overflow-hidden">
+        <button
+          type="button"
+          onClick={() => setRoadmapOpen((v) => !v)}
+          className="flex w-full items-center justify-between p-4"
+        >
+          <span className="font-display text-lg font-bold">Roadmap</span>
+          {roadmapOpen
+            ? <ChevronUp className="size-5 text-fg-muted" aria-hidden />
+            : <ChevronDown className="size-5 text-fg-muted" aria-hidden />}
+        </button>
+        {roadmapOpen && (
+          <div className="flex flex-col gap-2 px-4 pb-4">
+            {unitProgress.map(({ unit, total, completed }) => {
+              const pct = total > 0 ? Math.round((completed / total) * 100) : 0
+              const unitRef = `unit-${unit.id}`
+              return (
+                <button
+                  key={unit.id}
+                  type="button"
+                  onClick={() => {
+                    setRoadmapOpen(false)
+                    document.getElementById(unitRef)?.scrollIntoView({ behavior: 'smooth', block: 'start' })
+                  }}
+                  className="clay clay-press flex items-center gap-3 p-3 text-left"
+                >
+                  <span className={`rounded-full px-2 py-0.5 text-xs font-bold ${
+                    pct === 100 ? 'bg-accent text-on-primary' : 'bg-primary/10 text-primary'
+                  }`}>
+                    {unit.level}
+                  </span>
+                  <span className="grow">
+                    <span className="block text-sm font-bold">{unit.title}</span>
+                    <div className="mt-1 h-1.5 w-full rounded-full bg-border-soft">
+                      <div
+                        className={`h-full rounded-full ${pct === 100 ? 'bg-accent' : 'bg-primary'}`}
+                        style={{ width: `${pct}%` }}
+                      />
+                    </div>
+                  </span>
+                  <span className="text-xs text-fg-muted">{completed}/{total}</span>
+                  {unit.locked && (
+                    <Lock className="size-3.5 text-fg-muted" aria-hidden />
+                  )}
+                </button>
+              )
+            })}
+          </div>
+        )}
+      </div>
 
       <Link to="/topic-lesson" className="clay clay-press flex items-center gap-4 border-primary bg-indigo-50 p-4">
         <span className="flex size-12 shrink-0 items-center justify-center rounded-full border-3 border-indigo-700 bg-primary text-on-primary">
@@ -109,7 +179,7 @@ export function PathScreen() {
       </Link>
 
       {course.units.map((unit) => (
-        <section key={unit.id} className="flex flex-col gap-4">
+        <section key={unit.id} id={`unit-${unit.id}`} className="flex flex-col gap-4">
           <div className={`clay bg-primary p-4 text-on-primary ${unit.locked ? 'opacity-60' : ''}`}>
             <div className="flex items-center justify-between gap-2">
               <h2 className="font-display text-xl font-bold">{unit.title}</h2>
