@@ -1,14 +1,14 @@
 import type { Course, CourseId, Lesson } from './types'
 import { ruCourse } from './courses/ru'
 import { esCourse } from './courses/es'
-import { ruAlphabet } from './courses/ru-alphabet'
+import { ruAlphabet, readingPractice, confusablePairs } from './courses/ru-alphabet'
 
 export const courses: Record<CourseId, Course> = {
   ru: ruCourse,
   es: esCourse,
 }
 
-export { ruAlphabet }
+export { ruAlphabet, readingPractice, confusablePairs }
 
 export function getCourse(id: CourseId): Course {
   return courses[id]

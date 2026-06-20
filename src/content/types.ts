@@ -74,13 +74,25 @@ export interface Course {
 
 // ---- Alphabet (Russian) ----
 
+export interface AlphabetExample {
+  word: string
+  translation: string
+  hint: string
+  /** Where the letter appears: start, middle, end */
+  position: 'start' | 'middle' | 'end'
+}
+
 export interface AlphabetLetter {
   letter: string // uppercase
   lower: string
   sound: string // approximate English sound
   /** Word example using the letter, with translation */
-  example: { word: string; translation: string; hint: string }
+  example: AlphabetExample
+  /** Additional examples showing letter in different word positions */
+  extraExamples?: AlphabetExample[]
   mnemonic?: string
+  /** Letters commonly confused with this one */
+  confusables?: string[]
 }
 
 export interface AlphabetGroup {
