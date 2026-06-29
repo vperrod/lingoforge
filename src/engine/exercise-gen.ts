@@ -43,6 +43,18 @@ export type ExerciseInstance =
       pairs: { left: string; right: string; vocabId: string }[]
     }
   | {
+      kind: 'spell'
+      /** Instruction / translation shown above the tiles */
+      prompt: string
+      /** Target word to assemble */
+      answer: string
+      /** Letter tiles (answer letters + distractors); UI shuffles */
+      tiles: string[]
+      /** If set, the word is played aloud — makes this a listening activity too */
+      ttsText?: string
+      vocabIds: string[]
+    }
+  | {
       kind: 'pattern'
       frame: string
       frameTranslation: string
@@ -228,6 +240,52 @@ function translateExercise(sentence: { text: string; translation: string; vocabI
   }
 }
 
+/** Unique letters used across a course's vocab — the distractor-tile source for spelling. */
+export function letterPool(course: Course): string[] {
+  const set = new Set<string>()
+  for (const v of course.vocab) {
+    for (const ch of v.lemma.toLowerCase()) {
+      if (/\p{L}/u.test(ch)) set.add(ch)
+    }
+  }
+  return [...set]
+}
+
+/**
+ * Build a "spell the word from letter tiles" exercise. Reusable by lessons and the
+ * alphabet screen. `pool` supplies distractor letters; `audio` makes it a listening drill.
+ */
+export function spellFromWord(
+  word: string,
+  prompt: string,
+  pool: string[],
+  opts: { audio?: boolean; vocabIds?: string[] } = {},
+): ExerciseInstance {
+  const answer = word.toLowerCase()
+  const letters = [...answer].filter((ch) => /\p{L}/u.test(ch))
+  const distractors = sample(pool.filter((ch) => !letters.includes(ch)), Math.min(3, pool.length))
+  return {
+    kind: 'spell',
+    prompt,
+    answer,
+    tiles: shuffle([...letters, ...distractors]),
+    ...(opts.audio ? { ttsText: answer } : {}),
+    vocabIds: opts.vocabIds ?? [],
+  }
+}
+
+function spellExercise(vocab: VocabItem, pool: string[], audio = false): ExerciseInstance {
+  return spellFromWord(vocab.lemma, audio ? 'Spell what you hear' : vocab.translation, pool, {
+    audio,
+    vocabIds: [vocab.id],
+  })
+}
+
+/** Single-token words short enough to assemble from tiles without becoming tedious. */
+function isSpellable(vocab: VocabItem): boolean {
+  return !vocab.lemma.includes(' ') && vocab.lemma.length <= 9
+}
+
 function speakExercise(vocab: VocabItem): ExerciseInstance {
   return {
     kind: 'speak',
@@ -313,37 +371,64 @@ function reorderDictationExercise(
   }
 }
 
+/**
+ * Trim to `total` while keeping the activity mix varied: no single kind may exceed its
+ * cap, so "select the word" (choice/listening) can't dominate the way it used to.
+ */
+function capByKind(exercises: ExerciseInstance[], total: number): ExerciseInstance[] {
+  const caps: Partial<Record<ExerciseInstance['kind'], number>> = {
+    choice: 4, // recognition intros — capped so they don't flood the lesson
+    listening: 2, // the only "pick what you hear" select; rest of listening is spell/dictation
+    pattern: 2,
+  }
+  const counts = new Map<string, number>()
+  const kept: ExerciseInstance[] = []
+  for (const ex of shuffle(exercises)) {
+    const cap = caps[ex.kind] ?? 3
+    const n = counts.get(ex.kind) ?? 0
+    if (n >= cap) continue
+    counts.set(ex.kind, n + 1)
+    kept.push(ex)
+  }
+  return shuffle(kept).slice(0, total)
+}
+
 export function generateLessonExercises(course: Course, lesson: Lesson, crownLevel: number): ExerciseInstance[] {
   const vocab = lesson.vocabIds
     .map((id) => course.vocab.find((v) => v.id === id))
     .filter((v): v is VocabItem => Boolean(v))
 
+  const pool = letterPool(course)
+  const spellable = vocab.filter(isSpellable)
   const exercises: ExerciseInstance[] = []
 
-  // New vocab intro: recognition both directions
+  // New vocab intro: one recognition per word teaches meaning (capped later)
   for (const v of vocab) {
     exercises.push(choiceToEnglish(course, v))
   }
-  // Production direction for a subset (all at higher crowns)
+  // Production: spell it from tiles (short words) or type it — no more "pick the word"
   const productionSet = crownLevel >= 2 ? vocab : sample(vocab, Math.ceil(vocab.length / 2))
   for (const v of productionSet) {
-    exercises.push(crownLevel >= 3 ? typingExercise(v) : choiceToTarget(course, v))
+    if (crownLevel < 3 && isSpellable(v)) exercises.push(spellExercise(v, pool))
+    else exercises.push(typingExercise(v))
   }
-  // Listening for a couple of words
-  for (const v of sample(vocab, Math.min(2, vocab.length))) {
+  // Listening, mostly non-select: one "what do you hear", plus spell-from-audio + dictation
+  for (const v of sample(vocab, Math.min(1, vocab.length))) {
     exercises.push(listeningExercise(course, v))
   }
-  // Sentences as word banks (reduced share — mixed with other sentence practice below)
+  for (const v of sample(spellable, Math.min(2, spellable.length))) {
+    exercises.push(spellExercise(v, pool, true))
+  }
+  for (const s of sample(lesson.sentences, Math.min(2, lesson.sentences.length))) {
+    exercises.push(dictationExercise(s))
+  }
+  // Sentences as word banks
   for (const s of sample(lesson.sentences, Math.min(2, lesson.sentences.length))) {
     exercises.push(wordBankExercise(course, s))
   }
   // Fill-in-the-blank
   for (const s of sample(lesson.sentences, Math.min(2, lesson.sentences.length))) {
     exercises.push(clozeExercise(s))
-  }
-  // Dictation: hear it, type it
-  for (const s of sample(lesson.sentences, Math.min(1, lesson.sentences.length))) {
-    exercises.push(dictationExercise(s))
   }
   // Free translate: full-sentence production
   for (const s of sample(lesson.sentences, Math.min(1, lesson.sentences.length))) {
@@ -396,7 +481,5 @@ export function generateLessonExercises(course: Course, lesson: Lesson, crownLev
     })
   }
 
-  // Cap and shuffle, but keep first exposure (choice→EN of first word) early
-  const capped = shuffle(exercises).slice(0, 14)
-  return capped
+  return capByKind(exercises, 14)
 }

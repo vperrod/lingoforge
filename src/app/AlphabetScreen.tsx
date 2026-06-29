@@ -1,9 +1,10 @@
 import { useState } from 'react'
-import { Volume2, Play, Check, Eye, PenLine, Zap, BookOpen, ArrowLeft } from 'lucide-react'
+import { Volume2, Check, Eye, PenLine, Zap, BookOpen } from 'lucide-react'
 import { ruAlphabet, readingPractice, confusablePairs } from '../content'
 import { courses } from '../content'
 import type { AlphabetGroup, AlphabetLetter } from '../content/types'
 import type { ExerciseInstance } from '../engine/exercise-gen'
+import { spellFromWord } from '../engine/exercise-gen'
 import { LessonPlayer, type LessonResult } from '../exercises/LessonPlayer'
 import { renderExercise } from '../exercises/render'
 import { speak } from '../audio/tts'
@@ -26,7 +27,10 @@ function allLetters(): AlphabetLetter[] {
   return ruAlphabet.groups.flatMap((g) => g.letters)
 }
 
-/** Level 1: Recognition — see letter, pick sound / see sound, pick letter */
+/** Distractor-tile source for spelling drills: every lowercase Cyrillic letter. */
+const alphaPool = allLetters().map((l) => l.lower)
+
+/** Level 1: Recognition — see/hear letter → pick its sound, then build the example word you hear */
 function recognitionDrill(group: AlphabetGroup): ExerciseInstance[] {
   const exercises: ExerciseInstance[] = []
   const all = allLetters()
@@ -34,7 +38,7 @@ function recognitionDrill(group: AlphabetGroup): ExerciseInstance[] {
   for (const letter of group.letters) {
     const others = shuffle(all.filter((l) => l.letter !== letter.letter)).slice(0, 3)
 
-    // Letter → Sound
+    // Letter → Sound (core recognition)
     const soundOptions = shuffle([letter.sound, ...others.map((o) => o.sound)])
     exercises.push({
       kind: 'choice',
@@ -44,16 +48,16 @@ function recognitionDrill(group: AlphabetGroup): ExerciseInstance[] {
       correctIndex: soundOptions.indexOf(letter.sound),
       vocabIds: [`alpha:${letter.letter}`],
     })
+  }
 
-    // Sound → Letter
-    const letterOptions = shuffle([`${letter.letter} ${letter.lower}`, ...others.map((o) => `${o.letter} ${o.lower}`)])
-    exercises.push({
-      kind: 'choice',
-      prompt: `Which letter sounds like "${letter.sound}"?`,
-      options: letterOptions,
-      correctIndex: letterOptions.indexOf(`${letter.letter} ${letter.lower}`),
-      vocabIds: [`alpha:${letter.letter}`],
-    })
+  // Build the example word you hear — reading + spelling from the very first level
+  for (const letter of shuffle(group.letters).slice(0, 5)) {
+    exercises.push(
+      spellFromWord(letter.example.word, 'Spell what you hear', alphaPool, {
+        audio: true,
+        vocabIds: [`alpha:${letter.letter}`],
+      }),
+    )
   }
 
   return shuffle(exercises).slice(0, 14)
@@ -86,25 +90,13 @@ function readingDrill(group: AlphabetGroup): ExerciseInstance[] {
       vocabIds: [`alpha:${letter.letter}`],
     })
 
-    // Extra examples: see Cyrillic word, pick translation
+    // Extra examples: spell the word from its translation (reading + spelling, not select)
     const extras = letter.extraExamples ?? []
     if (extras.length > 0) {
       const ex = extras[0]
-      const otherTranslations = shuffle(
-        all.filter((l) => l.letter !== letter.letter)
-          .flatMap((l) => [l.example, ...(l.extraExamples ?? [])])
-          .map((e) => e.translation)
-          .filter((t) => t !== ex.translation),
-      ).slice(0, 3)
-      const transOptions = shuffle([ex.translation, ...otherTranslations])
-      exercises.push({
-        kind: 'choice',
-        prompt: `What does "${ex.word}" mean?`,
-        ttsText: ex.word,
-        options: transOptions,
-        correctIndex: transOptions.indexOf(ex.translation),
-        vocabIds: [`alpha:${letter.letter}`],
-      })
+      exercises.push(
+        spellFromWord(ex.word, ex.translation, alphaPool, { vocabIds: [`alpha:${letter.letter}`] }),
+      )
     }
   }
 
@@ -137,14 +129,12 @@ function productionDrill(group: AlphabetGroup): ExerciseInstance[] {
       vocabIds: [`alpha:${letter.letter}`],
     })
 
-    // Type the example word from translation
-    exercises.push({
-      kind: 'typing',
-      prompt: `Write in Russian: "${letter.example.translation}"`,
-      accept: [letter.example.word],
-      answer: letter.example.word,
-      vocabIds: [`alpha:${letter.letter}`],
-    })
+    // Spell the example word from its translation
+    exercises.push(
+      spellFromWord(letter.example.word, `Spell: "${letter.example.translation}"`, alphaPool, {
+        vocabIds: [`alpha:${letter.letter}`],
+      }),
+    )
 
     // Dictation: hear word, type it
     exercises.push({
@@ -216,16 +206,14 @@ function confusablesDrill(): ExerciseInstance[] {
       vocabIds: [`alpha:${letterB.letter}`],
     })
 
-    // Word with confusable: pick the correct word
+    // Word with confusable: build the word you hear (forces hearing the difference)
     if (letterA.example && letterB.example) {
-      const wordOptions = shuffle([letterA.example.word, letterB.example.word])
-      exercises.push({
-        kind: 'listening',
-        ttsText: letterA.example.word,
-        options: wordOptions,
-        correctIndex: wordOptions.indexOf(letterA.example.word),
-        vocabIds: [`alpha:${letterA.letter}`],
-      })
+      exercises.push(
+        spellFromWord(letterA.example.word, 'Spell what you hear', alphaPool, {
+          audio: true,
+          vocabIds: [`alpha:${letterA.letter}`],
+        }),
+      )
     }
   }
 
@@ -236,7 +224,6 @@ function confusablesDrill(): ExerciseInstance[] {
 function readingChallenge(): ExerciseInstance[] {
   const exercises: ExerciseInstance[] = []
   const allWords = Object.values(readingPractice).flat()
-  const all = allLetters()
 
   for (const w of shuffle(allWords).slice(0, 8)) {
     // Transliterate

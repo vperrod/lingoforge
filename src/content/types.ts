@@ -72,6 +72,54 @@ export interface Course {
   units: Unit[]
 }
 
+// ---- Reading (Readlang / LingQ style) ----
+
+export interface ReadingQuestion {
+  q: string
+  options: string[]
+  correctIndex: number
+}
+
+export interface DialogueTurn {
+  /** Display name of the speaker, e.g. "Анна" */
+  speaker: string
+  text: string
+  translation: string
+}
+
+export interface ReadingText {
+  id: string
+  title: string
+  level: CefrLevel
+  kind: 'story' | 'dialogue'
+  /** Story body — paragraphs separated by blank lines. Used when kind === 'story'. */
+  body?: string
+  /** Dialogue turns. Used when kind === 'dialogue'. */
+  turns?: DialogueTurn[]
+  /** Full-text translation, revealable. */
+  translation?: string
+  /** Glosses for surface forms not in the main vocab: lowercased word → translation. */
+  glossary?: Record<string, string>
+  /** Comprehension questions (mostly for dialogues). */
+  questions?: ReadingQuestion[]
+}
+
+// ---- Phrasebook (Loecsen style) ----
+
+export interface Phrase {
+  text: string
+  translation: string
+  /** If the phrase maps to a known vocab item, allow adding it to Practice. */
+  vocabId?: string
+}
+
+export interface PhrasePack {
+  id: string
+  title: string
+  icon: string // lucide icon name
+  phrases: Phrase[]
+}
+
 // ---- Alphabet (Russian) ----
 
 export interface AlphabetExample {

@@ -1,6 +1,6 @@
 import { Link } from 'react-router-dom'
 import { motion } from 'framer-motion'
-import { Lock, Check, Star, Hand, Sparkles, Coffee, Package, Users, MessageCircle, MapPin, Home, Hash, Clock, Wand2, Theater, Camera, GraduationCap, ChevronDown, ChevronUp } from 'lucide-react'
+import { Lock, Check, Star, Hand, Sparkles, Coffee, Package, Users, MessageCircle, MapPin, Home, Hash, Clock, Wand2, Theater, Camera, GraduationCap, ChevronDown, ChevronUp, BookOpen, MessagesSquare } from 'lucide-react'
 import type { LucideIcon } from 'lucide-react'
 import { courses } from '../content'
 import type { CourseId } from '../content/types'
@@ -165,6 +165,26 @@ export function PathScreen() {
         <span className="grow text-left">
           <span className="block font-display text-lg font-bold">Scenario Lesson</span>
           <span className="text-sm text-fg-muted">Practice real-life situations with AI dialogues</span>
+        </span>
+      </Link>
+
+      <Link to="/read" className="clay clay-press flex items-center gap-4 border-primary bg-indigo-50 p-4">
+        <span className="flex size-12 shrink-0 items-center justify-center rounded-full border-3 border-indigo-700 bg-primary text-on-primary">
+          <BookOpen aria-hidden />
+        </span>
+        <span className="grow text-left">
+          <span className="block font-display text-lg font-bold">Read</span>
+          <span className="text-sm text-fg-muted">Stories &amp; dialogues — tap any word to learn it</span>
+        </span>
+      </Link>
+
+      <Link to="/phrasebook" className="clay clay-press flex items-center gap-4 border-accent bg-emerald-50 p-4">
+        <span className="flex size-12 shrink-0 items-center justify-center rounded-full border-3 border-green-700 bg-accent text-on-primary">
+          <MessagesSquare aria-hidden />
+        </span>
+        <span className="grow text-left">
+          <span className="block font-display text-lg font-bold">Phrasebook</span>
+          <span className="text-sm text-fg-muted">Survival phrases for real situations</span>
         </span>
       </Link>
 

@@ -1,7 +1,10 @@
-import type { Course, CourseId, Lesson } from './types'
+import type { Course, CourseId, Lesson, ReadingText } from './types'
 import { ruCourse } from './courses/ru'
 import { esCourse } from './courses/es'
 import { ruAlphabet, readingPractice, confusablePairs } from './courses/ru-alphabet'
+import { readings } from './readings'
+import { phrasebook } from './phrasebook'
+import { grammarNotes } from './grammar'
 
 export const courses: Record<CourseId, Course> = {
   ru: ruCourse,
@@ -9,6 +12,15 @@ export const courses: Record<CourseId, Course> = {
 }
 
 export { ruAlphabet, readingPractice, confusablePairs }
+export { readings, phrasebook, grammarNotes }
+
+export function getReading(courseId: CourseId, textId: string): ReadingText | undefined {
+  return readings[courseId]?.find((r) => r.id === textId)
+}
+
+export function grammarNote(courseId: CourseId, lessonId: string): string | undefined {
+  return grammarNotes[`${courseId}:${lessonId}`]
+}
 
 export function getCourse(id: CourseId): Course {
   return courses[id]

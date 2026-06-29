@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest'
-import { courses, ruAlphabet } from './index'
+import { courses, ruAlphabet, readings, phrasebook } from './index'
 
 const courseList = Object.values(courses)
 
@@ -57,6 +57,51 @@ describe.each(courseList)('course $id integrity', (course) => {
   it('has unique lesson ids', () => {
     const ids = course.units.flatMap((u) => u.skills.flatMap((s) => s.lessons.map((l) => l.id)))
     expect(new Set(ids).size).toBe(ids.length)
+  })
+})
+
+describe.each(courseList)('reading content $id', (course) => {
+  const texts = readings[course.id] ?? []
+
+  it('has unique reading ids', () => {
+    const ids = texts.map((t) => t.id)
+    expect(new Set(ids).size).toBe(ids.length)
+  })
+
+  it('story has body, dialogue has turns', () => {
+    for (const t of texts) {
+      if (t.kind === 'story') expect(t.body, t.id).toBeTruthy()
+      else expect(t.turns?.length, t.id).toBeGreaterThan(0)
+    }
+  })
+
+  it('comprehension answers are in range', () => {
+    for (const t of texts) {
+      for (const q of t.questions ?? []) {
+        expect(q.correctIndex, `${t.id}: ${q.q}`).toBeGreaterThanOrEqual(0)
+        expect(q.correctIndex, `${t.id}: ${q.q}`).toBeLessThan(q.options.length)
+      }
+    }
+  })
+})
+
+describe.each(courseList)('phrasebook content $id', (course) => {
+  const vocabIds = new Set(course.vocab.map((v) => v.id))
+  const packs = phrasebook[course.id] ?? []
+
+  it('has unique pack ids', () => {
+    const ids = packs.map((p) => p.id)
+    expect(new Set(ids).size).toBe(ids.length)
+  })
+
+  it('phrase vocabIds reference existing vocab', () => {
+    const missing: string[] = []
+    for (const pack of packs) {
+      for (const phrase of pack.phrases) {
+        if (phrase.vocabId && !vocabIds.has(phrase.vocabId)) missing.push(`${pack.id}:${phrase.vocabId}`)
+      }
+    }
+    expect(missing).toEqual([])
   })
 })
 

@@ -12,6 +12,7 @@ import { ErrorCorrectionExercise } from './ErrorCorrectionExercise'
 import { ReorderDictationExercise } from './ReorderDictationExercise'
 import { DialogueExercise } from './DialogueExercise'
 import { PhraseOrderExercise } from './PhraseOrderExercise'
+import { SpellExercise } from './SpellExercise'
 
 export function renderExercise(
   exercise: ExerciseInstance,
@@ -145,6 +146,17 @@ export function renderExercise(
       return (
         <PhraseOrderExercise
           phrases={exercise.phrases}
+          onAnswer={onAnswer}
+        />
+      )
+    case 'spell':
+      return (
+        <SpellExercise
+          prompt={exercise.prompt}
+          answer={exercise.answer}
+          tiles={exercise.tiles}
+          ttsText={exercise.ttsText}
+          ttsLang={ttsLang}
           onAnswer={onAnswer}
         />
       )

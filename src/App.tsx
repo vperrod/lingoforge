@@ -15,6 +15,9 @@ import { TopicLessonScreen } from './app/TopicLessonScreen'
 import { ScenarioPickerScreen } from './app/ScenarioPickerScreen'
 import { ScenarioLessonScreen } from './app/ScenarioLessonScreen'
 import { PointLearnScreen } from './app/PointLearnScreen'
+import { ReadingPickerScreen } from './app/ReadingPickerScreen'
+import { ReadingScreen } from './app/ReadingScreen'
+import { PhrasebookScreen } from './app/PhrasebookScreen'
 
 export default function App() {
   const { profiles, activeProfileId } = useProfiles()
@@ -38,6 +41,7 @@ export default function App() {
         <Route path="/topic-lesson/play" element={<TopicLessonScreen />} />
         <Route path="/scenario-lesson/play" element={<ScenarioLessonScreen />} />
         <Route path="/point-learn" element={<PointLearnScreen />} />
+        <Route path="/read/:courseId/:textId" element={<ReadingScreen />} />
         <Route element={<Layout />}>
           <Route path="/" element={<PathScreen />} />
           <Route path="/alphabet" element={<AlphabetScreen />} />
@@ -45,6 +49,8 @@ export default function App() {
           <Route path="/stats" element={<StatsScreen />} />
           <Route path="/topic-lesson" element={<TopicPickerScreen />} />
           <Route path="/scenario-lesson" element={<ScenarioPickerScreen />} />
+          <Route path="/read" element={<ReadingPickerScreen />} />
+          <Route path="/phrasebook" element={<PhrasebookScreen />} />
         </Route>
       </Routes>
     </HashRouter>

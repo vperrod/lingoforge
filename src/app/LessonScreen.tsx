@@ -2,7 +2,8 @@ import { useMemo, useState } from 'react'
 import { useNavigate, useParams } from 'react-router-dom'
 import { motion } from 'framer-motion'
 import { Zap, Target, Timer } from 'lucide-react'
-import { courses, getLesson } from '../content'
+import { Lightbulb } from 'lucide-react'
+import { courses, getLesson, grammarNote } from '../content'
 import type { CourseId } from '../content/types'
 import { generateLessonExercises } from '../engine/exercise-gen'
 import { LessonPlayer, type LessonResult } from '../exercises/LessonPlayer'
@@ -19,10 +20,12 @@ export function LessonScreen() {
   const data = useProgress((s) => s.data)
   const { addXp, addStudyMinutes, completeLesson, reviewVocab, earnBadge } = useProgress()
   const [result, setResult] = useState<LessonResult | null>(null)
+  const [started, setStarted] = useState(false)
 
   const course = courseId ? courses[courseId] : undefined
   const lesson = course && lessonId ? getLesson(course, lessonId) : undefined
   const crowns = course && lessonId ? (data.courses[course.id]?.lessonCompletions[lessonId] ?? 0) : 0
+  const note = courseId && lessonId ? grammarNote(courseId, lessonId) : undefined
 
   const exercises = useMemo(
     () => (course && lesson ? generateLessonExercises(course, lesson, crowns) : []),
@@ -83,6 +86,22 @@ export function LessonScreen() {
         </div>
         <ClayButton variant="primary" className="min-w-48" onClick={() => navigate('/')}>
           Continue
+        </ClayButton>
+      </main>
+    )
+  }
+
+  if (note && !started) {
+    return (
+      <main className="mx-auto flex min-h-dvh w-full max-w-2xl flex-col justify-center gap-6 p-6">
+        <div className="clay flex flex-col gap-3 border-gold bg-amber-50 p-6">
+          <h1 className="flex items-center gap-2 font-display text-xl font-bold">
+            <Lightbulb className="size-6 text-gold" aria-hidden /> {lesson.title}
+          </h1>
+          <p className="text-lg leading-relaxed">{note}</p>
+        </div>
+        <ClayButton variant="primary" className="min-w-48 self-center" onClick={() => setStarted(true)}>
+          Start lesson
         </ClayButton>
       </main>
     )
