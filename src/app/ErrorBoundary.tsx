@@ -32,10 +32,17 @@ function logLocalError(context: string, error: Error) {
   } catch {
     // ignore logging failures
   }
+  const key = '__lingoforge_error_log'
+  let arr: unknown[]
   try {
-    const key = '__lingoforge_error_log'
     const raw = localStorage.getItem(key)
-    const arr = raw ? JSON.parse(raw) : []
+    arr = raw ? JSON.parse(raw) : []
+    if (!Array.isArray(arr)) arr = []
+  } catch {
+    // corrupted stored log: drop it, but still log the current error below
+    arr = []
+  }
+  try {
     arr.push(payload)
     localStorage.setItem(key, JSON.stringify(arr.slice(-100)))
   } catch {

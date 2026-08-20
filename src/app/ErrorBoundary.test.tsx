@@ -42,6 +42,23 @@ describe('ErrorBoundary', () => {
     ])
   })
 
+  it('still logs the new error when the stored log is corrupted', () => {
+    const consoleSpy = vi.spyOn(console, 'error').mockImplementation(() => {})
+    const setItemSpy = vi.spyOn(localStorage, 'setItem').mockImplementation(() => {})
+    vi.spyOn(localStorage, 'getItem').mockReturnValue('not valid json{')
+
+    const boundary = new ErrorBoundary({ children: null }, {})
+    boundary.componentDidCatch(sampleError)
+
+    expect(consoleSpy).toHaveBeenCalledWith('[lingoforge]', expect.objectContaining({ message: 'boom' }))
+    expect(setItemSpy).toHaveBeenCalledOnce()
+
+    const call = setItemSpy.mock.calls[0] as [string, string]
+    expect(JSON.parse(call[1])).toEqual([
+      expect.objectContaining({ message: 'boom', timestamp: expect.any(String) }),
+    ])
+  })
+
   it('uses the injected context for local logs when provided', () => {
     vi.spyOn(localStorage, 'setItem').mockImplementation(() => {})
     vi.spyOn(localStorage, 'getItem').mockReturnValue(null)
