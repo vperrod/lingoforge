@@ -44,6 +44,21 @@ afterEach(() => {
 })
 
 describe('ReviewScreen', () => {
+  it('excludes point-learn discoveries from the due badge since they never resolve into the queue', () => {
+    const data = emptyProgress('ru')
+    data.courses.ru = {
+      lessonCompletions: {},
+      srsItems: { 'pointlearn:apple': { ...newSrsItem('pointlearn:apple'), dueAt: Date.now() - 1000 } },
+    }
+    useProgress.setState({ profileId: 'test-profile', data, storageError: false })
+
+    render(<ReviewScreen />)
+    expect(screen.queryByText('Start review')).toBeNull()
+    expect(
+      screen.getByText('Complete lessons to add words here. They come back for review right when you are about to forget them.'),
+    ).toBeTruthy()
+  })
+
   it('shows how many words are due and offers to start review', () => {
     render(<ReviewScreen />)
     expect(screen.getByText('1')).toBeTruthy()

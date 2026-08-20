@@ -19,7 +19,10 @@ export function ReviewScreen() {
   const [finished, setFinished] = useState<LessonResult | null>(null)
 
   const course = courses[data.activeCourse]
-  const srsItems = Object.values(data.courses[course.id]?.srsItems ?? {})
+  const vocabIds = new Set(course.vocab.map((v) => v.id))
+  const srsItems = Object.values(data.courses[course.id]?.srsItems ?? {}).filter((item) =>
+    vocabIds.has(item.vocabId),
+  )
   const due = dueItems(srsItems)
   const stage = courseStage(course, data.courses[course.id]?.lessonCompletions ?? {})
 
