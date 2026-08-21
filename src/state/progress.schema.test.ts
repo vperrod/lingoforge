@@ -71,4 +71,21 @@ describe('progress schema rejects invalid objects', () => {
   it('rejects non-integer completion counts', () => {
     expect(courseProgressSchema.safeParse({ lessonCompletions: { l1: 1.5 }, srsItems: {} }).success).toBe(false)
   })
+
+  it('rejects an infinite stability', () => {
+    expect(
+      srsItemSchema.safeParse({
+        vocabId: 'v1',
+        stability: Infinity,
+        difficulty: 0.1,
+        dueAt: 0,
+        reps: 1,
+        lapses: 0,
+      }).success,
+    ).toBe(false)
+  })
+
+  it('rejects a negative xp', () => {
+    expect(progressDataSchema.safeParse({ xp: -1, activeCourse: 'ru' }).success).toBe(false)
+  })
 })

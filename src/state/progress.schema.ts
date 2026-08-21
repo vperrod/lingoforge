@@ -13,9 +13,9 @@ export const dayLogSchema = z.object({
 
 export const srsItemSchema = z.object({
   vocabId: z.string().min(1),
-  stability: z.number(),
-  difficulty: z.number(),
-  dueAt: z.number(),
+  stability: z.number().finite().positive(),
+  difficulty: z.number().finite().nonnegative(),
+  dueAt: z.number().finite().nonnegative(),
   reps: z.number().int().nonnegative(),
   lapses: z.number().int().nonnegative(),
 })
@@ -30,9 +30,9 @@ export const courseProgressSchema = z.object({
 // ---- Top-level Progress shape ----
 
 export const progressDataSchema = z.object({
-  xp: z.number(),
+  xp: z.number().finite().nonnegative(),
   activeCourse: courseIdSchema,
-  dailyGoalMinutes: z.number(),
+  dailyGoalMinutes: z.number().finite().positive(),
   /** 'YYYY-MM-DD' → log */
   dailyLog: z.record(z.string(), dayLogSchema),
   badges: z.record(z.string(), z.number()),
