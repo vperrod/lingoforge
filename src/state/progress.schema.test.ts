@@ -88,4 +88,14 @@ describe('progress schema rejects invalid objects', () => {
   it('rejects a negative xp', () => {
     expect(progressDataSchema.safeParse({ xp: -1, activeCourse: 'ru' }).success).toBe(false)
   })
+
+  it('rejects an infinite dayLog minutes', () => {
+    expect(dayLogSchema.safeParse({ minutes: Infinity, xp: 10, lessons: 1 }).success).toBe(false)
+  })
+
+  it('rejects a negative badge value', () => {
+    expect(
+      progressDataSchema.safeParse({ xp: 0, activeCourse: 'ru', badges: { streak: -1 } }).success,
+    ).toBe(false)
+  })
 })

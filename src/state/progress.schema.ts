@@ -6,9 +6,9 @@ export const courseIdSchema = z.string()
 // ---- Primitive nested objects ----
 
 export const dayLogSchema = z.object({
-  minutes: z.number(),
-  xp: z.number(),
-  lessons: z.number(), // lessons counted for this day
+  minutes: z.number().finite().nonnegative(),
+  xp: z.number().finite().nonnegative(),
+  lessons: z.number().finite().nonnegative(), // lessons counted for this day
 })
 
 export const srsItemSchema = z.object({
@@ -35,7 +35,7 @@ export const progressDataSchema = z.object({
   dailyGoalMinutes: z.number().finite().positive(),
   /** 'YYYY-MM-DD' → log */
   dailyLog: z.record(z.string(), dayLogSchema),
-  badges: z.record(z.string(), z.number()),
+  badges: z.record(z.string(), z.number().finite().nonnegative()),
   courses: z.partialRecord(courseIdSchema, courseProgressSchema),
 })
 
