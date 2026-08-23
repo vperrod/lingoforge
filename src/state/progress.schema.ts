@@ -1,7 +1,7 @@
 import { z } from 'zod'
 
 // Reusable CourseId alias so the schema matches src/content/types.ts
-export const courseIdSchema = z.string()
+export const courseIdSchema = z.enum(['ru', 'es'])
 
 // ---- Primitive nested objects ----
 
