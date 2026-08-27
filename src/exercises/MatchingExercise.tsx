@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import { shuffle } from '../engine/seeded-random'
 
 interface Pair {
@@ -19,6 +19,11 @@ export function MatchingExercise({ pairs, onAnswer }: Props) {
   const [matched, setMatched] = useState<Set<string>>(new Set())
   const [shake, setShake] = useState<string | null>(null)
   const [mistakes, setMistakes] = useState(0)
+  const shakeTimeout = useRef<ReturnType<typeof setTimeout> | null>(null)
+
+  useEffect(() => () => {
+    if (shakeTimeout.current) clearTimeout(shakeTimeout.current)
+  }, [])
 
   const tryMatch = (rightVocabId: string) => {
     if (!selectedLeft) return
@@ -32,7 +37,8 @@ export function MatchingExercise({ pairs, onAnswer }: Props) {
     } else {
       setMistakes((m) => m + 1)
       setShake(rightVocabId)
-      setTimeout(() => setShake(null), 300)
+      if (shakeTimeout.current) clearTimeout(shakeTimeout.current)
+      shakeTimeout.current = setTimeout(() => setShake(null), 300)
       setSelectedLeft(null)
     }
   }

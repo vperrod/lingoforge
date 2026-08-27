@@ -8,7 +8,7 @@ import type { StateStorage } from 'zustand/middleware'
  * uncaught error from createProfile/setAiEnabled etc. Here it degrades to
  * in-memory-only state instead.
  */
-const safeLocalStorage: StateStorage = {
+export const safeLocalStorage: StateStorage = {
   getItem: (name) => {
     try {
       return localStorage.getItem(name)
