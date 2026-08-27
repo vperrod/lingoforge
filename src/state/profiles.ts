@@ -3,10 +3,16 @@ import { persist } from 'zustand/middleware'
 import type { CourseId } from '../content/types'
 import { safeJSONStorage } from './safe-storage'
 
-/** crypto.randomUUID is missing on some older browsers / non-secure contexts */
+/** crypto.randomUUID needs a secure context; crypto.getRandomValues doesn't
+ *  and is available anywhere randomUUID would be missing, so it's the real
+ *  fallback — Math.random is not collision-resistant enough for an id. */
 function newProfileId(): string {
   if (typeof crypto !== 'undefined' && typeof crypto.randomUUID === 'function') {
     return crypto.randomUUID()
+  }
+  if (typeof crypto !== 'undefined' && typeof crypto.getRandomValues === 'function') {
+    const bytes = crypto.getRandomValues(new Uint8Array(10))
+    return `p-${Date.now()}-${Array.from(bytes, b => b.toString(16).padStart(2, '0')).join('')}`
   }
   return `p-${Date.now()}-${Math.random().toString(36).slice(2, 10)}`
 }
