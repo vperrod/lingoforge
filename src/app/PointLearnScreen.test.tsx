@@ -11,6 +11,7 @@ vi.mock('../services/vision', () => ({ identifyObjects: vi.fn(), captureFrame: v
 import { isOllamaOnline } from '../services/ollama'
 import { identifyObjects, captureFrame } from '../services/vision'
 import { PointLearnScreen } from './PointLearnScreen'
+import { emptyProgress, useProgress } from '../state/progress'
 import { useSettings } from '../state/settings'
 
 const mockIsOllamaOnline = vi.mocked(isOllamaOnline)
@@ -120,6 +121,33 @@ describe('PointLearnScreen phase machine', () => {
 
     const signal = mockIdentifyObjects.mock.calls[0][2]
     expect(signal?.aborted).toBe(true)
+  })
+
+  it('adds a detected word to review under its real course vocab id', async () => {
+    useProgress.setState({ profileId: 'test-profile', data: emptyProgress('ru'), storageError: false })
+    mockIdentifyObjects.mockResolvedValue([{ ...detectedObject, nameTarget: 'Привет' }])
+
+    render(<PointLearnScreen />)
+    await screen.findByLabelText('Take photo')
+    snap()
+    fireEvent.click(await screen.findByText('Привет'))
+    fireEvent.click(screen.getByText('Add to review'))
+
+    // The real vocab id 'privet', never a synthetic 'pointlearn:*' key —
+    // ReviewScreen drops SRS entries whose id is not in course.vocab
+    expect(Object.keys(useProgress.getState().data.courses.ru?.srsItems ?? {})).toEqual(['privet'])
+
+    useProgress.setState({ profileId: null, data: emptyProgress(), storageError: false })
+  })
+
+  it('offers no "Add to review" for a word that is not in the course vocab', async () => {
+    render(<PointLearnScreen />)
+    await screen.findByLabelText('Take photo')
+    snap()
+    fireEvent.click(await screen.findByText('taza'))
+
+    await screen.findByText('Hear example')
+    expect(screen.queryByText('Add to review')).toBeNull()
   })
 
   it('retrying from offline restarts the camera', async () => {

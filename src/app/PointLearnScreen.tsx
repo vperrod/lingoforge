@@ -98,8 +98,20 @@ export function PointLearnScreen() {
     startCamera()
   }
 
+  // ReviewScreen only schedules SRS items whose id exists in course.vocab, so a
+  // detected word can enter review only through a matching vocab item — a
+  // synthetic id would sit in storage and never come due.
+  const vocabFor = (obj: DetectedObject) => {
+    const name = obj.nameTarget.trim().toLowerCase()
+    return course.vocab.find(
+      (v) => v.lemma.toLowerCase() === name || v.forms?.some((f) => f.toLowerCase() === name),
+    )
+  }
+
   const addToReview = (obj: DetectedObject) => {
-    reviewVocab(data.activeCourse, `pointlearn:${obj.nameTarget}`, true)
+    const vocab = vocabFor(obj)
+    if (!vocab) return
+    reviewVocab(data.activeCourse, vocab.id, true)
     setAdded((prev) => new Set(prev).add(obj.nameTarget))
   }
 
@@ -270,11 +282,11 @@ export function PointLearnScreen() {
                 <ClayButton variant="neutral" disabled>
                   <Check className="size-4" aria-hidden /> Added to review
                 </ClayButton>
-              ) : (
+              ) : vocabFor(selected) ? (
                 <ClayButton variant="primary" onClick={() => addToReview(selected)}>
                   <Plus className="size-4" aria-hidden /> Add to review
                 </ClayButton>
-              )}
+              ) : null}
               <ClayButton
                 variant="neutral"
                 onClick={() => speak(selected.example, course.ttsLang)}
