@@ -1,6 +1,6 @@
 import { describe, it, expect } from 'vitest'
 import { optionOrder } from '../app/option-order'
-import { courses, ruAlphabet, readings, phrasebook } from './index'
+import { courses, ruAlphabet, readingPractice, readings, phrasebook } from './index'
 
 const courseList = Object.values(courses)
 
@@ -151,5 +151,25 @@ describe('russian alphabet', () => {
     const letters = ruAlphabet.groups.flatMap((g) => g.letters.map((l) => l.letter))
     expect(letters.length).toBe(33)
     expect(new Set(letters).size).toBe(33)
+  })
+
+  // AlphabetScreen scores drills with options.indexOf(correctValue): a duplicate
+  // sound/word/hint would silently make a right answer score as wrong.
+  const letters = ruAlphabet.groups.flatMap((g) => g.letters)
+  it.each([
+    ['sound', letters.map((l) => l.sound)],
+    ['example word', letters.map((l) => l.example.word)],
+    ['example hint', letters.map((l) => l.example.hint)],
+  ])('letter %s values are unique', (_, values) => {
+    expect(new Set(values).size).toBe(values.length)
+  })
+
+  const practice = Object.values(readingPractice).flat()
+  it.each([
+    ['word', practice.map((w) => w.word)],
+    ['hint', practice.map((w) => w.hint)],
+    ['translation', practice.map((w) => w.translation)],
+  ])('reading practice %s values are unique', (_, values) => {
+    expect(new Set(values).size).toBe(values.length)
   })
 })
