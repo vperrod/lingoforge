@@ -6,14 +6,11 @@ import { useProgress } from '../state/progress'
 import { ClayButton } from '../ui/ClayButton'
 import { SpeakerButton } from '../ui/SpeakerButton'
 import { playFanfare } from '../audio/sfx'
+import { shuffle } from '../engine/seeded-random'
 
 function unitVocab(course: Course, unit: Unit): VocabItem[] {
   const ids = new Set(unit.skills.flatMap((s) => s.lessons.flatMap((l) => l.vocabIds)))
   return [...ids].map((id) => course.vocab.find((v) => v.id === id)).filter((v): v is VocabItem => Boolean(v))
-}
-
-function shuffle<T>(arr: T[]): T[] {
-  return [...arr].sort(() => Math.random() - 0.5)
 }
 
 export function FlashcardsScreen() {

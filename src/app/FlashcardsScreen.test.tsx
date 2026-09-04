@@ -12,8 +12,8 @@ vi.mock('../audio/tts', () => ({ speak: vi.fn(), stopSpeaking: vi.fn() }))
 import { FlashcardsScreen } from './FlashcardsScreen'
 import { useProgress, emptyProgress } from '../state/progress'
 
-// Unit 1 of the Russian course has 18 cards; a constant random keeps the shuffle
-// comparator at 0 so the deck stays in vocab order (first card = "privet").
+// Unit 1 of the Russian course has 18 cards; a random just under 1 makes Fisher-Yates
+// swap every card with itself so the deck stays in vocab order (first card = "privet").
 const DECK_SIZE = 18
 
 function startFirstDeck() {
@@ -27,7 +27,7 @@ function rateAll(correct: boolean, lastCorrect = correct) {
 }
 
 beforeEach(() => {
-  vi.spyOn(Math, 'random').mockReturnValue(0.5)
+  vi.spyOn(Math, 'random').mockReturnValue(0.999)
   useProgress.setState({ profileId: 'test-profile', data: emptyProgress('ru'), storageError: false })
 })
 
