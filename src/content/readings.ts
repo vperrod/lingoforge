@@ -128,6 +128,91 @@ export const readings: Record<CourseId, ReadingText[]> = {
         },
       ],
     },
+    {
+      id: 'ru-read-friend',
+      title: 'Мой друг',
+      level: 'A1',
+      kind: 'story',
+      body: 'Мой друг — Иван. Он живёт в Москве и работает в магазине.\n\nИван говорит по-русски и по-английски. У него есть кот и собака. Мы играем в парке. Иван — очень хороший друг!',
+      translation:
+        'My friend is Ivan. He lives in Moscow and works in a shop. Ivan speaks Russian and English. He has a cat and a dog. We play in the park. Ivan is a very good friend!',
+      glossary: {
+        'иван': 'Ivan (name)',
+        'и': 'and',
+        'него': 'him (у него есть = he has)',
+        'играем': 'we play',
+        'парке': 'in the park',
+        'хороший': 'good (m.)',
+      },
+    },
+    {
+      id: 'ru-dlg-metro',
+      title: 'Где метро?',
+      level: 'A2',
+      kind: 'dialogue',
+      turns: [
+        { speaker: 'Турист', text: 'Извините, пожалуйста! Где здесь метро?', translation: 'Excuse me, please! Where is the metro here?' },
+        { speaker: 'Прохожий', text: 'Метро близко. Идите прямо, потом направо.', translation: 'The metro is close. Go straight, then to the right.' },
+        { speaker: 'Турист', text: 'Это далеко?', translation: 'Is it far?' },
+        { speaker: 'Прохожий', text: 'Нет, пять минут. Там остановка.', translation: 'No, five minutes. The bus stop is there.' },
+        { speaker: 'Турист', text: 'А где можно купить билет?', translation: 'And where can I buy a ticket?' },
+        { speaker: 'Прохожий', text: 'В метро есть касса. Билет стоит пять рублей.', translation: 'There is a ticket desk in the metro. A ticket costs five rubles.' },
+        { speaker: 'Турист', text: 'Спасибо большое! До свидания.', translation: 'Thank you very much! Goodbye.' },
+        { speaker: 'Прохожий', text: 'Пожалуйста! До свидания.', translation: 'You are welcome! Goodbye.' },
+      ],
+      glossary: {
+        'турист': 'tourist',
+        'прохожий': 'passer-by',
+        'идите': 'go! (formal imperative)',
+        'минут': 'minutes',
+        'а': 'and / but',
+        'большое': 'big (n.) — спасибо большое = thanks a lot',
+      },
+      questions: [
+        {
+          q: 'How does the tourist get to the metro?',
+          options: ['Straight, then right', 'Straight, then left', 'By train', 'Past the shop'],
+          correctIndex: 0,
+        },
+        {
+          q: 'How much does a ticket cost?',
+          options: ['Five rubles', 'Ten rubles', 'It is free', 'Two rubles'],
+          correctIndex: 0,
+        },
+      ],
+    },
+    {
+      id: 'ru-read-trip',
+      title: 'Поезд в Москву',
+      level: 'B1',
+      kind: 'story',
+      body: 'Вчера я пошёл на вокзал, потому что я хотел купить билет в Москву. Касса была открыта, и я купил билет.\n\nУтром я пришёл на вокзал рано. Поезд был большой и красивый. Я читал книгу, потом смотрел в окно.\n\nЕсли бы у меня было больше времени, я бы посмотрел город. Но сегодня я очень рад, потому что Москва — красивый город.',
+      translation:
+        'Yesterday I went to the train station, because I wanted to buy a ticket to Moscow. The ticket desk was open, and I bought a ticket. In the morning I arrived at the station early. The train was big and beautiful. I read a book, then looked out of the window. If I had had more time, I would have looked around the city. But today I am very glad, because Moscow is a beautiful city.',
+      glossary: {
+        'на': 'to / at',
+        'хотел': 'wanted (m.)',
+        'москву': 'Moscow (accusative)',
+        'и': 'and',
+        'купил': 'bought (m.)',
+        'утром': 'in the morning',
+        'окно': 'window',
+        'больше': 'more',
+        'но': 'but',
+      },
+      questions: [
+        {
+          q: 'Why did he go to the station?',
+          options: ['To buy a ticket to Moscow', 'To meet a friend', 'To work there', 'To read a book'],
+          correctIndex: 0,
+        },
+        {
+          q: 'What did he do on the train?',
+          options: ['Read a book and looked out of the window', 'Slept the whole way', 'Ate soup', 'Wrote a letter'],
+          correctIndex: 0,
+        },
+      ],
+    },
   ],
   es: [
     {
