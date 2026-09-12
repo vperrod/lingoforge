@@ -20,7 +20,15 @@ export function shuffle<T>(arr: T[], rng = Math.random): T[] {
   return a
 }
 
+/** Partial Fisher-Yates: stops after `n` swaps instead of shuffling the
+ * whole array, since callers only ever want a handful of items back. */
 export function sample<T>(arr: T[], n: number, rng: (() => number) | undefined = undefined): T[] {
   const random = rng ?? Math.random
-  return shuffle(arr, random).slice(0, n)
+  const count = Math.min(n, arr.length)
+  const a = [...arr]
+  for (let i = 0; i < count; i++) {
+    const j = i + Math.floor(random() * (a.length - i))
+    ;[a[i], a[j]] = [a[j], a[i]]
+  }
+  return a.slice(0, count)
 }
