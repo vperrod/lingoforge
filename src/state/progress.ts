@@ -90,7 +90,14 @@ interface ProgressState {
   earnBadge: (badgeId: string) => void
   exportData: () => string
   importData: (json: string) => boolean
+  /** Writes any pending debounced save immediately (e.g. before navigating away). */
+  flushSave: () => void
 }
+
+/** reviewVocab/addXp/bumpDay fire back-to-back per exercise answer, each re-serializing
+ *  the full blob (all courses' srsItems + daily log history) — debounce so a burst of
+ *  calls in the same interaction produces one write instead of one per call. */
+const SAVE_DEBOUNCE_MS = 400
 
 function saveToStorage(profileId: string | null, data: ProgressData): boolean {
   if (!profileId) return true
@@ -105,11 +112,30 @@ function saveToStorage(profileId: string | null, data: ProgressData): boolean {
 }
 
 export const useProgress = create<ProgressState>()((set, get) => {
-  const update = (fn: (d: ProgressData) => ProgressData) => {
+  let saveTimer: ReturnType<typeof setTimeout> | null = null
+
+  const flushSave = () => {
+    if (saveTimer === null) return
+    clearTimeout(saveTimer)
+    saveTimer = null
     const { profileId, data } = get()
+    const saved = saveToStorage(profileId, data)
+    set({ storageError: !saved })
+  }
+
+  if (typeof window !== 'undefined') {
+    window.addEventListener('pagehide', flushSave)
+    window.addEventListener('visibilitychange', () => {
+      if (document.visibilityState === 'hidden') flushSave()
+    })
+  }
+
+  const update = (fn: (d: ProgressData) => ProgressData) => {
+    const { data } = get()
     const next = fn(data)
-    const saved = saveToStorage(profileId, next)
-    set({ data: next, storageError: !saved })
+    set({ data: next })
+    if (saveTimer !== null) clearTimeout(saveTimer)
+    saveTimer = setTimeout(flushSave, SAVE_DEBOUNCE_MS)
   }
 
   const bumpDay = (d: ProgressData, delta: Partial<DayLog>): ProgressData => {
@@ -134,6 +160,7 @@ export const useProgress = create<ProgressState>()((set, get) => {
     storageError: false,
 
     loadForProfile: (profileId, defaultCourse) => {
+      flushSave() // don't lose a pending debounced write for the profile being switched away from
       const key = progressStorageKey(profileId)
       const raw = localStorage.getItem(key)
       let data = emptyProgress(defaultCourse)
@@ -231,10 +258,13 @@ export const useProgress = create<ProgressState>()((set, get) => {
         const parsed: unknown = JSON.parse(json)
         if (!isProgressData(parsed)) return false
         update(() => progressDataSchema.parse(parsed))
+        flushSave()
         return true
       } catch {
         return false
       }
     },
+
+    flushSave,
   }
 })

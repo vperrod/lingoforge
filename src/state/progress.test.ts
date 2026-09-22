@@ -177,6 +177,7 @@ describe('isProgressData', () => {
 
 describe('useProgress store', () => {
   beforeEach(() => {
+    useProgress.getState().flushSave() // discard any debounced write left pending by the previous test
     localStorage.clear()
     useProgress.getState().loadForProfile('test-profile', 'ru')
   })
@@ -335,23 +336,41 @@ describe('useProgress store', () => {
       })
     }
 
-    it('keeps the in-memory mutation when setItem throws', () => {
+    it('keeps the in-memory mutation when the debounced save fails', () => {
       failNextSetItem()
       useProgress.getState().addXp(10)
+      useProgress.getState().flushSave()
       expect(useProgress.getState().data.xp).toBe(10)
     })
 
-    it('sets storageError when setItem throws', () => {
+    it('sets storageError when the debounced save fails', () => {
       failNextSetItem()
       useProgress.getState().addXp(10)
+      useProgress.getState().flushSave()
       expect(useProgress.getState().storageError).toBe(true)
     })
 
     it('clears storageError once a later save succeeds', () => {
       failNextSetItem()
       useProgress.getState().addXp(10)
+      useProgress.getState().flushSave()
       useProgress.getState().addXp(5)
+      useProgress.getState().flushSave()
       expect(useProgress.getState().storageError).toBe(false)
+    })
+  })
+
+  describe('debounced save', () => {
+    it('coalesces multiple rapid updates into a single localStorage write', () => {
+      const spy = vi.spyOn(localStorage, 'setItem')
+      const key = progressStorageKey('test-profile')
+      spy.mockClear()
+      useProgress.getState().addXp(10)
+      useProgress.getState().reviewVocab('ru', 'v1', true)
+      useProgress.getState().addStudyMinutes(5)
+      expect(spy.mock.calls.filter(([k]) => k === key)).toHaveLength(0)
+      useProgress.getState().flushSave()
+      expect(spy.mock.calls.filter(([k]) => k === key)).toHaveLength(1)
     })
   })
 

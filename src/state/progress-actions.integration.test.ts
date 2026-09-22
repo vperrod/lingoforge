@@ -23,6 +23,7 @@ const isPersistedShape = (data: unknown): data is { xp: number; activeCourse: st
 
 describe('Zustand integration: completeLesson + skipToUnit + reviewVocab + earnBadge', () => {
   beforeEach(() => {
+    useProgress.getState().flushSave() // discard any debounced write left pending by the previous test
     localStorage.clear()
     useProgress.getState().loadForProfile('integration', 'ru')
   })
