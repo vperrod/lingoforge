@@ -2,14 +2,14 @@ import type { Course, VocabItem } from '../content/types'
 import type { ExerciseInstance } from './exercise-gen'
 import { blanksFor, letterPool, spellFromWord } from './exercise-gen'
 import type { Stage } from './production-stage'
-import { shuffle } from './seeded-random'
+import { sample, shuffle } from './seeded-random'
 
 /**
  * Production follows the learner's stage (production-stage.ts); a text field only
  * once the course is at the typing stage AND this word is already known.
  */
 export function reviewExercise(course: Course, vocab: VocabItem, stage: Stage, known: boolean): ExerciseInstance {
-  const distractors = shuffle(course.vocab.filter((v) => v.id !== vocab.id)).slice(0, 3)
+  const distractors = sample(course.vocab.filter((v) => v.id !== vocab.id), 3)
   // Alternate directions randomly; production for variety
   const roll = Math.random()
   if (roll < 0.4) {
@@ -44,8 +44,7 @@ export function reviewExercise(course: Course, vocab: VocabItem, stage: Stage, k
   }
   if (vocab.lemma.includes(' ')) {
     const chips = vocab.lemma.split(/\s+/)
-    const distractors = shuffle(course.vocab.filter((v) => !v.lemma.includes(' ') && !chips.includes(v.lemma)))
-      .slice(0, 2)
+    const distractors = sample(course.vocab.filter((v) => !v.lemma.includes(' ') && !chips.includes(v.lemma)), 2)
       .map((v) => v.lemma)
     return {
       kind: 'wordBank',
@@ -62,4 +61,3 @@ export function reviewExercise(course: Course, vocab: VocabItem, stage: Stage, k
     ...(wholeWord ? {} : { blanks: blanksFor(vocab.lemma) }),
   })
 }
-
