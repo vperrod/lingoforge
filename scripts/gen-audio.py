@@ -22,6 +22,7 @@ Coverage:
 import asyncio
 import re
 import sys
+import unicodedata
 from pathlib import Path
 
 import edge_tts
@@ -116,11 +117,20 @@ def split_sentences(body: str) -> list[str]:
     return out
 
 
+def _is_letter_or_mark(ch: str) -> bool:
+    return unicodedata.category(ch)[0] in ("L", "M")
+
+
 def split_words(body: str) -> list[str]:
     """Twin of splitWords() in src/content/sentences.ts — every tappable word."""
     out: list[str] = []
     for word in re.split(r"\s+", body):
-        word = re.sub(r"^[^\w]+|[^\w]+$", "", word, flags=re.UNICODE).strip("_")
+        start, end = 0, len(word)
+        while start < end and not _is_letter_or_mark(word[start]):
+            start += 1
+        while end > start and not _is_letter_or_mark(word[end - 1]):
+            end -= 1
+        word = word[start:end]
         if word:
             out.append(word)
     return out
