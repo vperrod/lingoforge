@@ -1,6 +1,28 @@
-import { describe, it, expect } from 'vitest'
+import { describe, it, expect, vi } from 'vitest'
 import { optionOrder } from '../app/option-order'
 import { courses, ruAlphabet, readingPractice, readings, phrasebook } from './index'
+import { phrasesForVocabIds } from './phrasebook'
+
+// Add a well-formed duplicate pack so the "first pack wins" behaviour of
+// phrasesForVocabIds can be exercised (no real vocabId repeats across packs).
+vi.mock('./phrasebook', async (importOriginal) => {
+  const actual = await importOriginal<typeof import('./phrasebook')>()
+  return {
+    ...actual,
+    phrasebook: {
+      ...actual.phrasebook,
+      ru: [
+        ...actual.phrasebook.ru,
+        {
+          id: 'ru-test-dup',
+          title: 'Test duplicate',
+          icon: 'hand',
+          phrases: [{ text: 'Приветик', translation: 'Hi (dup)', vocabId: 'privet' }],
+        },
+      ],
+    },
+  }
+})
 
 const courseList = Object.values(courses)
 
@@ -165,11 +187,38 @@ describe('russian alphabet', () => {
   })
 
   const practice = Object.values(readingPractice).flat()
-  it.each([
-    ['word', practice.map((w) => w.word)],
-    ['hint', practice.map((w) => w.hint)],
-    ['translation', practice.map((w) => w.translation)],
-  ])('reading practice %s values are unique', (_, values) => {
-    expect(new Set(values).size).toBe(values.length)
+    it.each([
+      ['word', practice.map((w) => w.word)],
+      ['hint', practice.map((w) => w.hint)],
+      ['translation', practice.map((w) => w.translation)],
+    ])('reading practice %s values are unique', (_, values) => {
+      expect(new Set(values).size).toBe(values.length)
+    })
   })
-})
+
+  describe('phrasesForVocabIds', () => {
+    it('returns the phrase for a known vocabId', () => {
+      const result = phrasesForVocabIds('ru', ['privet'])
+      expect(result).toHaveLength(1)
+      expect(result[0].text).toBe('Привет')
+    })
+
+    it('skips vocabIds with no match instead of padding with undefined', () => {
+      const result = phrasesForVocabIds('ru', ['privet', 'no-such-vocab', 'spasibo'])
+      expect(result.map((p) => p.vocabId)).toEqual(['privet', 'spasibo'])
+    })
+
+    it('returns results in input order, not phrasebook order', () => {
+      // spasibo precedes privet in the essentials pack, but input order is reversed.
+      const result = phrasesForVocabIds('ru', ['spasibo', 'privet', 'khleb'])
+      expect(result.map((p) => p.vocabId)).toEqual(['spasibo', 'privet', 'khleb'])
+    })
+
+    it('first pack in iteration order wins for a duplicated vocabId', () => {
+      // 'privet' also appears in the mocked ru-test-dup pack (appended last); the
+      // ru-essentials occurrence must win.
+      const result = phrasesForVocabIds('ru', ['privet'])
+      expect(result).toHaveLength(1)
+      expect(result[0].text).toBe('Привет')
+    })
+  })

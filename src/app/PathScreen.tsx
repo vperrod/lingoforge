@@ -9,6 +9,7 @@ import { useState } from 'react'
 import { useProfiles } from '../state/profiles'
 import { useProgress } from '../state/progress'
 import { VoiceWarning } from '../ui/VoiceWarning'
+import { TodayReviewCard } from './TodayReviewCard'
 
 const skillIcons: Record<string, LucideIcon> = {
   hand: Hand,
@@ -141,6 +142,8 @@ export function PathScreen() {
           <p className="text-fg-muted">Each lesson teaches a few new Cyrillic letters before its words. The Alphabet tab is there for extra practice any time.</p>
         </Link>
       )}
+
+      {course.id === 'ru' && <TodayReviewCard />}
 
       <Link to={`/placement/${course.id}`} className="clay clay-press flex items-center gap-4 border-gold bg-amber-50 p-4">
         <span className="flex size-12 shrink-0 items-center justify-center rounded-full border-3 border-amber-700 bg-gold text-white">

@@ -1,6 +1,7 @@
 import { describe, it, expect } from 'vitest'
 
-import { newSrsItem, review, dueItems, type SrsItem } from './srs'
+import type { Course } from '../content/types'
+import { courseDueItems, dueItems, newSrsItem, review, type SrsItem } from './srs'
 
 const NOW = 1_700_000_000_000
 const DAY_MS = 24 * 60 * 60 * 1000
@@ -109,5 +110,42 @@ describe('dueItems', () => {
     const a = item({ vocabId: 'a', dueAt: NOW - 1 })
     const b = item({ vocabId: 'b', dueAt: NOW - DAY_MS })
     expect(dueItems([a, b], NOW).map((i) => i.vocabId)).toEqual(['b', 'a'])
+  })
+})
+
+const courseVocab = [
+  { id: 'v1', lemma: 'a', translation: 'a' },
+  { id: 'v2', lemma: 'b', translation: 'b' },
+  { id: 'v3', lemma: 'c', translation: 'c' },
+] as const
+
+const course: Course = {
+  id: 'ru',
+  name: 'Test',
+  flag: '🇷🇺',
+  ttsLang: 'ru-RU',
+  vocab: courseVocab as Course['vocab'],
+  patterns: [],
+  units: [],
+}
+
+describe('courseDueItems', () => {
+  it('returns [] when srsItems is undefined', () => {
+    expect(courseDueItems(course, undefined, NOW)).toEqual([])
+  })
+
+  it('excludes items whose vocabId belongs to a different course', () => {
+    const foreign = item({ vocabId: 'nope', dueAt: NOW })
+    const srsItems = { nope: foreign }
+    expect(courseDueItems(course, srsItems, NOW)).toEqual([])
+  })
+
+  it('preserves ascending dueAt order (most-overdue first)', () => {
+    const early = item({ vocabId: 'v1', dueAt: NOW - DAY_MS })
+    const mid = item({ vocabId: 'v2', dueAt: NOW - 1 })
+    const late = item({ vocabId: 'v3', dueAt: NOW })
+    const srsItems = { v3: late, v1: early, v2: mid }
+    const result = courseDueItems(course, srsItems, NOW)
+    expect(result.map((i) => i.vocabId)).toEqual(['v1', 'v2', 'v3'])
   })
 })

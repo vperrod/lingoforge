@@ -1,4 +1,4 @@
-import type { CourseId, PhrasePack } from './types'
+import type { CourseId, Phrase, PhrasePack } from './types'
 
 /**
  * Loecsen-style situational survival phrases — organised by real-life situation.
@@ -180,4 +180,17 @@ export const phrasebook: Record<CourseId, PhrasePack[]> = {
       ],
     },
   ],
+}
+
+/** Phrases whose vocabId matches one of the given ids, in input order. Coverage is
+ *  sparse (most multi-word phrases carry no vocabId) — an empty/partial result is
+ *  expected, not an error. */
+export function phrasesForVocabIds(course: CourseId, vocabIds: string[]): Phrase[] {
+  const byVocabId = new Map<string, Phrase>()
+  for (const pack of phrasebook[course] ?? []) {
+    for (const phrase of pack.phrases) {
+      if (phrase.vocabId && !byVocabId.has(phrase.vocabId)) byVocabId.set(phrase.vocabId, phrase)
+    }
+  }
+  return vocabIds.map((id) => byVocabId.get(id)).filter((p): p is Phrase => p !== undefined)
 }

@@ -1,3 +1,5 @@
+import type { Course } from '../content/types'
+
 /**
  * Simplified FSRS-style spaced repetition.
  * Each item has stability (days until ~90% recall) and difficulty (0-1).
@@ -60,4 +62,15 @@ export function dueItems(items: SrsItem[], now: number = Date.now()): SrsItem[] 
   return items
     .filter((i) => i.dueAt <= now)
     .sort((a, b) => a.dueAt - b.dueAt)
+}
+
+/** Due items for a course's active vocab, most-overdue-first. */
+export function courseDueItems(
+  course: Course,
+  srsItems: Record<string, SrsItem> | undefined,
+  now: number = Date.now(),
+): SrsItem[] {
+  const vocabIds = new Set(course.vocab.map((v) => v.id))
+  const items = Object.values(srsItems ?? {}).filter((item) => vocabIds.has(item.vocabId))
+  return dueItems(items, now)
 }

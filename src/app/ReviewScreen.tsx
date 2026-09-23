@@ -2,7 +2,7 @@ import { useMemo, useState } from 'react'
 import { Dumbbell } from 'lucide-react'
 import { courses } from '../content'
 import type { VocabItem } from '../content/types'
-import { dueItems } from '../engine/srs'
+import { courseDueItems } from '../engine/srs'
 import { courseStage } from '../engine/production-stage'
 import { reviewExercise } from '../engine/review-exercise'
 import { wordStatus } from '../engine/word-status'
@@ -19,11 +19,10 @@ export function ReviewScreen() {
   const [finished, setFinished] = useState<LessonResult | null>(null)
 
   const course = courses[data.activeCourse]
-  const vocabIds = new Set(course.vocab.map((v) => v.id))
-  const srsItems = Object.values(data.courses[course.id]?.srsItems ?? {}).filter((item) =>
-    vocabIds.has(item.vocabId),
+  const due = courseDueItems(course, data.courses[course.id]?.srsItems)
+  const hasAnySrsItems = Object.values(data.courses[course.id]?.srsItems ?? {}).some((item) =>
+    course.vocab.some((v) => v.id === item.vocabId),
   )
-  const due = dueItems(srsItems)
   const stage = courseStage(course, data.courses[course.id]?.lessonCompletions ?? {})
 
   const exercises = useMemo(() => {
@@ -83,7 +82,7 @@ export function ReviewScreen() {
         </>
       ) : (
         <p className="max-w-md text-fg-muted">
-          {srsItems.length === 0
+          {!hasAnySrsItems
             ? 'Complete lessons to add words here. They come back for review right when you are about to forget them.'
             : 'Nothing due right now — great job! Come back later or learn a new lesson.'}
         </p>
