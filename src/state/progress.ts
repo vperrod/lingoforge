@@ -128,6 +128,18 @@ export const useProgress = create<ProgressState>()((set, get) => {
     window.addEventListener('visibilitychange', () => {
       if (document.visibilityState === 'hidden') flushSave()
     })
+    // Another tab/PWA window saved this profile: adopt its blob so our next save doesn't
+    // overwrite it with stale in-memory data. A pending local save wins (it's < 400ms old).
+    window.addEventListener('storage', (e) => {
+      const { profileId } = get()
+      if (!profileId || e.key !== progressStorageKey(profileId) || e.newValue === null || saveTimer !== null) return
+      try {
+        const parsed: unknown = JSON.parse(e.newValue)
+        if (isProgressData(parsed)) set({ data: parsed })
+      } catch {
+        // malformed write from another tab — keep our in-memory state
+      }
+    })
   }
 
   const update = (fn: (d: ProgressData) => ProgressData) => {
