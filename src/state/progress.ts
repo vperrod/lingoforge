@@ -206,7 +206,7 @@ export const useProgress = create<ProgressState>()((set, get) => {
 
     addStudyMinutes: (minutes) => update((d) => bumpDay(d, { minutes })),
 
-    completeLesson: (course, lessonId, newVocabIds) =>
+    completeLesson: (course, lessonId, newVocabIds) => {
       update((d) => {
         const cp = d.courses[course] ?? emptyCourseProgress()
         const srsItems = { ...cp.srsItems }
@@ -228,7 +228,9 @@ export const useProgress = create<ProgressState>()((set, get) => {
           },
         }
         return bumpDay(next, { lessons: 1 })
-      }),
+      })
+      flushSave() // a finished lesson is a natural checkpoint: persist now, not after the debounce
+    },
 
     skipToUnit: (course, unitIndex) =>
       update((d) => {
