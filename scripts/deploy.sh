@@ -24,8 +24,8 @@ if [[ -z "${CLOUDFLARE_API_TOKEN:-}" ]]; then
   [[ -r "$TOKEN_FILE" ]] || { echo "ERROR: no token in \$CLOUDFLARE_API_TOKEN or $TOKEN_FILE" >&2; exit 1; }
   CLOUDFLARE_API_TOKEN="$(cat "$TOKEN_FILE")"
 fi
-export CLOUDFLARE_API_TOKEN
-export CLOUDFLARE_ACCOUNT_ID="$ACCOUNT_ID"
+# Deliberately not exported: only the wrangler step gets the token, so the
+# npm/pip tooling that runs earlier never sees deploy credentials.
 
 # edge-tts goes in a venv: Debian's python3 is PEP 668 externally-managed and
 # refuses a plain `pip install --user`.
@@ -33,7 +33,7 @@ if [[ ! -x "$VENV_DIR/bin/python" ]]; then
   echo "==> creating venv at $VENV_DIR"
   python3 -m venv "$VENV_DIR"
 fi
-"$VENV_DIR/bin/pip" install --quiet --upgrade edge-tts
+"$VENV_DIR/bin/pip" install --quiet edge-tts==7.2.8
 
 echo "==> npm ci"
 npm ci
@@ -57,7 +57,8 @@ echo "==> build"
 npm run build
 
 echo "==> deploy to Cloudflare Pages"
-npx --yes wrangler@latest pages deploy dist \
+CLOUDFLARE_API_TOKEN="$CLOUDFLARE_API_TOKEN" CLOUDFLARE_ACCOUNT_ID="$ACCOUNT_ID" \
+  npx --yes wrangler@4.141.0 pages deploy dist \
   --project-name "$PROJECT_NAME" \
   --branch main \
   --commit-dirty=true
