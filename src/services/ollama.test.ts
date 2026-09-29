@@ -1,6 +1,8 @@
 import { describe, it, expect, vi, afterEach } from 'vitest'
 import { generate, generateJSON, generateVision, isOllamaOnline, resetStatus } from './ollama'
 
+const isObject = (v: unknown): v is Record<string, unknown> => typeof v === 'object' && v !== null && !Array.isArray(v)
+
 function stubFetchResponse(response: string) {
   vi.stubGlobal(
     'fetch',
@@ -35,24 +37,29 @@ describe('generate', () => {
 describe('generateJSON', () => {
   it('parses a clean JSON response', async () => {
     stubFetchResponse('{"a": 1}')
-    await expect(generateJSON('prompt')).resolves.toEqual({ a: 1 })
+    await expect(generateJSON('prompt', isObject)).resolves.toEqual({ a: 1 })
   })
 
   it('recovers JSON wrapped in prose via brace extraction', async () => {
     vi.spyOn(console, 'warn').mockImplementation(() => {})
     stubFetchResponse('Sure! Here is the JSON:\n```json\n{"vocab": []}\n```\nHope that helps.')
-    await expect(generateJSON('prompt')).resolves.toEqual({ vocab: [] })
+    await expect(generateJSON('prompt', isObject)).resolves.toEqual({ vocab: [] })
   })
 
   it('recovers JSON when surrounding prose contains stray braces', async () => {
     vi.spyOn(console, 'warn').mockImplementation(() => {})
     stubFetchResponse('Use {placeholder} syntax. Result: {"vocab": ["дом"]} — note the {braces} above.')
-    await expect(generateJSON('prompt')).resolves.toEqual({ vocab: ['дом'] })
+    await expect(generateJSON('prompt', isObject)).resolves.toEqual({ vocab: ['дом'] })
   })
 
   it('throws when the response contains no JSON object at all', async () => {
     stubFetchResponse('I cannot help with that.')
-    await expect(generateJSON('prompt')).rejects.toThrow('Failed to parse Ollama JSON')
+    await expect(generateJSON('prompt', isObject)).rejects.toThrow('Failed to parse Ollama JSON')
+  })
+
+  it('throws when the parsed JSON fails the type guard', async () => {
+    stubFetchResponse('[1, 2, 3]')
+    await expect(generateJSON('prompt', isObject)).rejects.toThrow('Unexpected shape in Ollama JSON')
   })
 })
 
@@ -60,12 +67,17 @@ describe('generateVision', () => {
   it('recovers JSON wrapped in prose via brace extraction', async () => {
     vi.spyOn(console, 'warn').mockImplementation(() => {})
     stubFetchResponse('The image shows: {"objects": []} done')
-    await expect(generateVision('prompt', 'base64img')).resolves.toEqual({ objects: [] })
+    await expect(generateVision('prompt', 'base64img', isObject)).resolves.toEqual({ objects: [] })
   })
 
   it('throws when the response contains no JSON object at all', async () => {
     stubFetchResponse('just prose')
-    await expect(generateVision('prompt', 'base64img')).rejects.toThrow('Failed to parse vision JSON')
+    await expect(generateVision('prompt', 'base64img', isObject)).rejects.toThrow('Failed to parse vision JSON')
+  })
+
+  it('throws when the parsed JSON fails the type guard', async () => {
+    stubFetchResponse('"just a string"')
+    await expect(generateVision('prompt', 'base64img', isObject)).rejects.toThrow('Unexpected shape in vision JSON')
   })
 })
 

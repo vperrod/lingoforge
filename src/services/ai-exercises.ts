@@ -18,6 +18,11 @@ interface TopicVocabResponse {
   vocab: GeneratedVocab[]
 }
 
+// Top level only: items are validated one by one below so a single bad entry
+// doesn't discard the rest.
+const isTopicVocabResponse = (v: unknown): v is Partial<TopicVocabResponse> | null =>
+  typeof v === 'object' && !Array.isArray(v)
+
 function isGeneratedVocab(v: unknown): v is GeneratedVocab {
   if (typeof v !== 'object' || v === null) return false
   const o = v as Record<string, unknown>
@@ -47,7 +52,7 @@ Rules:
 - Example sentences should be simple and use the word in context
 - Pronunciation should help an English speaker approximate the sound`
 
-  const result = await generateJSON<Partial<TopicVocabResponse> | null>(prompt, undefined, signal)
+  const result = await generateJSON(prompt, isTopicVocabResponse, undefined, signal)
   const raw = Array.isArray(result?.vocab) ? result.vocab : []
   const vocab = raw.filter(isGeneratedVocab)
   if (vocab.length < raw.length) {

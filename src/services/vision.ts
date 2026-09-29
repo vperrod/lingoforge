@@ -22,6 +22,11 @@ interface VisionResponse {
   }[]
 }
 
+// Top level only: objects are validated one by one below so a single bad entry
+// doesn't discard the rest.
+const isVisionResponse = (v: unknown): v is Partial<VisionResponse> | null =>
+  typeof v === 'object' && !Array.isArray(v)
+
 function isVisionObject(v: unknown): v is VisionResponse['objects'][number] {
   if (typeof v !== 'object' || v === null) return false
   const o = v as Record<string, unknown>
@@ -63,7 +68,7 @@ Rules:
 - Use common, practical vocabulary
 - Example sentences should be simple A2 level`
 
-  const result = await generateVision<Partial<VisionResponse> | null>(prompt, imageBase64, undefined, signal)
+  const result = await generateVision(prompt, imageBase64, isVisionResponse, undefined, signal)
   const raw = Array.isArray(result?.objects) ? result.objects : []
   const objects = raw.filter(isVisionObject)
   if (objects.length < raw.length) {

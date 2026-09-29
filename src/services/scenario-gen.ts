@@ -58,6 +58,11 @@ export function isDialogueLine(v: unknown): v is DialogueLine {
   )
 }
 
+// Top level only: items are validated one by one below so a single bad entry
+// doesn't discard the rest.
+const isScenarioResponse = (v: unknown): v is Partial<ScenarioData> | null =>
+  typeof v === 'object' && !Array.isArray(v)
+
 function filterValid<T>(list: unknown, isValid: (v: unknown) => v is T, label: string): T[] {
   const raw = Array.isArray(list) ? list : []
   const valid = raw.filter(isValid)
@@ -91,7 +96,7 @@ Rules:
 - Phrases should be practical and immediately usable
 - Include polite/formal variants where relevant`
 
-  const result = await generateJSON<Partial<ScenarioData> | null>(prompt, undefined, signal)
+  const result = await generateJSON(prompt, isScenarioResponse, undefined, signal)
   const vocab = filterValid(result?.vocab, isScenarioVocab, 'vocab')
   const phrases = filterValid(result?.phrases, isScenarioPhrase, 'phrases')
   const dialogue = filterValid(result?.dialogue, isDialogueLine, 'dialogue')

@@ -92,21 +92,39 @@ function extractJSON(raw: string): string | null {
   return null
 }
 
-export async function generateJSON<T>(prompt: string, system?: string, signal?: AbortSignal): Promise<T> {
-  const raw = await generate(prompt, system, signal)
-  try {
-    return JSON.parse(raw) as T
-  } catch {
-    const extracted = extractJSON(raw)
-    if (extracted) {
-      console.warn(`Ollama returned malformed JSON, recovered via brace-extraction fallback: ${raw.slice(0, 200)}`)
-      return JSON.parse(extracted) as T
-    }
-    throw new Error(`Failed to parse Ollama JSON: ${raw.slice(0, 200)}`)
-  }
+// The guard runs on the parsed value, outside the parse try/catch, so a shape
+// failure is reported as one instead of falling through to brace-extraction.
+function expectShape<T>(value: unknown, isValid: (value: unknown) => value is T, what: string, raw: string): T {
+  if (!isValid(value)) throw new Error(`Unexpected shape in ${what}: ${raw.slice(0, 200)}`)
+  return value
 }
 
-export async function generateVision<T>(prompt: string, imageBase64: string, system?: string, signal?: AbortSignal): Promise<T> {
+export async function generateJSON<T>(
+  prompt: string,
+  isValid: (value: unknown) => value is T,
+  system?: string,
+  signal?: AbortSignal,
+): Promise<T> {
+  const raw = await generate(prompt, system, signal)
+  let parsed: unknown
+  try {
+    parsed = JSON.parse(raw)
+  } catch {
+    const extracted = extractJSON(raw)
+    if (!extracted) throw new Error(`Failed to parse Ollama JSON: ${raw.slice(0, 200)}`)
+    console.warn(`Ollama returned malformed JSON, recovered via brace-extraction fallback: ${raw.slice(0, 200)}`)
+    parsed = JSON.parse(extracted)
+  }
+  return expectShape(parsed, isValid, 'Ollama JSON', raw)
+}
+
+export async function generateVision<T>(
+  prompt: string,
+  imageBase64: string,
+  isValid: (value: unknown) => value is T,
+  system?: string,
+  signal?: AbortSignal,
+): Promise<T> {
   const body: GenerateRequest = {
     model: 'llava:13b',
     prompt,
@@ -125,14 +143,14 @@ export async function generateVision<T>(prompt: string, imageBase64: string, sys
   if (!r.ok) throw new Error(`Ollama vision ${r.status}: ${await r.text()}`)
   const data: GenerateResponse = await r.json()
   const raw = data.response
+  let parsed: unknown
   try {
-    return JSON.parse(raw) as T
+    parsed = JSON.parse(raw)
   } catch {
     const extracted = extractJSON(raw)
-    if (extracted) {
-      console.warn(`Ollama vision returned malformed JSON, recovered via brace-extraction fallback: ${raw.slice(0, 200)}`)
-      return JSON.parse(extracted) as T
-    }
-    throw new Error(`Failed to parse vision JSON: ${raw.slice(0, 200)}`)
+    if (!extracted) throw new Error(`Failed to parse vision JSON: ${raw.slice(0, 200)}`)
+    console.warn(`Ollama vision returned malformed JSON, recovered via brace-extraction fallback: ${raw.slice(0, 200)}`)
+    parsed = JSON.parse(extracted)
   }
+  return expectShape(parsed, isValid, 'vision JSON', raw)
 }
