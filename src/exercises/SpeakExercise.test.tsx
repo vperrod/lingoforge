@@ -64,6 +64,28 @@ test('a blocked microphone explains itself', () => {
   expect(screen.getByRole('status').textContent).toContain('Microphone blocked')
 })
 
+test('an unreachable speech service explains itself', () => {
+  stubFailingRecognizer('network')
+  renderExercise()
+  fireEvent.click(screen.getByLabelText('Record your voice'))
+  expect(screen.getByRole('status').textContent).toContain('could not reach the service')
+})
+
+test('a blocked-by-policy service is reported as a blocked microphone', () => {
+  stubFailingRecognizer('service-not-allowed')
+  renderExercise()
+  fireEvent.click(screen.getByLabelText('Record your voice'))
+  expect(screen.getByRole('status').textContent).toContain('Microphone blocked')
+})
+
+test('skip still works after a mic error', () => {
+  stubFailingRecognizer('not-allowed')
+  const onAnswer = renderExercise()
+  fireEvent.click(screen.getByLabelText('Record your voice'))
+  fireEvent.click(screen.getByText("Can't speak now — skip"))
+  expect(onAnswer).toHaveBeenCalledWith(false, 'привет', { skipped: true })
+})
+
 test('skipping moves on without scoring the word wrong', () => {
   const onAnswer = renderExercise()
   fireEvent.click(screen.getByText("Can't speak now — skip"))

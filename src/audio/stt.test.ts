@@ -1,5 +1,36 @@
-import { describe, it, expect } from 'vitest'
-import { speechErrorMessage } from './stt'
+import { afterEach, describe, it, expect, vi } from 'vitest'
+import { createRecognizer, isSpeechSupported, speechErrorMessage } from './stt'
+
+afterEach(() => {
+  vi.unstubAllGlobals()
+})
+
+describe('browser support', () => {
+  it('is unsupported without a window (SSR)', () => {
+    vi.stubGlobal('window', undefined)
+    expect(isSpeechSupported()).toBe(false)
+  })
+
+  it('is unsupported when the browser has no recognizer (Firefox)', () => {
+    vi.stubGlobal('window', {})
+    expect(isSpeechSupported()).toBe(false)
+  })
+
+  it('createRecognizer returns null when unsupported', () => {
+    vi.stubGlobal('window', {})
+    expect(createRecognizer('ru-RU')).toBeNull()
+  })
+
+  it('accepts the webkit-prefixed recognizer (Safari)', () => {
+    vi.stubGlobal('window', { webkitSpeechRecognition: function () {} })
+    expect(isSpeechSupported()).toBe(true)
+  })
+
+  it('createRecognizer sets single-utterance mode so the mic is released', () => {
+    vi.stubGlobal('window', { SpeechRecognition: function () {} })
+    expect(createRecognizer('es-ES')).toMatchObject({ lang: 'es-ES', continuous: false })
+  })
+})
 
 describe('speechErrorMessage', () => {
   it('explains a blocked microphone for not-allowed', () => {
