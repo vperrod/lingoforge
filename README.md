@@ -74,6 +74,12 @@ To point a build at a remote Ollama instance (LAN device, self-hosted server)
 instead of `localhost:11434`, set `VITE_OLLAMA_URL` before `npm run build` —
 it's baked into both the client code and the CSP `connect-src` at build time.
 
+> **Trusted networks only.** Prompts and (for Point & Learn) camera frames are sent
+> to that URL, and Ollama has no authentication. Only point it at a server you
+> control on a network you trust (localhost, or a LAN host), preferably over
+> HTTPS. Never expose an Ollama port to the public internet, and never set
+> `VITE_OLLAMA_URL` to a third-party host.
+
 ## Adding content
 
 Courses are typed data in `src/content/courses/*.ts` (validated by `src/content/content.test.ts`). Add vocab/lessons/units there — no app code changes needed.

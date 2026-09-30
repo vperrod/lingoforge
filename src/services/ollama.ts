@@ -1,6 +1,8 @@
 // Local-first by default, but overridable at build time (npm run build) for LAN
 // devices / self-hosted servers that can't reach localhost — see vite.config.ts,
-// which templates the same URL into index.html's CSP connect-src.
+// which templates the same URL into index.html's CSP connect-src. Ollama is
+// unauthenticated and receives prompts and camera frames: only set this to a
+// server you control on a trusted network, never a public or third-party host.
 const BASE_URL = import.meta.env.VITE_OLLAMA_URL || 'http://localhost:11434'
 
 interface GenerateRequest {
