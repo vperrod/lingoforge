@@ -1,5 +1,5 @@
 import { describe, it, expect, vi, afterEach } from 'vitest'
-import { generate, generateJSON, generateVision, isOllamaOnline, resetStatus } from './ollama'
+import { isSecureEndpoint, generate, generateJSON, generateVision, isOllamaOnline, resetStatus } from './ollama'
 
 const isObject = (v: unknown): v is Record<string, unknown> => typeof v === 'object' && v !== null && !Array.isArray(v)
 
@@ -90,5 +90,18 @@ describe('isOllamaOnline', () => {
   it('reports online when /api/tags responds ok', async () => {
     vi.stubGlobal('fetch', vi.fn(async () => ({ ok: true })))
     await expect(isOllamaOnline()).resolves.toBe(true)
+  })
+})
+
+describe('isSecureEndpoint', () => {
+  it.each([
+    ['http://localhost:11434', true],
+    ['http://127.0.0.1:11434', true],
+    ['https://ollama.example.com', true],
+    ['http://192.168.1.5:11434', false],
+    ['http://ollama.example.com', false],
+    ['not a url', false],
+  ])('%s -> %s', (url, expected) => {
+    expect(isSecureEndpoint(url)).toBe(expected)
   })
 })

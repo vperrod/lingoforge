@@ -5,6 +5,29 @@
 // server you control on a trusted network, never a public or third-party host.
 const BASE_URL = import.meta.env.VITE_OLLAMA_URL || 'http://localhost:11434'
 
+// Prompts and camera frames go over this connection, so plain http is only
+// acceptable to the same machine; any other host must use https.
+export function isSecureEndpoint(url: string): boolean {
+  try {
+    const { protocol, hostname } = new URL(url)
+    if (protocol === 'https:') return true
+    return protocol === 'http:' && ['localhost', '127.0.0.1', '[::1]'].includes(hostname)
+  } catch {
+    return false
+  }
+}
+
+const IS_ENDPOINT_SECURE = isSecureEndpoint(BASE_URL)
+if (!IS_ENDPOINT_SECURE) {
+  console.warn(`VITE_OLLAMA_URL (${BASE_URL}) is not https or localhost; AI requests are blocked.`)
+} else if (!/^https?:\/\/(localhost|127\.0\.0\.1|\[::1\])(:|\/|$)/.test(BASE_URL)) {
+  console.warn(`Ollama is configured at a remote host (${BASE_URL}); prompts and camera frames leave this device.`)
+}
+
+function assertSecureEndpoint() {
+  if (!IS_ENDPOINT_SECURE) throw new Error('Ollama endpoint must use https unless it is localhost')
+}
+
 interface GenerateRequest {
   model: string
   prompt: string
@@ -24,6 +47,7 @@ let _status: 'unknown' | 'online' | 'offline' = 'unknown'
 let _lastCheck = 0
 
 export async function isOllamaOnline(): Promise<boolean> {
+  if (!IS_ENDPOINT_SECURE) return false
   if (Date.now() - _lastCheck < 10_000 && _status !== 'unknown') return _status === 'online'
   try {
     const r = await fetch(`${BASE_URL}/api/tags`, { signal: AbortSignal.timeout(3000) })
@@ -48,6 +72,7 @@ function withTimeout(ms: number, signal?: AbortSignal): AbortSignal {
 }
 
 export async function generate(prompt: string, system?: string, signal?: AbortSignal): Promise<string> {
+  assertSecureEndpoint()
   const body: GenerateRequest = {
     model: 'gemma2:9b',
     prompt,
@@ -127,6 +152,7 @@ export async function generateVision<T>(
   system?: string,
   signal?: AbortSignal,
 ): Promise<T> {
+  assertSecureEndpoint()
   const body: GenerateRequest = {
     model: 'llava:13b',
     prompt,
