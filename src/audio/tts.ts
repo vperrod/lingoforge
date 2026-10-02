@@ -7,13 +7,13 @@
  */
 
 /**
- * Must match safe_filename() in scripts/gen-audio.py. '?' and '#' are dropped
- * rather than kept: they are legal in a filename but start the query/fragment
- * in a URL, so '/audio/ru/Где метро?.mp3' fetches '/audio/ru/Где метро' and
+ * Must match safe_filename() in scripts/gen-audio.py. '?', '#' and '%' are
+ * dropped rather than kept: they are legal in a filename but start the
+ * query/fragment (or a percent-escape) in a URL, so '/audio/ru/Где метро?.mp3' fetches '/audio/ru/Где метро' and
  * gets the SPA shell back instead of the MP3.
  */
 function safeText(text: string): string {
-  return text.replace(/[/\\]/g, '-').replace(/[?#]/g, '')
+  return text.replace(/[/\\]/g, '-').replace(/[?#%]/g, '')
 }
 
 export function audioUrl(text: string, lang: string): string {

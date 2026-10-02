@@ -41,7 +41,7 @@ OUT_DIR = Path("public/audio")
 def safe_filename(text: str) -> str:
     """Make text safe for use in a path *and* in a URL.
 
-    '?' and '#' are legal in a filename but start the query/fragment in a URL, so
+    '?', '#' and '%' are legal in a filename but start the query/fragment in a URL, so
     a file named 'Где метро?.mp3' can never be fetched — the browser asks for
     'Где метро' and gets the SPA's index.html back. Dropping them keeps the URL
     whole; the synthesized speech is unaffected (edge-tts reads the real text).
@@ -51,6 +51,7 @@ def safe_filename(text: str) -> str:
         .replace("\\", "-")
         .replace("?", "")
         .replace("#", "")
+        .replace("%", "")
     )
 
 
