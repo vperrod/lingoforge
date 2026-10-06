@@ -1,3 +1,4 @@
+import { readFileSync } from 'node:fs'
 import { describe, it, expect } from 'vitest'
 import { audioUrl } from './tts'
 
@@ -16,5 +17,26 @@ describe('audioUrl', () => {
 
   it('replaces a slash, which would read as a directory', () => {
     expect(audioUrl('да/нет', 'ru-RU')).toContain('audio/ru/да-нет.mp3')
+  })
+})
+
+// gen-audio.py can't be imported (it needs edge_tts), so apply the .replace()
+// chain written in its safe_filename() source to the same inputs.
+function pythonSafeFilename(text: string): string {
+  const src = readFileSync('scripts/gen-audio.py', 'utf-8')
+  const body = src.split('def safe_filename')[1].split('\n\n\n')[0]
+  const unescape = (s: string) => s.replace(/\\\\/g, '\\')
+  return [...body.matchAll(/\.replace\("((?:[^"\\]|\\.)*)", "((?:[^"\\]|\\.)*)"\)/g)].reduce(
+    (acc, [, from, to]) => acc.split(unescape(from)).join(unescape(to)),
+    text,
+  )
+}
+
+describe('audio filename parity with scripts/gen-audio.py', () => {
+  const inputs = ['Где метро?', 'N#1', '100%20', 'да/нет', 'a\\b', '¿Dónde está?', 'plain', '?#%/\\']
+
+  it.each(inputs)('audioUrl matches safe_filename for %j', (text) => {
+    const file = audioUrl(text, 'ru-RU').split('audio/ru/')[1]
+    expect(file).toBe(`${pythonSafeFilename(text)}.mp3`)
   })
 })
