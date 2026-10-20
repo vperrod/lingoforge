@@ -25,6 +25,26 @@ describe('letterSchedule', () => {
     expect([...lettersUpTo(ru, lesson1)]).toEqual(['п', 'р', 'и', 'в', 'е', 'т'])
   })
 
+  it('spills a letter past the cap into the next lesson', () => {
+    const lessons = beginnerLessons.slice(0, 3)
+    const schedule = letterSchedule(ru)
+    for (const l of lessons.slice(0, 2)) expect(schedule.get(l.id)).toHaveLength(6)
+    const byId = new Map(ru.vocab.map((v) => [v.id, v]))
+    const ownOfSecond = lessons[1].vocabIds.map((id) => byId.get(id)?.lemma ?? '').join('')
+    const spilled = schedule.get(lessons[1].id)!.filter((ch) => !ownOfSecond.includes(ch))
+    expect(spilled.length).toBeGreaterThan(0)
+  })
+
+  it('places the rare letters ё щ ц in later units, not the beginner ones', () => {
+    const beginnerIds = new Set(beginnerLessons.map((l) => l.id))
+    const schedule = letterSchedule(ru)
+    for (const ch of ['ё', 'щ', 'ц']) {
+      const lessonId = [...schedule].find(([, letters]) => letters.includes(ch))?.[0]
+      expect(lessonId).toBeDefined()
+      expect(beginnerIds.has(lessonId!)).toBe(false)
+    }
+  })
+
   it('has no schedule for Spanish', () => {
     expect(letterSchedule(courses.es).size).toBe(0)
   })
