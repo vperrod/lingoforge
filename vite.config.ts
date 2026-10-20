@@ -4,6 +4,7 @@ import react from '@vitejs/plugin-react'
 import tailwindcss from '@tailwindcss/vite'
 import { VitePWA } from 'vite-plugin-pwa'
 import { viteSingleFile } from 'vite-plugin-singlefile'
+import { toCspOllamaOrigin } from './src/services/ollama-url'
 
 // `npm run build:single` produces one self-contained HTML file (no PWA/SW —
 // service workers don't run on file://)
@@ -17,7 +18,9 @@ const stripCspMeta = {
 
 export default defineConfig(({ mode }) => {
   const singleFile = mode === 'singlefile'
-  const ollamaUrl = loadEnv(mode, process.cwd(), 'VITE_').VITE_OLLAMA_URL || 'http://localhost:11434'
+  const ollamaUrl = toCspOllamaOrigin(
+    loadEnv(mode, process.cwd(), 'VITE_').VITE_OLLAMA_URL || 'http://localhost:11434',
+  )
 
   // Keeps the CSP connect-src in sync with services/ollama.ts's BASE_URL so a
   // build pointed at a remote Ollama instance (VITE_OLLAMA_URL) doesn't get

@@ -73,6 +73,8 @@ running" notice instead of a broken screen.
 To point a build at a remote Ollama instance (LAN device, self-hosted server)
 instead of `localhost:11434`, set `VITE_OLLAMA_URL` before `npm run build` —
 it's baked into both the client code and the CSP `connect-src` at build time.
+The build fails unless the host is `localhost`, a `*.local` name or a
+loopback/private LAN IPv4 address.
 
 > **Trusted networks only.** Prompts and (for Point & Learn) camera frames are sent
 > to that URL, and Ollama has no authentication. Only point it at a server you
