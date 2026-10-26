@@ -97,7 +97,9 @@ describe('isSecureEndpoint', () => {
   it.each([
     ['http://localhost:11434', true],
     ['http://127.0.0.1:11434', true],
-    ['https://ollama.example.com', true],
+    ['https://192.168.1.5:11434', true],
+    ['https://ollama.local', true],
+    ['https://ollama.example.com', false],
     ['http://192.168.1.5:11434', false],
     ['http://ollama.example.com', false],
     ['not a url', false],

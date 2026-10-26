@@ -9,7 +9,7 @@ const LAN_V4 = [
   /^169\.254\./,
 ]
 
-function isLocalHost(hostname: string): boolean {
+export function isLocalHost(hostname: string): boolean {
   if (hostname === 'localhost' || hostname === '[::1]' || hostname.endsWith('.local')) return true
   return /^\d{1,3}(\.\d{1,3}){3}$/.test(hostname) && LAN_V4.some((re) => re.test(hostname))
 }

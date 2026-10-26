@@ -3,13 +3,18 @@
 // which templates the same URL into index.html's CSP connect-src. Ollama is
 // unauthenticated and receives prompts and camera frames: only set this to a
 // server you control on a trusted network, never a public or third-party host.
+import { isLocalHost } from './ollama-url'
+
 const BASE_URL = import.meta.env.VITE_OLLAMA_URL || 'http://localhost:11434'
 
 // Prompts and camera frames go over this connection, so plain http is only
-// acceptable to the same machine; any other host must use https.
+// acceptable to the same machine; any other host must use https. Public hosts
+// are refused outright (same allow-list as the build-time CSP guard), so a
+// tampered VITE_OLLAMA_URL can't exfiltrate prompts or camera frames.
 export function isSecureEndpoint(url: string): boolean {
   try {
     const { protocol, hostname } = new URL(url)
+    if (!isLocalHost(hostname)) return false
     if (protocol === 'https:') return true
     return protocol === 'http:' && ['localhost', '127.0.0.1', '[::1]'].includes(hostname)
   } catch {
@@ -19,7 +24,7 @@ export function isSecureEndpoint(url: string): boolean {
 
 const IS_ENDPOINT_SECURE = isSecureEndpoint(BASE_URL)
 if (!IS_ENDPOINT_SECURE) {
-  console.warn(`VITE_OLLAMA_URL (${BASE_URL}) is not https or localhost; AI requests are blocked.`)
+  console.warn(`VITE_OLLAMA_URL (${BASE_URL}) is not a local/LAN host over https (or localhost); AI requests are blocked.`)
 } else if (!/^https?:\/\/(localhost|127\.0\.0\.1|\[::1\])(:|\/|$)/.test(BASE_URL)) {
   console.warn(`Ollama is configured at a remote host (${BASE_URL}); prompts and camera frames leave this device.`)
 }
