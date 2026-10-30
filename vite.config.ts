@@ -48,7 +48,7 @@ export default defineConfig(({ mode }) => {
                   handler: 'CacheFirst',
                   options: {
                     cacheName: 'lingoforge-audio-v1',
-                    expiration: { maxEntries: 600 },
+                    expiration: { maxEntries: 3000 }, // > ~1,500 shipped MP3s, with headroom for growth
                   },
                 },
               ],
