@@ -56,7 +56,7 @@ def speakable() -> dict[str, set[str]]:
 def main() -> int:
     failed = False
     for lang, texts in speakable().items():
-        have = {p.name for p in (gen.OUT_DIR / lang).glob("*.mp3")}
+        have = {p.name for p in (gen.OUT_DIR / lang).glob("*.mp3") if p.stat().st_size >= gen.MIN_MP3_BYTES}
         missing = sorted(t for t in texts if gen.safe_filename(t) + ".mp3" not in have)
         unreachable = sorted(n for n in have if "?" in n or "#" in n)
         print(f"{lang}: {len(texts)} speakable, {len(have)} files, {len(missing)} missing, "

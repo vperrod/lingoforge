@@ -153,15 +153,23 @@ def extract_glossary(block: str) -> list[str]:
     return keys
 
 
+# Smallest shipped MP3 is ~7 KB; anything under 1 KB is a truncated download.
+MIN_MP3_BYTES = 1024
+
+
 async def generate(text: str, voice: str, out_dir: Path) -> None:
     out_path = out_dir / (safe_filename(text) + ".mp3")
-    if out_path.exists() and out_path.stat().st_size > 0:
+    if out_path.exists() and out_path.stat().st_size >= MIN_MP3_BYTES:
         return
+    # Save to a temp name so an interrupted synthesis never leaves a truncated MP3 behind.
+    tmp_path = out_path.with_suffix(".mp3.part")
     try:
         communicate = edge_tts.Communicate(text, voice)
-        await communicate.save(str(out_path))
+        await communicate.save(str(tmp_path))
+        tmp_path.replace(out_path)
         print(f"  OK  {out_path.name}")
     except Exception as e:
+        tmp_path.unlink(missing_ok=True)
         print(f"  SKIP  {text!r}  ({e})")
 
 
