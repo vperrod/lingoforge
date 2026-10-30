@@ -43,15 +43,24 @@ if [[ "${1:-}" != "--skip-tests" ]]; then
   npm test
 fi
 
-# No audio is committed; every .mp3 under public/audio is synthesized here.
+# No audio is committed. gen-audio.py skips MP3s that already exist, so public/audio
+# is kept in a cache outside the repo: a deploy only synthesizes new texts, and a
+# flaky edge-tts run is retried (only the failed items) instead of aborting.
 # Skipping this step ships a site with silent playback buttons.
-echo "==> gen-audio"
-PATH="$VENV_DIR/bin:$PATH" npm run gen-audio
+AUDIO_CACHE="${AUDIO_CACHE:-$HOME/.cache/lingoforge-audio}"
+mkdir -p "$AUDIO_CACHE" public/audio
+cp -a "$AUDIO_CACHE/." public/audio/
 
 # A missing MP3 is silent, not loud: tts.ts falls back to Web Speech, which says
 # nothing at all on a phone with no Russian voice. Refuse to ship that.
-echo "==> check-audio"
-python3 scripts/check-audio.py
+for attempt in 1 2 3; do
+  echo "==> gen-audio (attempt $attempt)"
+  PATH="$VENV_DIR/bin:$PATH" npm run gen-audio
+  cp -a public/audio/. "$AUDIO_CACHE/"
+  echo "==> check-audio"
+  python3 scripts/check-audio.py && break
+  [[ $attempt -lt 3 ]] || exit 1
+done
 
 echo "==> build"
 npm run build
