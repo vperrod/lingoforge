@@ -23,11 +23,15 @@ export function audioUrl(text: string, lang: string): string {
 }
 
 let currentAudio: HTMLAudioElement | null = null
+let settleCurrent: (() => void) | null = null
+// Bumped by stopSpeaking so an in-flight speak() knows not to fall back to Web Speech.
+let stopCount = 0
 
 async function playAudioFile(url: string): Promise<boolean> {
   return new Promise((resolve) => {
     const el = new Audio(url)
     currentAudio = el
+    settleCurrent = () => resolve(false)
     el.onended = () => resolve(true)
     el.onerror = () => resolve(false)
     el.play().catch(() => resolve(false))
@@ -36,8 +40,11 @@ async function playAudioFile(url: string): Promise<boolean> {
 
 /** Cut playback short — the mic must not record the app talking to itself. */
 export function stopSpeaking(): void {
-  currentAudio?.pause()
+  stopCount++
+  currentAudio?.pause() // fires neither ended nor error, so settle the promise by hand
+  settleCurrent?.()
   currentAudio = null
+  settleCurrent = null
   if ('speechSynthesis' in window) window.speechSynthesis.cancel()
 }
 
@@ -100,7 +107,9 @@ async function speakWebSpeech(text: string, lang: string, rate: number): Promise
 /** Resolves false when the device produced no sound — the caller must say so. */
 export async function speak(text: string, lang: string, rate = 0.9): Promise<boolean> {
   const url = audioUrl(text, lang)
+  const stopsBefore = stopCount
   const played = await playAudioFile(url)
+  if (stopCount !== stopsBefore) return false
   if (import.meta.env.DEV) console.log('[tts]', url, played ? 'mp3 ✓' : 'fallback → Web Speech')
   return played || (await speakWebSpeech(text, lang, rate))
 }

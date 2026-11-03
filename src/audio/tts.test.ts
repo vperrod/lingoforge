@@ -1,6 +1,6 @@
 import { readFileSync } from 'node:fs'
-import { describe, it, expect } from 'vitest'
-import { audioUrl } from './tts'
+import { describe, it, expect, vi } from 'vitest'
+import { audioUrl, speak, stopSpeaking } from './tts'
 
 describe('audioUrl', () => {
   it('keeps a question mark out of the path so the MP3 is reachable', () => {
@@ -38,5 +38,17 @@ describe('audio filename parity with scripts/gen-audio.py', () => {
   it.each(inputs)('audioUrl matches safe_filename for %j', (text) => {
     const file = audioUrl(text, 'ru-RU').split('audio/ru/')[1]
     expect(file).toBe(`${pythonSafeFilename(text)}.mp3`)
+  })
+})
+
+describe('stopSpeaking', () => {
+  it('settles a pending speak() with false instead of hanging', async () => {
+    vi.stubGlobal('window', {})
+    const pause = vi.fn()
+    vi.stubGlobal('Audio', class { onended = null; onerror = null; pause = pause; play = () => new Promise(() => {}) })
+    const pending = speak('привет', 'ru-RU')
+    stopSpeaking()
+    await expect(pending).resolves.toBe(false)
+    vi.unstubAllGlobals()
   })
 })
