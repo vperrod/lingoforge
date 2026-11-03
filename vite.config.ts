@@ -45,7 +45,7 @@ export default defineConfig(({ mode }) => {
               runtimeCaching: [
                 {
                   urlPattern: /\/audio\/.+\.mp3$/,
-                  handler: 'CacheFirst',
+                  handler: 'StaleWhileRevalidate', // repaired MP3s must replace cached copies
                   options: {
                     cacheName: 'lingoforge-audio-v1',
                     expiration: { maxEntries: 3000 }, // > ~1,500 shipped MP3s, with headroom for growth
