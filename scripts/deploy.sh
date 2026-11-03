@@ -5,12 +5,25 @@
 # account is blocked (Actions disabled account-wide, ticket 4583559).
 # Mirrors that workflow's steps exactly so the output is identical.
 #
-# Usage: scripts/deploy.sh [--skip-tests]
+# Usage: scripts/deploy.sh [--skip-tests] [--skip-audio]
+#   --skip-audio  don't call edge-tts; ship the cached MP3s only, and abort
+#                 unless check-audio.py passes against them (for hotfixes while
+#                 the TTS service is down).
 #
 # Requires: CLOUDFLARE_API_TOKEN (defaults to ~/.cloudflare/api-token)
 #           node 20+, python3, network access for edge-tts.
 
 set -euo pipefail
+
+SKIP_TESTS=0
+SKIP_AUDIO=0
+for arg in "$@"; do
+  case "$arg" in
+    --skip-tests) SKIP_TESTS=1 ;;
+    --skip-audio) SKIP_AUDIO=1 ;;
+    *) echo "ERROR: unknown argument $arg" >&2; exit 2 ;;
+  esac
+done
 
 REPO_ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
 cd "$REPO_ROOT"
@@ -29,16 +42,18 @@ fi
 
 # edge-tts goes in a venv: Debian's python3 is PEP 668 externally-managed and
 # refuses a plain `pip install --user`.
-if [[ ! -x "$VENV_DIR/bin/python" ]]; then
-  echo "==> creating venv at $VENV_DIR"
-  python3 -m venv "$VENV_DIR"
+if [[ $SKIP_AUDIO -eq 0 ]]; then
+  if [[ ! -x "$VENV_DIR/bin/python" ]]; then
+    echo "==> creating venv at $VENV_DIR"
+    python3 -m venv "$VENV_DIR"
+  fi
+  "$VENV_DIR/bin/pip" install --quiet edge-tts==7.2.8
 fi
-"$VENV_DIR/bin/pip" install --quiet edge-tts==7.2.8
 
 echo "==> npm ci"
 npm ci
 
-if [[ "${1:-}" != "--skip-tests" ]]; then
+if [[ $SKIP_TESTS -eq 0 ]]; then
   echo "==> tests"
   npm test
 fi
@@ -53,14 +68,19 @@ cp -a "$AUDIO_CACHE/." public/audio/
 
 # A missing MP3 is silent, not loud: tts.ts falls back to Web Speech, which says
 # nothing at all on a phone with no Russian voice. Refuse to ship that.
-for attempt in 1 2 3; do
-  echo "==> gen-audio (attempt $attempt)"
-  PATH="$VENV_DIR/bin:$PATH" npm run gen-audio
-  cp -a public/audio/. "$AUDIO_CACHE/"
-  echo "==> check-audio"
-  python3 scripts/check-audio.py && break
-  [[ $attempt -lt 3 ]] || exit 1
-done
+if [[ $SKIP_AUDIO -eq 1 ]]; then
+  echo "==> check-audio (cache only, --skip-audio)"
+  python3 scripts/check-audio.py || { echo "ERROR: cached audio is incomplete; run without --skip-audio" >&2; exit 1; }
+else
+  for attempt in 1 2 3; do
+    echo "==> gen-audio (attempt $attempt)"
+    PATH="$VENV_DIR/bin:$PATH" npm run gen-audio
+    cp -a public/audio/. "$AUDIO_CACHE/"
+    echo "==> check-audio"
+    python3 scripts/check-audio.py && break
+    [[ $attempt -lt 3 ]] || exit 1
+  done
+fi
 
 echo "==> build"
 npm run build
