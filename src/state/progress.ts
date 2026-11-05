@@ -111,14 +111,66 @@ function saveToStorage(profileId: string | null, data: ProgressData): boolean {
   }
 }
 
+/** Combines two copies of a profile's progress (ours + another tab's) without losing either:
+ *  counters take the max, badges/days are unioned, an SRS item with more reviews (then later
+ *  due date) wins. Scalar settings come from `local`. */
+export function mergeProgress(local: ProgressData, other: ProgressData): ProgressData {
+  const dailyLog = { ...other.dailyLog }
+  for (const [day, l] of Object.entries(local.dailyLog)) {
+    const o = dailyLog[day]
+    dailyLog[day] = o
+      ? { minutes: Math.max(l.minutes, o.minutes), xp: Math.max(l.xp, o.xp), lessons: Math.max(l.lessons, o.lessons) }
+      : l
+  }
+  const merged: ProgressData = {
+    ...local,
+    xp: Math.max(local.xp, other.xp),
+    dailyLog,
+    badges: { ...other.badges, ...local.badges },
+    courses: {},
+  }
+  for (const id of new Set([...Object.keys(local.courses), ...Object.keys(other.courses)]) as Set<CourseId>) {
+    const l = local.courses[id] ?? emptyCourseProgress()
+    const o = other.courses[id] ?? emptyCourseProgress()
+    const lessonCompletions = { ...o.lessonCompletions }
+    for (const [lesson, n] of Object.entries(l.lessonCompletions)) {
+      lessonCompletions[lesson] = Math.max(n, lessonCompletions[lesson] ?? 0)
+    }
+    const srsItems = { ...o.srsItems }
+    for (const [vocab, li] of Object.entries(l.srsItems)) {
+      const oi = srsItems[vocab]
+      if (!oi || li.reps > oi.reps || (li.reps === oi.reps && li.dueAt >= oi.dueAt)) srsItems[vocab] = li
+    }
+    merged.courses[id] = { lessonCompletions, srsItems }
+  }
+  return merged
+}
+
 export const useProgress = create<ProgressState>()((set, get) => {
   let saveTimer: ReturnType<typeof setTimeout> | null = null
+  // importData replaces the profile's progress, so it must not be merged with what's stored
+  let replaceOnFlush = false
 
   const flushSave = () => {
     if (saveTimer === null) return
     clearTimeout(saveTimer)
     saveTimer = null
-    const { profileId, data } = get()
+    const { profileId } = get()
+    let { data } = get()
+    if (profileId && !replaceOnFlush) {
+      // Another tab may have written since we loaded: merge instead of overwriting its progress
+      try {
+        const raw = localStorage.getItem(progressStorageKey(profileId))
+        const stored: unknown = raw ? JSON.parse(raw) : null
+        if (isProgressData(stored)) {
+          data = mergeProgress(data, stored)
+          set({ data })
+        }
+      } catch {
+        // unreadable stored blob — fall through and write ours
+      }
+    }
+    replaceOnFlush = false
     const saved = saveToStorage(profileId, data)
     set({ storageError: !saved })
   }
@@ -129,13 +181,13 @@ export const useProgress = create<ProgressState>()((set, get) => {
       if (document.visibilityState === 'hidden') flushSave()
     })
     // Another tab/PWA window saved this profile: adopt its blob so our next save doesn't
-    // overwrite it with stale in-memory data. A pending local save wins (it's < 400ms old).
+    // overwrite it with stale in-memory data. With a local save pending, merge (the flush re-merges too).
     window.addEventListener('storage', (e) => {
       const { profileId } = get()
-      if (!profileId || e.key !== progressStorageKey(profileId) || e.newValue === null || saveTimer !== null) return
+      if (!profileId || e.key !== progressStorageKey(profileId) || e.newValue === null) return
       try {
         const parsed: unknown = JSON.parse(e.newValue)
-        if (isProgressData(parsed)) set({ data: parsed })
+        if (isProgressData(parsed)) set({ data: saveTimer !== null ? mergeProgress(get().data, parsed) : parsed })
       } catch {
         // malformed write from another tab — keep our in-memory state
       }
@@ -272,6 +324,7 @@ export const useProgress = create<ProgressState>()((set, get) => {
         const parsed: unknown = JSON.parse(json)
         if (!isProgressData(parsed)) return false
         update(() => progressDataSchema.parse(parsed))
+        replaceOnFlush = true
         flushSave()
         return true
       } catch {

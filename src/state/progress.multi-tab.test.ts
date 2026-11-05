@@ -7,7 +7,8 @@ const listeners = vi.hoisted(() => {
   return l
 })
 const writes = vi.hoisted(() => [] as string[])
-vi.stubGlobal('localStorage', { getItem: () => null, setItem: (_k: string, v: string) => void writes.push(v), removeItem: () => {} })
+const stored = vi.hoisted(() => ({ value: null as string | null }))
+vi.stubGlobal('localStorage', { getItem: () => stored.value, setItem: (_k: string, v: string) => void writes.push(v), removeItem: () => {} })
 const doc = vi.hoisted(() => {
   const d = { visibilityState: 'visible' }
   vi.stubGlobal('document', d)
@@ -35,6 +36,7 @@ describe('multi-tab sync', () => {
     beforeEach(() => {
       vi.useFakeTimers()
       writes.length = 0
+      stored.value = null
       doc.visibilityState = 'visible'
       useProgress.getState().loadForProfile('p1', 'ru')
     })
@@ -43,10 +45,20 @@ describe('multi-tab sync', () => {
       vi.useRealTimers()
     })
 
-    it('is not overwritten by a foreign-tab write', () => {
+    it('keeps the foreign tab\'s progress when merged with a foreign-tab write', () => {
       useProgress.getState().addXp(10)
-      listeners.storage({ key: progressStorageKey('p1'), newValue: JSON.stringify({ ...emptyProgress('ru'), xp: 99 }) })
-      expect(useProgress.getState().data.xp).toBe(10)
+      listeners.storage({
+        key: progressStorageKey('p1'),
+        newValue: JSON.stringify({ ...emptyProgress('ru'), xp: 99, badges: { b: 1 } }),
+      })
+      expect(useProgress.getState().data.badges).toEqual({ b: 1 })
+    })
+
+    it('does not overwrite another tab\'s newer write on flush', () => {
+      useProgress.getState().addXp(10)
+      stored.value = JSON.stringify({ ...emptyProgress('ru'), xp: 99 })
+      useProgress.getState().flushSave()
+      expect(JSON.parse(writes[0]).xp).toBe(99)
     })
 
     it('is written on pagehide', () => {
