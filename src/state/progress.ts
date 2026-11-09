@@ -113,7 +113,10 @@ function saveToStorage(profileId: string | null, data: ProgressData): boolean {
 
 /** Combines two copies of a profile's progress (ours + another tab's) without losing either:
  *  counters take the max, badges/days are unioned, an SRS item with more reviews (then later
- *  due date) wins. Scalar settings come from `local`. */
+ *  due date) wins. Scalar settings come from `local`.
+ *  shortcut: xp and dailyLog minutes/xp/lessons use Math.max, so two tabs that both earned
+ *  since their last common save keep only the larger total and the other's gain is lost.
+ *  Exact merging needs a per-tab delta or event log; upgrade if concurrent tabs matter. */
 export function mergeProgress(local: ProgressData, other: ProgressData): ProgressData {
   const dailyLog = { ...other.dailyLog }
   for (const [day, l] of Object.entries(local.dailyLog)) {
