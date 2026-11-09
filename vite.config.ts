@@ -48,6 +48,7 @@ export default defineConfig(({ mode }) => {
                   handler: 'StaleWhileRevalidate', // repaired MP3s must replace cached copies
                   options: {
                     cacheName: 'lingoforge-audio-v1',
+                    rangeRequests: true, // Safari/iOS fetch media with Range; serve slices from the cached full 200
                     expiration: { maxEntries: 3000 }, // > ~1,500 shipped MP3s, with headroom for growth
                   },
                 },
