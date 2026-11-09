@@ -79,6 +79,8 @@ interface ProgressState {
   /** true when the last save failed (storage full / private mode) — progress is not being persisted */
   storageError: boolean
   loadForProfile: (profileId: string, defaultCourse: CourseId) => void
+  /** Detaches a deleted profile: cancels its pending save so the blob is not re-created. */
+  unloadProfile: (profileId: string) => void
   setActiveCourse: (course: CourseId) => void
   setDailyGoal: (minutes: number) => void
   addXp: (amount: number) => void
@@ -252,6 +254,15 @@ export const useProgress = create<ProgressState>()((set, get) => {
         }
       }
       set({ profileId, data, storageError: false })
+    },
+
+    unloadProfile: (profileId) => {
+      if (get().profileId !== profileId) return
+      // drop the pending save instead of flushing it: the profile's blob is gone for good
+      if (saveTimer !== null) clearTimeout(saveTimer)
+      saveTimer = null
+      replaceOnFlush = false
+      set({ profileId: null, data: emptyProgress(), storageError: false })
     },
 
     setActiveCourse: (course) => update((d) => ({ ...d, activeCourse: course })),

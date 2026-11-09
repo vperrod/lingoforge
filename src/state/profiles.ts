@@ -2,6 +2,7 @@ import { create } from 'zustand'
 import { persist } from 'zustand/middleware'
 import type { CourseId } from '../content/types'
 import { safeJSONStorage } from './safe-storage'
+import { useProgress } from './progress'
 
 /** crypto.randomUUID needs a secure context; crypto.getRandomValues doesn't
  *  and is available anywhere randomUUID would be missing, so it's the real
@@ -54,6 +55,7 @@ export const useProfiles = create<ProfilesState>()(
       switchProfile: (id) => set({ activeProfileId: id }),
       deleteProfile: (id) =>
         set((s) => {
+          useProgress.getState().unloadProfile(id) // before removeItem, so no save can re-create the blob
           try {
             localStorage.removeItem(progressStorageKey(id))
           } catch (e) {
@@ -79,6 +81,20 @@ export const useProfiles = create<ProfilesState>()(
     { name: 'lingoforge:profiles', storage: safeJSONStorage },
   ),
 )
+
+// Another tab changed the profile list: adopt it, so this tab can't re-persist a stale
+// list (e.g. resurrect a profile deleted elsewhere), and drop progress of profiles that vanished.
+if (typeof window !== 'undefined') {
+  window.addEventListener('storage', (e) => {
+    if (e.key !== 'lingoforge:profiles') return
+    void Promise.resolve(useProfiles.persist.rehydrate()).then(() => {
+      const { profileId } = useProgress.getState()
+      if (profileId && !useProfiles.getState().profiles.some((p) => p.id === profileId)) {
+        useProgress.getState().unloadProfile(profileId)
+      }
+    })
+  })
+}
 
 export function progressStorageKey(profileId: string): string {
   return `lingoforge:${profileId}:progress`

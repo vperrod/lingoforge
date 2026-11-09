@@ -12,6 +12,7 @@ vi.hoisted(() => {
 })
 
 import { useProfiles, progressStorageKey } from './profiles'
+import { useProgress } from './progress'
 
 const create = (name = 'Anna') => useProfiles.getState().createProfile(name, '🦊', ['ru'])
 
@@ -86,6 +87,18 @@ describe('useProfiles store', () => {
       const p = create()
       localStorage.setItem(progressStorageKey(p.id), '{"xp":1}')
       useProfiles.getState().deleteProfile(p.id)
+      expect(localStorage.getItem(progressStorageKey(p.id))).toBeNull()
+    })
+
+    it('a pending progress save cannot re-create the deleted profile blob', () => {
+      vi.useFakeTimers()
+      const p = create()
+      useProgress.getState().loadForProfile(p.id, 'ru')
+      useProgress.getState().addXp(5)
+      useProfiles.getState().deleteProfile(p.id)
+      vi.advanceTimersByTime(1000)
+      useProgress.getState().flushSave()
+      vi.useRealTimers()
       expect(localStorage.getItem(progressStorageKey(p.id))).toBeNull()
     })
   })
