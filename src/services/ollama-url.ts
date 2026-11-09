@@ -28,5 +28,9 @@ export function toCspOllamaOrigin(raw: string): string {
   if (!isLocalHost(url.hostname)) {
     throw new Error(`VITE_OLLAMA_URL host must be localhost or a LAN address: ${JSON.stringify(raw)}`)
   }
+  // Same rule as isSecureEndpoint in ollama.ts: plain http only for loopback, or every AI request is blocked at runtime.
+  if (url.protocol === 'http:' && !['localhost', '127.0.0.1', '[::1]'].includes(url.hostname)) {
+    throw new Error(`VITE_OLLAMA_URL must use https unless the host is localhost: ${JSON.stringify(raw)}`)
+  }
   return url.origin
 }
