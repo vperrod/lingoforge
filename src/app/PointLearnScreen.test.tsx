@@ -21,6 +21,11 @@ const mockCaptureFrame = vi.mocked(captureFrame)
 const fakeStream = { getTracks: () => [] } as unknown as MediaStream
 const mockGetUserMedia = vi.fn()
 
+const makeStream = () => {
+  const stop = vi.fn()
+  return { stream: { getTracks: () => [{ stop }] } as unknown as MediaStream, stop }
+}
+
 const detectedObject = {
   nameEn: 'cup',
   nameTarget: 'taza',
@@ -162,5 +167,43 @@ describe('PointLearnScreen phase machine', () => {
 
     await waitFor(() => expect(mockGetUserMedia).toHaveBeenCalledOnce())
     expect(await screen.findByLabelText('Take photo')).toBeTruthy()
+  })
+
+  it('attaches the new stream to the preview after New photo', async () => {
+    const second = makeStream().stream
+    mockGetUserMedia.mockResolvedValueOnce(makeStream().stream).mockResolvedValueOnce(second)
+    render(<PointLearnScreen />)
+    await screen.findByLabelText('Take photo')
+    snap()
+    fireEvent.click(await screen.findByText('New photo'))
+
+    await screen.findByLabelText('Take photo')
+    expect(document.querySelector('video')!.srcObject).toBe(second)
+  })
+
+  it('stops the first stream when retrying from offline', async () => {
+    const first = makeStream()
+    mockGetUserMedia.mockResolvedValueOnce(first.stream)
+    mockIsOllamaOnline.mockResolvedValue(false)
+    render(<PointLearnScreen />)
+    await screen.findByLabelText('Take photo')
+    snap()
+    await screen.findByText('Ollama is not running')
+
+    fireEvent.click(screen.getByText('Try again'))
+
+    await waitFor(() => expect(first.stop).toHaveBeenCalledOnce())
+  })
+
+  it('stops a stream that resolves after the screen unmounted', async () => {
+    const late = makeStream()
+    let resolveStream!: (s: MediaStream) => void
+    mockGetUserMedia.mockReturnValue(new Promise<MediaStream>((resolve) => (resolveStream = resolve)))
+    const { unmount } = render(<PointLearnScreen />)
+
+    unmount()
+    resolveStream(late.stream)
+
+    await waitFor(() => expect(late.stop).toHaveBeenCalledOnce())
   })
 })

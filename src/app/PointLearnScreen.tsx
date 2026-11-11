@@ -28,25 +28,42 @@ export function PointLearnScreen() {
   const [selected, setSelected] = useState<DetectedObject | null>(null)
   const [added, setAdded] = useState<Set<string>>(new Set())
 
+  // Bumped by every stopCamera() so a getUserMedia still pending when the screen
+  // unmounts (or a newer start supersedes it) can tell its stream is orphaned.
+  const requestRef = useRef(0)
+
+  const stopCamera = useCallback(() => {
+    requestRef.current++
+    streamRef.current?.getTracks().forEach((t) => t.stop())
+    streamRef.current = null
+  }, [])
+
   const startCamera = useCallback(async () => {
+    stopCamera()
+    const request = requestRef.current
     try {
       const stream = await navigator.mediaDevices.getUserMedia({
         video: { facingMode: 'environment', width: { ideal: 1280 }, height: { ideal: 960 } },
       })
+      if (request !== requestRef.current) {
+        stream.getTracks().forEach((t) => t.stop())
+        return
+      }
       streamRef.current = stream
       if (videoRef.current) {
         videoRef.current.srcObject = stream
       }
       setPhase('camera')
     } catch {
-      setPhase('no-camera')
+      if (request === requestRef.current) setPhase('no-camera')
     }
-  }, [])
+  }, [stopCamera])
 
-  const stopCamera = useCallback(() => {
-    streamRef.current?.getTracks().forEach((t) => t.stop())
-    streamRef.current = null
-  }, [])
+  // The <video> only exists in the 'camera' phase, so on a retry (New photo /
+  // Try again) startCamera ran while videoRef was null — attach once it mounts.
+  useEffect(() => {
+    if (phase === 'camera' && videoRef.current) videoRef.current.srcObject = streamRef.current
+  }, [phase])
 
   useEffect(() => {
     if (!aiEnabled) return
