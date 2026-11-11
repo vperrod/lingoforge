@@ -26,11 +26,8 @@ def speakable() -> dict[str, set[str]]:
     """Every text a speak() call site can receive, per language."""
     out: dict[str, set[str]] = {"ru": set(), "es": set()}
 
-    for lang, course in (("ru", "src/content/courses/ru.ts"), ("es", "src/content/courses/es.ts")):
-        src = Path(course).read_text(encoding="utf-8")
-        out[lang].update(gen.extract_lemmas(course))
-        out[lang].update(gen.extract_forms(course))
-        out[lang].update(gen.extract_phrases(src))  # lesson sentences
+    for lang in out:
+        out[lang].update(gen.course_texts(lang))  # lemmas, forms, lesson sentences
 
     letters, words = gen.extract_alphabet("src/content/courses/ru-alphabet.ts")
     out["ru"].update(letters)

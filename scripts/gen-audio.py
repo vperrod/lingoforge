@@ -9,8 +9,8 @@ tts.ts uses the same safeText() transformation, no percent-encoding.
 When the browser fetches the URL, it auto-encodes Unicode → server decodes → matches file.
 
 Coverage:
-  - course vocab lemmas + inflected forms (from courses/*.ts)
-  - course lesson sentences (from courses/*.ts) — dictation, reorder-dictation,
+  - course vocab lemmas + inflected forms (from COURSE_FILES, incl. ru-topics.ts)
+  - course lesson sentences (from COURSE_FILES) — dictation, reorder-dictation,
     word bank and cloze all speak whole sentences
   - Russian alphabet letters + example words (from ru-alphabet.ts)
   - phrasebook phrases (from phrasebook.ts) — the 🔊 button on each phrase
@@ -69,6 +69,25 @@ def extract_forms(ts_path: str) -> list[str]:
     for m in matches:
         words.extend(re.findall(r"['\"]([^'\"]+)['\"]", m))
     return words
+
+
+# Source files whose vocab and lessons end up in each language's compiled course:
+# ru.ts merges ru-topics.ts (the Flashcards vocab), so both must be scanned here
+# and by check-audio.py, or that vocab ships silent. audio-coverage.test.ts diffs
+# this scan against the compiled course objects.
+COURSE_FILES = {
+    "ru": ["src/content/courses/ru.ts", "src/content/courses/ru-topics.ts"],
+    "es": ["src/content/courses/es.ts"],
+}
+
+
+def course_texts(lang: str) -> list[str]:
+    """Lemmas, inflected forms and lesson sentences from a language's course files."""
+    texts: list[str] = []
+    for path in COURSE_FILES[lang]:
+        texts += extract_lemmas(path) + extract_forms(path)
+        texts += extract_phrases(Path(path).read_text(encoding="utf-8"))
+    return texts
 
 
 def extract_alphabet(ts_path: str) -> tuple[list[str], list[str]]:
@@ -190,9 +209,7 @@ async def main() -> None:
     print("=== LingoForge audio generation ===\n")
 
     ru_texts = list(dict.fromkeys(
-        extract_lemmas("src/content/courses/ru.ts")
-        + extract_forms("src/content/courses/ru.ts")
-        + extract_phrases(Path("src/content/courses/ru.ts").read_text(encoding="utf-8"))
+        course_texts("ru")
         + extract_alphabet("src/content/courses/ru-alphabet.ts")[0]
         + extract_alphabet("src/content/courses/ru-alphabet.ts")[1]
     ))
@@ -200,9 +217,7 @@ async def main() -> None:
     await generate_batch(ru_texts, "ru")
 
     es_texts = list(dict.fromkeys(
-        extract_lemmas("src/content/courses/es.ts")
-        + extract_forms("src/content/courses/es.ts")
-        + extract_phrases(Path("src/content/courses/es.ts").read_text(encoding="utf-8"))
+        course_texts("es")
     ))
     print(f"\nSpanish (vocab + sentences): {len(es_texts)} unique texts")
     await generate_batch(es_texts, "es")
