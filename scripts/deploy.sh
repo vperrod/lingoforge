@@ -28,6 +28,12 @@ done
 REPO_ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
 cd "$REPO_ROOT"
 
+# The final step publishes to the production alias (--branch main), so only a
+# committed build of main may go out. Checked first: fail before the slow steps.
+BRANCH="$(git rev-parse --abbrev-ref HEAD)"
+[[ "$BRANCH" == "main" ]] || { echo "ERROR: deploy only from main (on '$BRANCH')" >&2; exit 1; }
+[[ -z "$(git status --porcelain)" ]] || { echo "ERROR: working tree is not clean; commit or stash first" >&2; exit 1; }
+
 PROJECT_NAME="lingoforge"
 ACCOUNT_ID="${CLOUDFLARE_ACCOUNT_ID:-be2fcc462d6ce346d319308ee23f1854}"
 TOKEN_FILE="${CLOUDFLARE_TOKEN_FILE:-$HOME/.cloudflare/api-token}"
