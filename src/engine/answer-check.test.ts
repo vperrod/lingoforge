@@ -38,6 +38,18 @@ describe('isCorrectAnswer', () => {
     expect(isCorrectAnswer('Нет, спасибо — не надо', 'нет спасибо не надо')).toBe(true)
   })
 
+  it('rejects й typed as и (мой vs мои)', () => {
+    expect(isCorrectAnswer('мой', 'мои')).toBe(false)
+  })
+
+  it('rejects и typed as й (чаи vs чай)', () => {
+    expect(isCorrectAnswer('чаи', 'чай')).toBe(false)
+  })
+
+  it('accepts й typed as precomposed or decomposed', () => {
+    expect(isCorrectAnswer('чай', 'чай')).toBe(true)
+  })
+
   it('rejects a different word', () => {
     expect(isCorrectAnswer('чай', 'кофе')).toBe(false)
   })

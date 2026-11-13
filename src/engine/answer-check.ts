@@ -12,7 +12,8 @@ function normalize(text: string): string {
     .replace(/ё/g, 'е')
     .normalize('NFD')
     // strip combining accents (Spanish á é í ó ú ü; keeps base letter). ñ → n accepted.
-    .replace(/[̀-ͯ]/g, '')
+    // U+0306 (breve) is kept: it is what makes Russian й a different letter from и.
+    .replace(/[̀-̅̇-ͯ]/g, '')
     // unify punctuation/whitespace
     .replace(/[¿¡?!.,;:'"«»—–-]/g, ' ')
     .replace(/\s+/g, ' ')
