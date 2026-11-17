@@ -104,6 +104,20 @@ describe('scenarioToExercises', () => {
     expect(cloze?.tokens).toContain(cloze?.answer)
   })
 
+  it('blanks a bare word, never a punctuated token', () => {
+    const scenario: ScenarioData = {
+      title: 't',
+      culturalTip: '',
+      vocab: [],
+      phrases: [],
+      dialogue: [{ speaker: 'you', line: 'Hola, ¿cuánto cuesta?', translation: 'Hi, how much?' }],
+    }
+    const answers = Array.from({ length: 30 }, () =>
+      scenarioToExercises(scenario, 'es-ES', 'typing').find((e): e is Cloze => e.kind === 'cloze')?.answer,
+    )
+    expect(answers.every((a) => a !== undefined && /^[\p{L}]+$/u.test(a))).toBe(true)
+  })
+
   it('skips cloze for single-word user lines', () => {
     const scenario: ScenarioData = {
       title: 't',

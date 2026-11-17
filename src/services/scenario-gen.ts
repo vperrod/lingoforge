@@ -5,7 +5,7 @@ import type { ExerciseInstance } from '../engine/exercise-gen'
 import { blanksFor, spellFromWord } from '../engine/exercise-gen'
 import type { Stage } from '../engine/production-stage'
 import { sample } from '../engine/seeded-random'
-import { lettersOf } from './ai-exercises'
+import { lettersOf, translationDistractors } from './ai-exercises'
 
 export interface ScenarioPhrase {
   phrase: string
@@ -136,10 +136,7 @@ export function scenarioToExercises(
 
   // Phase 1: Vocab recognition (target → English)
   for (const v of vocab) {
-    const distractors = sample(
-      vocab.filter((d) => d.word !== v.word),
-      3,
-    ).map((d) => d.translation)
+    const distractors = translationDistractors(vocab, v.translation)
     const options = sample([v.translation, ...distractors], 4)
     exercises.push({
       kind: 'choice',
@@ -153,10 +150,7 @@ export function scenarioToExercises(
 
   // Phase 2: Phrase recognition (target → English)
   for (const p of phrases) {
-    const distractors = sample(
-      phrases.filter((d) => d.phrase !== p.phrase),
-      3,
-    ).map((d) => d.translation)
+    const distractors = translationDistractors(phrases, p.translation)
     if (distractors.length < 3) continue
     const options = sample([p.translation, ...distractors], 4)
     exercises.push({
@@ -174,15 +168,21 @@ export function scenarioToExercises(
   for (const line of userLines) {
     const tokens = line.line.split(/\s+/)
     if (tokens.length < 2) continue
-    const blankIndex = sample(tokens.map((_, i) => i), 1)[0]
-    const distractors = sample(vocab.filter((v) => v.word !== tokens[blankIndex]), 3).map((v) => v.word)
+    // Blank a real word and use it bare: punctuation on the answer would give it away among
+    // bare-word distractors and force the learner to type it exactly.
+    const stripPunct = (t: string) => t.replace(/[¿¡?!.,;:'"«»—–-]/g, '')
+    const words = tokens.map((_, i) => i).filter((i) => stripPunct(tokens[i]).length > 0)
+    if (words.length === 0) continue
+    const blankIndex = sample(words, 1)[0]
+    const answer = stripPunct(tokens[blankIndex])
+    const distractors = sample(vocab.filter((v) => v.word !== answer), 3).map((v) => v.word)
     exercises.push({
       kind: 'cloze',
       tokens,
       blankIndex,
       translation: line.translation,
-      answer: tokens[blankIndex],
-      ...(typing ? {} : { options: sample([tokens[blankIndex], ...distractors], 4) }),
+      answer,
+      ...(typing ? {} : { options: sample([answer, ...distractors], 4) }),
       vocabIds: [`scenario:${line.line}`],
     })
   }
