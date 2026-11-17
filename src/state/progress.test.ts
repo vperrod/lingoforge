@@ -286,6 +286,42 @@ describe('useProgress store', () => {
       useProgress.getState().completeLesson('ru', 'lesson-b', ['v1'])
       expect(useProgress.getState().data.courses.ru!.srsItems['v1']).toEqual(reviewed)
     })
+
+    describe('replaying a lesson (as LessonScreen does: completeLesson, then reviewVocab per word)', () => {
+      const DAY_MS = 24 * 60 * 60 * 1000
+      const T0 = Date.UTC(2026, 6, 13)
+      const replay = () => {
+        useProgress.getState().completeLesson('ru', 'lesson-a', ['v1'])
+        useProgress.getState().reviewVocab('ru', 'v1', true)
+      }
+      const item = () => useProgress.getState().data.courses.ru!.srsItems['v1']
+
+      it('keeps the word due within a day of first exposure across three same-day completions', () => {
+        const now = vi.spyOn(Date, 'now').mockReturnValue(T0)
+        replay()
+        const first = item()
+        now.mockReturnValue(T0 + 60 * 60 * 1000)
+        replay()
+        now.mockReturnValue(T0 + 2 * 60 * 60 * 1000)
+        replay()
+        const third = item()
+        now.mockRestore()
+        expect(third).toEqual({ ...first, dueAt: T0 + DAY_MS })
+      })
+
+      it('grows stability once when a replay finds the word due, not again on the replay right after', () => {
+        const now = vi.spyOn(Date, 'now').mockReturnValue(T0)
+        replay()
+        now.mockReturnValue(T0 + 2 * DAY_MS)
+        replay()
+        now.mockReturnValue(T0 + 2 * DAY_MS + 60 * 60 * 1000)
+        replay()
+        const afterImmediateReplay = item()
+        now.mockRestore()
+        // 2.05 = 1 day × (1 + (2.5 − 1) × (1 − 0.3 difficulty)); reps 2 = seed + the one due review
+        expect(afterImmediateReplay).toMatchObject({ stability: expect.closeTo(2.05, 5), reps: 2 })
+      })
+    })
   })
 
   describe('skipToUnit', () => {
