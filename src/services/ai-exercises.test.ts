@@ -84,3 +84,15 @@ describe('topicVocabToExercises', () => {
     }
   })
 })
+
+describe('topicVocabToExercises duplicate glosses', () => {
+  const item = (word: string, translation: string) => ({ ...validItem, word, translation })
+
+  it('never shows the same option label twice', () => {
+    const items = [item('gato', 'cat'), item('minino', 'cat'), item('perro', 'dog'), item('pez', 'fish')]
+    const labels = topicVocabToExercises(items, 'tiles')
+      .filter((e): e is WithCorrect & { options: string[] } => e.kind === 'choice')
+      .map((e) => e.options.length - new Set(e.options).size)
+    expect(Math.max(...labels)).toBe(0)
+  })
+})

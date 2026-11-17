@@ -75,6 +75,11 @@ export function lettersOf(words: string[]): string[] {
   return [...new Set(words.flatMap((w) => [...w.toLowerCase()].filter((ch) => /\p{L}/u.test(ch))))]
 }
 
+/** Distinct English labels other than the answer — options are shown by translation, so equal glosses would render as identical (and mis-graded) choices. */
+export function translationDistractors(items: { translation: string }[], correct: string): string[] {
+  return sample([...new Set(items.map((d) => d.translation))].filter((t) => t !== correct), 3)
+}
+
 export function topicVocabToExercises(
   vocabItems: GeneratedVocab[],
   stage: Stage,
@@ -86,10 +91,7 @@ export function topicVocabToExercises(
 
   // Phase 1: Recognition (choice exercises — target → English)
   for (const v of vocabItems) {
-    const distractors = sample(
-      vocabItems.filter((d) => d.word !== v.word),
-      3,
-    ).map((d) => d.translation)
+    const distractors = translationDistractors(vocabItems, v.translation)
     const options = sample([v.translation, ...distractors], 4)
     exercises.push({
       kind: 'choice',
