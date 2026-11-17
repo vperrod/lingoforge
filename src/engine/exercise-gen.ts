@@ -1,5 +1,6 @@
 import type { Course, Lesson, VocabItem } from '../content/types'
 import { isSpeechSupported } from '../audio/stt'
+import { isCorrectAnswer } from './answer-check'
 import { sample, shuffle } from './seeded-random'
 import { letterInfo, lettersUpTo, newLetters, type Stage } from './production-stage'
 
@@ -219,12 +220,14 @@ function clozeExercise(
   typed: boolean,
 ): ExerciseInstance {
   const tokens = sentence.text.split(/\s+/)
-  const candidates = tokens
-    .map((t, i) => ({ t, i }))
-    .filter(({ t }) => t.replace(/[¿¡?!.,;:'"«»—–-]/g, '').length >= 3)
+  const stripPunct = (t: string) => t.replace(/[¿¡?!.,;:'"«»—–-]/g, '')
+  const candidates = tokens.map((t, i) => ({ t, i })).filter(({ t }) => stripPunct(t).length >= 3)
   const pick = candidates.length > 0 ? sample(candidates, 1)[0] : { t: tokens[0], i: 0 }
+  // The bare word is the answer: a trailing "?" on the correct chip alone would give it away,
+  // and distractors must be compared with the grader's own rules or two chips can both be right.
+  const answer = stripPunct(pick.t) || pick.t
   const distractors = sample(
-    course.vocab.filter((v) => !v.lemma.includes(' ') && v.lemma.toLowerCase() !== pick.t.toLowerCase()),
+    course.vocab.filter((v) => !v.lemma.includes(' ') && !isCorrectAnswer(answer, v.lemma)),
     3,
   ).map((v) => v.lemma)
   return {
@@ -232,8 +235,8 @@ function clozeExercise(
     tokens,
     blankIndex: pick.i,
     translation: sentence.translation,
-    answer: pick.t,
-    ...(typed ? {} : { options: shuffle([pick.t, ...distractors]) }),
+    answer,
+    ...(typed ? {} : { options: shuffle([answer, ...distractors]) }),
     vocabIds: sentence.vocabIds,
   }
 }

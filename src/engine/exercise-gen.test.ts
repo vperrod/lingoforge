@@ -1,5 +1,6 @@
 import { describe, it, expect } from 'vitest'
 import { courses, getLesson } from '../content'
+import { isCorrectAnswer } from './answer-check'
 import {
   errorCorrectionExercise,
   generateLessonExercises,
@@ -197,6 +198,21 @@ describe('difficulty ramp', () => {
       for (const e of generateLessonExercises(ru, lesson, 0, 'letters')) {
         if (e.kind === 'cloze') expect(e.options?.length).toBeGreaterThan(1)
       }
+    }
+  })
+
+  it('offers the blanked word bare, with exactly one chip the grader accepts', () => {
+    if (!lesson) throw new Error('fixture lesson missing')
+    const word = ru.vocab.find((v) => /^[а-яё]{4,}$/i.test(v.lemma))!
+    const punctuated = { ...lesson, sentences: [{ text: `${word.lemma}?`, translation: 'x?', vocabIds: [word.id] }] }
+    const clozes = Array.from({ length: 40 }, () => generateLessonExercises(ru, punctuated, 0, 'letters'))
+      .flat()
+      .filter((e) => e.kind === 'cloze')
+    expect(clozes.length).toBeGreaterThan(0)
+    for (const e of clozes) {
+      if (e.kind !== 'cloze') continue
+      expect(e.answer).toBe(word.lemma)
+      expect(e.options?.filter((o) => isCorrectAnswer(e.answer, o))).toHaveLength(1)
     }
   })
 
