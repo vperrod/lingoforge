@@ -31,6 +31,8 @@ export function PointLearnScreen() {
   // Bumped by every stopCamera() so a getUserMedia still pending when the screen
   // unmounts (or a newer start supersedes it) can tell its stream is orphaned.
   const requestRef = useRef(0)
+  // True while snap() awaits the Ollama check, so a double-tap can't start a second capture.
+  const snappingRef = useRef(false)
 
   const stopCamera = useCallback(() => {
     requestRef.current++
@@ -77,13 +79,17 @@ export function PointLearnScreen() {
   useEffect(() => () => abortRef.current?.abort(), [])
 
   const snap = async () => {
-    if (!videoRef.current) return
+    if (!videoRef.current || snappingRef.current) return
+    snappingRef.current = true
     const ac = new AbortController()
     abortRef.current = ac
 
-    const online = await isOllamaOnline()
+    const online = await isOllamaOnline().finally(() => {
+      snappingRef.current = false
+    })
     if (ac.signal.aborted) return
     if (!online) {
+      stopCamera()
       setPhase('offline')
       return
     }

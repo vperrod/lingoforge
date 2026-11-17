@@ -76,6 +76,30 @@ describe('PointLearnScreen phase machine', () => {
     expect(mockIdentifyObjects).not.toHaveBeenCalled()
   })
 
+  it('stops the camera when Ollama is unreachable on capture', async () => {
+    const first = makeStream()
+    mockGetUserMedia.mockResolvedValueOnce(first.stream)
+    mockIsOllamaOnline.mockResolvedValue(false)
+    render(<PointLearnScreen />)
+    await screen.findByLabelText('Take photo')
+    snap()
+    await screen.findByText('Ollama is not running')
+    expect(first.stop).toHaveBeenCalledOnce()
+  })
+
+  it('ignores a second shutter tap while the first is still checking Ollama', async () => {
+    let resolveOnline!: (v: boolean) => void
+    mockIsOllamaOnline.mockReturnValue(new Promise<boolean>((r) => (resolveOnline = r)))
+    render(<PointLearnScreen />)
+    await screen.findByLabelText('Take photo')
+    snap()
+    snap()
+    resolveOnline(true)
+    await screen.findByText('taza')
+    expect(mockIsOllamaOnline).toHaveBeenCalledOnce()
+    expect(mockIdentifyObjects).toHaveBeenCalledOnce()
+  })
+
   it('passes through scanning before landing on results when detection succeeds', async () => {
     let resolveDetection!: (objs: (typeof detectedObject)[]) => void
     mockIdentifyObjects.mockReturnValue(
