@@ -37,6 +37,8 @@ export function newSrsItem(vocabId: string, now: number = Date.now()): SrsItem {
 
 export function review(item: SrsItem, correct: boolean, now: number = Date.now()): SrsItem {
   if (correct) {
+    // Practising an item that isn't due (lesson replays, reading taps) must not inflate stability.
+    if (now < item.dueAt) return item
     const growth = 1 + (GROWTH_BASE - 1) * (1 - item.difficulty)
     const stability = item.stability * growth
     return {

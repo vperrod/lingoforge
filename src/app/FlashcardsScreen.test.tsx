@@ -10,6 +10,7 @@ vi.mock('../audio/sfx', () => ({ playFanfare: vi.fn(), playCorrect: vi.fn(), pla
 vi.mock('../audio/tts', () => ({ speak: vi.fn(), stopSpeaking: vi.fn() }))
 
 import { FlashcardsScreen } from './FlashcardsScreen'
+import { newSrsItem } from '../engine/srs'
 import { useProgress, emptyProgress } from '../state/progress'
 
 // Unit 1 of the Russian course has 18 cards; a random just under 1 makes Fisher-Yates
@@ -54,10 +55,13 @@ describe('FlashcardsScreen', () => {
     expect(screen.getByText(`2 / ${DECK_SIZE}`)).toBeTruthy()
   })
 
-  it('rating a card records an SRS review for that word', () => {
+  it('rating a due card records an SRS review for that word', () => {
+    const data = emptyProgress('ru')
+    data.courses.ru = { lessonCompletions: {}, srsItems: { privet: { ...newSrsItem('privet'), dueAt: Date.now() - 1000 } } }
+    useProgress.setState({ data })
     startFirstDeck()
     fireEvent.click(screen.getByText('Know it'))
-    // newSrsItem starts at 1 rep; a review increments it
+    // newSrsItem starts at 1 rep; a review of a due item increments it
     expect(useProgress.getState().data.courses.ru!.srsItems.privet.reps).toBe(2)
   })
 

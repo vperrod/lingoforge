@@ -320,12 +320,22 @@ describe('useProgress store', () => {
       expect(useProgress.getState().data.courses.ru!.srsItems['fresh']).toBeDefined()
     })
 
-    it('updates the existing item on subsequent reviews', () => {
+    it('updates the existing item when a later review finds it due', () => {
+      const now = vi.spyOn(Date, 'now').mockReturnValue(Date.UTC(2026, 6, 13))
+      useProgress.getState().reviewVocab('ru', 'v', true)
+      const first = useProgress.getState().data.courses.ru!.srsItems['v']
+      now.mockReturnValue(Date.UTC(2026, 6, 15))
+      useProgress.getState().reviewVocab('ru', 'v', true)
+      const second = useProgress.getState().data.courses.ru!.srsItems['v']
+      now.mockRestore()
+      expect(second.reps).toBeGreaterThan(first.reps)
+    })
+
+    it('does not change an item that is answered correctly again before it is due', () => {
       useProgress.getState().reviewVocab('ru', 'v', true)
       const first = useProgress.getState().data.courses.ru!.srsItems['v']
       useProgress.getState().reviewVocab('ru', 'v', true)
-      const second = useProgress.getState().data.courses.ru!.srsItems['v']
-      expect(second.reps).toBeGreaterThan(first.reps)
+      expect(useProgress.getState().data.courses.ru!.srsItems['v']).toEqual(first)
     })
   })
 

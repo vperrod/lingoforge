@@ -10,6 +10,7 @@ const item = (over: Partial<SrsItem> = {}): SrsItem => ({
   ...newSrsItem('v1', NOW),
   ...over,
 })
+const dueItem = (over: Partial<SrsItem> = {}): SrsItem => item({ dueAt: NOW, ...over })
 
 describe('newSrsItem', () => {
   it('is due one day after first exposure', () => {
@@ -31,35 +32,52 @@ describe('newSrsItem', () => {
 
 describe('review — correct answer', () => {
   it('grows stability', () => {
-    const before = item()
+    const before = dueItem()
     expect(review(before, true, NOW).stability).toBeGreaterThan(before.stability)
   })
 
   it('grows stability more for easier items', () => {
-    const easy = review(item({ difficulty: 0.1 }), true, NOW)
-    const hard = review(item({ difficulty: 0.9 }), true, NOW)
+    const easy = review(dueItem({ difficulty: 0.1 }), true, NOW)
+    const hard = review(dueItem({ difficulty: 0.9 }), true, NOW)
     expect(easy.stability).toBeGreaterThan(hard.stability)
   })
 
   it('schedules the next review stability-days out', () => {
-    const after = review(item(), true, NOW)
+    const after = review(dueItem(), true, NOW)
     expect(after.dueAt).toBe(NOW + after.stability * DAY_MS)
   })
 
   it('eases difficulty down', () => {
-    expect(review(item({ difficulty: 0.3 }), true, NOW).difficulty).toBeCloseTo(0.25)
+    expect(review(dueItem({ difficulty: 0.3 }), true, NOW).difficulty).toBeCloseTo(0.25)
   })
 
   it('clamps difficulty at zero', () => {
-    expect(review(item({ difficulty: 0.02 }), true, NOW).difficulty).toBe(0)
+    expect(review(dueItem({ difficulty: 0.02 }), true, NOW).difficulty).toBe(0)
   })
 
   it('increments reps', () => {
-    expect(review(item(), true, NOW).reps).toBe(2)
+    expect(review(dueItem(), true, NOW).reps).toBe(2)
   })
 
   it('does not count a lapse', () => {
-    expect(review(item(), true, NOW).lapses).toBe(0)
+    expect(review(dueItem(), true, NOW).lapses).toBe(0)
+  })
+})
+
+describe('review — correct answer on an item that is not due', () => {
+  it('leaves the item untouched, so lesson replays cannot inflate stability', () => {
+    const notDue = item({ stability: 3, dueAt: NOW + 3 * DAY_MS })
+    expect(review(notDue, true, NOW)).toEqual(notDue)
+  })
+
+  it('keeps stability flat across repeated same-day replays', () => {
+    const replayed = Array.from({ length: 5 }).reduce<SrsItem>((cur) => review(cur, true, NOW), item())
+    expect(replayed.stability).toBe(1)
+  })
+
+  it('grows stability once the due time has arrived', () => {
+    const notDue = item()
+    expect(review(notDue, true, notDue.dueAt).stability).toBeGreaterThan(notDue.stability)
   })
 })
 

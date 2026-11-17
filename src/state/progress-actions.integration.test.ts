@@ -61,8 +61,9 @@ describe('Zustand integration: completeLesson + skipToUnit + reviewVocab + earnB
   })
 
   it('reviewVocab progresses SRS reps/lapses deterministically', () => {
+    // first exposure seeds the item (1 rep); a correct answer before it is due is not a scheduled review
     useProgress.getState().reviewVocab('ru', 'v1', true)
-    expect(fresh().courses.ru!.srsItems['v1'].reps).toBe(2)
+    expect(fresh().courses.ru!.srsItems['v1'].reps).toBe(1)
 
     useProgress.getState().reviewVocab('ru', 'v2', false)
     const wrong = fresh().courses.ru!.srsItems['v2']
@@ -107,7 +108,7 @@ describe('Zustand integration: completeLesson + skipToUnit + reviewVocab + earnB
     expect(Object.keys(items)).toEqual(expect.arrayContaining(ids))
     for (const id of ids) {
       expect(items[id]).toBeDefined()
-      expect(items[id].reps).toBe(2)
+      expect(items[id].reps).toBe(1)
     }
   })
 
@@ -160,7 +161,7 @@ describe('Zustand integration: completeLesson + skipToUnit + reviewVocab + earnB
 
     expect(fresh().activeCourse).toBe('ru')
     expect(fresh().courses.ru!.lessonCompletions['lsn-x']).toBe(1)
-    expect(fresh().courses.ru!.srsItems['v-x'].reps).toBe(2)
+    expect(fresh().courses.ru!.srsItems['v-x'].reps).toBe(1)
     expect(fresh().badges['xp-500']).toBeGreaterThan(0)
     expect(() => JSON.stringify(fresh())).not.toThrow()
   })
@@ -183,7 +184,7 @@ describe('Zustand integration: completeLesson + skipToUnit + reviewVocab + earnB
     useProgress.getState().earnBadge('words-50')
 
     expect(() => JSON.stringify(fresh())).not.toThrow()
-    expect(fresh().courses.ru!.srsItems['v1'].reps).toBe(2)
+    expect(fresh().courses.ru!.srsItems['v1'].reps).toBe(1)
     expect(fresh().courses.ru!.srsItems['v2'].lapses).toBe(1)
   })
 })
