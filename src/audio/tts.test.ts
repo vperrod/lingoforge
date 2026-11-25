@@ -1,5 +1,5 @@
 import { readFileSync } from 'node:fs'
-import { describe, it, expect, vi } from 'vitest'
+import { afterEach, describe, it, expect, vi } from 'vitest'
 import { audioUrl, speak, stopSpeaking } from './tts'
 
 describe('audioUrl', () => {
@@ -50,5 +50,46 @@ describe('stopSpeaking', () => {
     stopSpeaking()
     await expect(pending).resolves.toBe(false)
     vi.unstubAllGlobals()
+  })
+})
+
+describe('MP3 reuse', () => {
+  function stubAudio(outcome: 'ended' | 'error') {
+    const created: string[] = []
+    vi.stubGlobal('window', {})
+    vi.stubGlobal('Audio', class {
+      onended: (() => void) | null = null
+      onerror: (() => void) | null = null
+      paused = true
+      currentTime = 0
+      constructor(url: string) { created.push(url) }
+      pause() { this.paused = true }
+      play() {
+        this.paused = false
+        queueMicrotask(() => {
+          this.paused = true
+          if (outcome === 'ended') this.onended?.()
+          else this.onerror?.()
+        })
+        return Promise.resolve()
+      }
+    })
+    return created
+  }
+
+  afterEach(() => vi.unstubAllGlobals())
+
+  it('loads an MP3 once when the same text is spoken twice', async () => {
+    const created = stubAudio('ended')
+    await speak('дом', 'ru-RU')
+    await speak('дом', 'ru-RU')
+    expect(created).toEqual([audioUrl('дом', 'ru-RU')])
+  })
+
+  it('retries an MP3 that failed to load', async () => {
+    const created = stubAudio('error')
+    await speak('кот', 'ru-RU')
+    await speak('кот', 'ru-RU')
+    expect(created).toHaveLength(2)
   })
 })

@@ -27,14 +27,36 @@ let settleCurrent: (() => void) | null = null
 // Bumped by stopSpeaking so an in-flight speak() knows not to fall back to Web Speech.
 let stopCount = 0
 
+// Loaded elements by URL, so a replay doesn't request the MP3 again. Kept small:
+// browsers cap how many media players can be alive at once.
+const AUDIO_CACHE_SIZE = 20
+const audioCache = new Map<string, HTMLAudioElement>()
+
+function getAudio(url: string): HTMLAudioElement {
+  let el = audioCache.get(url)
+  // A still-playing element can't be shared: its pending promise would never settle.
+  if (el && !el.paused) return new Audio(url)
+  if (el) el.currentTime = 0
+  else el = new Audio(url)
+  audioCache.delete(url) // re-insert so the least recently used stays first
+  audioCache.set(url, el)
+  if (audioCache.size > AUDIO_CACHE_SIZE) audioCache.delete(audioCache.keys().next().value!)
+  return el
+}
+
 async function playAudioFile(url: string): Promise<boolean> {
   return new Promise((resolve) => {
-    const el = new Audio(url)
+    const el = getAudio(url)
+    // A failed element stays broken, so drop it and let the next call reload.
+    const fail = () => {
+      audioCache.delete(url)
+      resolve(false)
+    }
     currentAudio = el
     settleCurrent = () => resolve(false)
     el.onended = () => resolve(true)
-    el.onerror = () => resolve(false)
-    el.play().catch(() => resolve(false))
+    el.onerror = fail
+    el.play().catch(fail)
   })
 }
 
