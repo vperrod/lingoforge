@@ -53,6 +53,60 @@ describe('stopSpeaking', () => {
   })
 })
 
+describe('speak() when the MP3 is missing', () => {
+  afterEach(() => vi.unstubAllGlobals())
+
+  function stubDeviceWithoutMp3() {
+    const requested: string[] = []
+    const spoken: string[] = []
+    vi.stubGlobal('Audio', class {
+      onended = null
+      onerror: (() => void) | null = null
+      constructor(url: string) { requested.push(url) }
+      play() {
+        queueMicrotask(() => this.onerror?.())
+        return new Promise(() => {})
+      }
+    })
+    vi.stubGlobal('SpeechSynthesisUtterance', class {
+      onstart?: () => void
+      onend?: () => void
+      text: string
+      constructor(text: string) { this.text = text }
+    })
+    vi.stubGlobal('window', {
+      speechSynthesis: {
+        getVoices: () => [{ lang: 'ru-RU' }],
+        cancel: () => {},
+        speak: (u: { text: string; onstart: () => void; onend: () => void }) => {
+          spoken.push(u.text)
+          u.onstart()
+          u.onend()
+        },
+      },
+    })
+    return { requested, spoken }
+  }
+
+  it('requests the sanitized filename', async () => {
+    const { requested } = stubDeviceWithoutMp3()
+    await speak('Где метро?', 'ru-RU')
+    expect(requested).toEqual([audioUrl('Где метро?', 'ru-RU')])
+  })
+
+  it('falls back to Web Speech with the unsanitized text', async () => {
+    const { spoken } = stubDeviceWithoutMp3()
+    await speak('Где метро?', 'ru-RU')
+    expect(spoken).toEqual(['Где метро?'])
+  })
+
+  it('resolves false when the device cannot synthesize speech either', async () => {
+    stubDeviceWithoutMp3()
+    vi.stubGlobal('window', {})
+    await expect(speak('Где метро?', 'ru-RU')).resolves.toBe(false)
+  })
+})
+
 describe('MP3 reuse', () => {
   function stubAudio(outcome: 'ended' | 'error') {
     const created: string[] = []
