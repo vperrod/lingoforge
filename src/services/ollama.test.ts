@@ -32,6 +32,11 @@ describe('generate', () => {
     )
     await expect(generate('prompt')).rejects.toThrow('Ollama 500: boom')
   })
+
+  it('rejects when the server is unreachable', async () => {
+    vi.stubGlobal('fetch', vi.fn(async () => { throw new TypeError('Failed to fetch') }))
+    await expect(generate('prompt')).rejects.toThrow('Failed to fetch')
+  })
 })
 
 describe('generateJSON', () => {
@@ -64,6 +69,14 @@ describe('generateJSON', () => {
 })
 
 describe('generateVision', () => {
+  it('throws with status and body on a non-ok response', async () => {
+    vi.stubGlobal(
+      'fetch',
+      vi.fn(async () => ({ ok: false, status: 404, text: async () => 'model not found' })),
+    )
+    await expect(generateVision('prompt', 'base64img', isObject)).rejects.toThrow('Ollama vision 404: model not found')
+  })
+
   it('recovers JSON wrapped in prose via brace extraction', async () => {
     vi.spyOn(console, 'warn').mockImplementation(() => {})
     stubFetchResponse('The image shows: {"objects": []} done')
@@ -84,6 +97,11 @@ describe('generateVision', () => {
 describe('isOllamaOnline', () => {
   it('reports offline when the server is unreachable', async () => {
     vi.stubGlobal('fetch', vi.fn(async () => { throw new Error('ECONNREFUSED') }))
+    await expect(isOllamaOnline()).resolves.toBe(false)
+  })
+
+  it('reports offline when /api/tags responds with an error status', async () => {
+    vi.stubGlobal('fetch', vi.fn(async () => ({ ok: false, status: 503 })))
     await expect(isOllamaOnline()).resolves.toBe(false)
   })
 
